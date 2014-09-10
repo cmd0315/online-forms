@@ -1,0 +1,290 @@
+@import url('responsive-bcd.css');
+
+body {
+    overflow-x: hidden;
+    font-family: "Vaud", Helvetica, Arial,sans-serif;
+    font-size: 15px;
+    line-height: 1.42857143;
+    background-color: #222;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Vaud", Helvetica, Arial,sans-serif;
+    font-weight: 700;
+}
+
+/* Header */
+header {
+    color: #fff;
+    background: url(../img/home-bg-compressed.jpg) no-repeat;
+    background-size: cover;
+}
+header .container {
+    padding-top: 100px;
+    padding-bottom: 50px;
+}
+header .container .row {
+    height: 100%;
+    min-height: 800px;
+}
+header .intro-text {
+    display: block;
+    font-family: "Vaud Bold",Helvetica,Arial,sans-serif;
+}
+/* Navbar */
+.navbar-default {
+    color: #fff;
+    padding: 10px 0;
+    border-bottom: 2px solid #e67e22;
+    margin-bottom: 0;
+}
+
+/* Footer */
+#copyright {
+    text-align: right;
+}
+footer .footer-above {
+    padding: 50px 0;
+    background-color: #06a885;
+    color: #fff;
+    border-top: 2px solid #e67e22;
+}
+
+
+/* Splash Message */
+.flash-msg {
+    position: fixed;
+    bottom: 0;
+    right: 20px;
+    z-index: 10000;
+    border: none;
+    border-radius: 0;
+    padding: 18px 30px;
+    -webkit-box-shadow: 0 0 15px #999;
+    box-shadow: 0 0 15px #999;
+    min-width: 380px;
+    max-width: 480px;
+    text-align: center;
+}
+.alert-success {
+    color: #192819!important;
+    background-color: #83C069!important;
+}
+.alert-danger {
+    color: #E4C3C3!important;
+    background-color: #a94442!important;
+}
+.alert-info {
+    color: #d9edf7!important;
+    background-color: #31708f!important;
+}
+
+/* HOME */
+#home-form {
+    padding: 20px 20px 60px;
+    margin: 10px 0;
+    background-color: rgba(230,126,34,0.6);
+    border-color: transparent;
+    border-radius: 5px;
+}
+#home-form h1 {
+    font-weight: bold;
+}
+
+/* -- INNER PAGES -- */
+#wrapper {
+    padding-left: 0;
+    background-color: #06a885;
+}
+.navbar-inverse {
+    background-color: #06a885;
+    border-color: #e67e22;
+}
+.navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
+    border-color: #e67e22;
+}
+.navbar-inverse .navbar-nav > li > a {
+    color: #fff;
+}
+.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {
+    border-right: 8px solid #e67e22;
+    background-color: transparent;
+}
+.navbar-inverse .navbar-nav > li > a:hover, .navbar-inverse .navbar-nav > li > a:focus {
+    background-color: rgba(230,126,34,0.8);
+}
+.top-nav {
+    padding: 0 15px;
+}
+.top-nav>li {
+    display: inline-block;
+    float: left;
+}
+.top-nav>li>a {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    line-height: 20px;
+    color: #fff;
+}
+.top-nav>li>a:hover, .top-nav>li>a:focus, .top-nav>.open>a, .top-nav>.open>a:hover, .top-nav>.open>a:focus {
+    color: #fff;
+    background-color: rgba(230,126,34,0.8);
+}
+ul.message-dropdown {
+    padding: 0;
+    max-height: 250px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.top-nav>.open>.dropdown-menu {
+    float: left;
+    position: absolute;
+    margin-top: 0;
+    border: 1px solid rgba(0,0,0,.15);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    background-color: #fff;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+li.message-preview {
+    width: 275px;
+    border-bottom: 1px solid rgba(0,0,0,.15);
+}
+.top-nav>.open>.dropdown-menu>li>a {
+    white-space: normal;
+}
+li.message-preview>a {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+li.message-footer {
+    margin: 5px 0;
+}
+#page-wrapper {
+    width: 100%;
+    padding: 0;
+    background-color: #fff;
+}
+.side-nav ul>li>a {
+    color: #E0E0E0;
+}
+ul.in {
+    list-style-type: none;
+}
+
+/* FORMS */
+#online-form {
+    background-color: #e6e7e8;
+}
+#form-wrapper {
+   border-bottom: 3px solid #06a885;
+}
+#form-wrapper .side-nav {
+    background-color: #e6e7e8;
+    list-style-type: none;
+    width: 100%;
+    font-family: "Vaud Black", Helvetica, Arial, sans-serif;
+    color: #59595b;
+}
+#form-wrapper .side-nav >li>a {
+    color: #59595b;
+}
+#form-navigation {
+    margin-top: 20px;
+}
+#form-content {
+    background-color: #fff;
+}
+#form-wrapper .side-nav>li {
+    padding: 5px 0;
+}
+.form-header {
+    border-bottom: 3px solid #f05926;
+}
+.form-msg {
+    margin: 10px;
+    padding: 20px;
+}
+.form-meta {
+    border-top: 3px solid #f05926;
+}
+.form-title {
+    margin-bottom: 5px;
+}
+.form-number {
+    margin-top: 0;
+    color: #231f20;
+}
+.form-inputs {
+    padding: 0;
+}
+.form-label {
+    font-style: italic;
+}
+.form-inputs input, .form-inputs textarea {
+    border-radius: 0;
+    margin: 5px 0;
+    border: 0;
+    font-size: 14px;
+}
+.form-inputs select {
+    font-size: 14px;
+}
+.form .first, .form .meta-firsts {
+    border-bottom: 2px solid #06a885;
+}
+.form .right {
+    height: 100%;
+    min-height: 320px;
+}
+.form .right, .form .right input {
+    background-color: #e6e7e8;
+}
+.form-divider {
+    padding: 50px 0;
+}
+#bcd-ci {
+    margin: 0 30px
+}
+#form-wrapper hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #06a885;
+    margin: 1em 0.5em;
+    padding: 0;
+}
+/* ~-- INNER PAGES -- */
+
+
+/* Font */
+@font-face {
+    font-family: "Vaud";
+    src: url(./fonts/VaudBook_0.ttf);
+}
+
+@font-face {
+    font-family: "Vaud Bold";
+    src: url(./fonts/VaudBold.ttf);
+}
+
+@font-face {
+    font-family: "Vaud Italic";
+    src: url(./fonts/VaudBookIt.ttf);
+}
+
+@font-face {
+    font-family: "Vaud Bold Italic";
+    src: url(fonts/VaudBoldIt.ttf);
+}
+
+@font-face {
+    font-family: "Vaud Black";
+    src: url(fonts/VaudBlack.ttf);
+}

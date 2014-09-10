@@ -1,0 +1,119 @@
+body {
+	font-family: 'Vaud', sans-serif;
+    font-size: 11px;
+    color: #231f20;
+    -webkit-font-smoothing: antialiased;
+    -webkit-overflow-scrolling: touch;
+}
+h1, h3 {
+	margin: 0;
+	padding: 0;
+}
+.online-form {
+	width: 100%;
+	margin-right: 196px;
+	padding: 10px 0 20px 30px; 
+	border-left: 1px dashed;
+	border-bottom: 1px dashed;
+}
+.form-title {
+	font-family: 'Vaud Bold', sans-serif;
+	font-size: 26px;
+	font-weight: bold;
+}
+.control-num {
+    font-family: "Vaud Display", sans-serif;
+	font-size: 16px;
+	font-weight: normal;
+}
+.form-label {
+	font-family: "Vaud Italic", sans-serif;
+	padding-right: 30px;
+}
+#form-header {
+	width: 100%;
+}
+#form-header td.left {
+	width: 70%;
+}
+#form-header td.right {
+	width: 30%;
+	text-align: right;
+}
+#form-general-div {
+	margin-top: 10px;
+	border-top: 3px solid #f05926;
+	height: 100px;
+}
+#form-content-div {
+	margin-top: 20px;
+}
+tr.row-line td {
+	border-bottom: 1px solid #06a885;
+}
+#form-general {
+	width: 100%
+}
+#form-general td.left{
+	width: 70%;
+}
+#form-general td.right{
+	width: 30%;
+	background-color: #e6e7e8;
+}
+#form-content {
+	width: 100%;
+}
+#form-content td.left {
+	width: 65%;
+}
+#form-content td.right{
+	width: 35%;
+}
+#form-content-proper {
+	width: 100%;
+}
+#form-content-proper td.col {
+	width: 50%;
+	height: 35px;
+}
+#form-content-proper td.fake {
+	width: 10px;
+}
+#form-content-proper tr.row-line-head td {
+	border-top: 3px solid #f05926;
+	border-bottom: 1px solid #06a885;
+}
+#form-content #bcd-ci {
+	margin-top: -60px;
+	padding-left: 40px;
+}
+
+@font-face {
+    font-family: "Vaud";
+    src: url(./fonts/VaudBook_0.ttf);
+}
+
+@font-face {
+    font-family: "Vaud Bold";
+    src: url(./fonts/VaudBold.ttf);
+}
+
+@font-face {
+    font-family: "Vaud Italic";
+    src: url(./fonts/VaudBookIt.ttf);
+}
+
+@font-face {
+    font-family: "Vaud Bold Italic";
+    src: url(fonts/VaudBoldIt.ttf);
+}
+
+@font-face {
+    font-family: "Vaud Black";
+    src: url(fonts/VaudBlack.ttf);
+}
+@font-face {
+    font-family: "Vaud Display";
+    src: url(fonts/VaudDisplayLight.ttf);
+}
