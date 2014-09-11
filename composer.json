@@ -6,7 +6,8 @@
 	"require": {
 		"laravel/framework": "4.2.*",
 		"davejamesmiller/laravel-breadcrumbs": "~2.2.2",
-		"thujohn/pdf": "dev-master"
+		"thujohn/pdf": "dev-master",
+		"way/generators": "~2.0"
 	},
 	"autoload": {
 		"classmap": [

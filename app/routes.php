@@ -2,5 +2,5 @@
 
 Route::get('/', function()
 {
-	return View::make('account.forms.payment-request');
+	return View::make('account.dashboard');
 });

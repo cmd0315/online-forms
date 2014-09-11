@@ -2,6 +2,23 @@
 
 class DatabaseSeeder extends Seeder {
 
+
+	protected $tables = [
+		'accounts',
+		'employees',
+		'departments',
+		'clients',
+		'onlineforms',
+		'prs'
+	];
+
+	protected $seeders = [
+		'AccountSeeder',
+		'ClientSeeder',
+		'DepartmentSeeder',
+		'EmployeeSeeder'
+	];
+
 	/**
 	 * Run the database seeds.
 	 *
@@ -11,7 +28,25 @@ class DatabaseSeeder extends Seeder {
 	{
 		Eloquent::unguard();
 
-		// $this->call('UserTableSeeder');
+		$this->cleanDatabase();
+		
+		foreach($this->seeders as $seederClass) {
+			$this->call($seederClass);
+		}
+	}
+
+	/*
+	* Clean database to prepare for seed generation
+	*/
+	private function cleanDatabase() {
+
+		DB::statement('SET FOREIGN_KEY_CHECKS = 0'); //disregard foreign key rules
+
+		foreach($this->tables as $table) {
+			DB::table($table)->truncate();
+		}
+
+		DB::statement('SET FOREIGN_KEY_CHECKS = 1'); //enable foreign key rules
 	}
 
 }

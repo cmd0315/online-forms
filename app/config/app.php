@@ -13,7 +13,7 @@ return array(
 	|
 	*/
 
-	'debug' => true,
+	'debug' => false,
 
 	/*
 	|--------------------------------------------------------------------------
@@ -123,6 +123,7 @@ return array(
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'DaveJamesMiller\Breadcrumbs\ServiceProvider',
 		'Thujohn\Pdf\PdfServiceProvider',
+		'Way\Generators\GeneratorsServiceProvider',
 
 	),
 
