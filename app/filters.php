@@ -43,7 +43,7 @@ Route::filter('auth', function()
 		}
 		else
 		{
-			return Redirect::guest('login');
+			return Redirect::guest(URL::route('home.signin'));
 		}
 	}
 });
@@ -88,3 +88,19 @@ Route::filter('csrf', function()
 		throw new Illuminate\Session\TokenMismatchException;
 	}
 });
+
+/*
+|--------------------------------------------------------------------------
+| User Role Filter
+|--------------------------------------------------------------------------
+|
+|
+*/
+
+Route::filter('role', function()
+{ 
+  if ( Auth::user()->employee->position !== 2) {
+     // redirect to dashboard page if function is not available for regular users
+     return Redirect::to('dashboard'); 
+   }
+}); 

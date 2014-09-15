@@ -1,5 +1,5 @@
 @include('layout.partials._header')
-	body
+	<body>
 		<div id="wrapper">
 			@include('layout.inner._navigation')
 			<div id="page-wrapper">
@@ -8,13 +8,9 @@
 				    <div class="row">
 				        <div class="col-lg-12">
 				            <h1 class="page-header">
-				                Dashboard <small>Statistics Overview</small>
+				                {{ isset($pageTitle) ? $pageTitle : ''}} <small>@yield('sub-heading')</small>
 				            </h1>
-				            <ol class="breadcrumb">
-				                <li class="active">
-				                    Dashboard
-				                </li>
-				            </ol>
+				            @yield('breadcrumbs')
 				        </div>
 				    </div>
 				    <!-- /.row -->

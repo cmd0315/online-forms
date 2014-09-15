@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>{{ isset($pageTitle) ? $pageTitle : '' }} | BCD Online Forms</title>
+	<title>BCD Online Forms | {{ isset($pageTitle) ? $pageTitle : '' }} </title>
 	<link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
 	{{ HTML::style('css/bootstrap.css') }}
 	{{ HTML::style('css/main.css') }}

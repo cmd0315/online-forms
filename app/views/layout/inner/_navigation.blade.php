@@ -8,7 +8,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">{{ HTML::image("img/bcd-logo.png", "BCD Pinpoint Logo") }}</a>
+        <a class="navbar-brand" href="{{ URL::route('dashboard') }}">{{ HTML::image("img/bcd-logo.png", "BCD Pinpoint Logo") }}</a>
     </div>
     <!-- Top Menu Items -->
     <ul class="nav navbar-right top-nav">
@@ -93,20 +93,20 @@
             </ul>
         </li>
         <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> John Smith <b class="caret"></b></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ Auth::user()->username}} <b class="caret"></b></a>
             <ul class="dropdown-menu">
                 <li>
-                    <a href="#"><i class="fa fa-fw fa-user "></i> Profile</a>
+                    <a href="{{ URL::route('profile.index') }}"> Profile</a>
                 </li>
                <li>
-                    <a href="#"><i class="fa fa-fw fa-envelope"></i> Inbox</a>
+                    <a href="#"> Inbox</a>
                 </li>
                 <li>
-                    <a href="#"><i class="fa fa-fw fa-gear"></i> Settings</a>
+                    <a href="#"> Settings</a>
                 </li>
                 <li class="divider"></li>
                 <li>
-                    <a href="#"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                    <a href="{{ URL::route('home.signout') }}"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
                 </li>
             </ul>
         </li>
@@ -117,26 +117,27 @@
             <li>
                 <a href="#"> Dashboard</a>
             </li>
-           
-            <li class="active">
-                <a href="javascript:;" data-toggle="collapse" data-target="#employees-menu"> Employees <b class="caret"></b></a>
-                <ul id="employees-menu" class="collapse">
-                    <li>
-                        <a href="#">Add Employee</a>
-                    </li>
-                    <li>
-                        <a href="#">Manage Employee Records</a>
-                    </li>
-                </ul>
-            </li>
+            @if(Auth::user()->employee->system_admin)
+                <li class="active">
+                    <a href="javascript:;" data-toggle="collapse" data-target="#employees-menu"> Employees <b class="caret"></b></a>
+                    <ul id="employees-menu" class="collapse">
+                        <li>
+                            <a href="#">Add Employee</a>
+                        </li>
+                        <li>
+                            <a href="#">Manage Employee Records</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#"> Departments</a>
+                </li>
+                <li>
+                    <a href="#"> Clients</a>
+                </li>
+            @endif
             <li>
-                <a href="#"> Departments</a>
-            </li>
-            <li>
-                <a href="#"> Clients</a>
-            </li>
-            <li>
-                <a href="bootstrap-elements.html"> Forms</a>
+                <a href="#"> Forms</a>
             </li>
         </ul>
     </div>

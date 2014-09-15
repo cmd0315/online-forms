@@ -1,5 +1,9 @@
 @extends('layout.inner.master')
 
+@section('breadcrumbs')
+  {{ Breadcrumbs::render('dashboard') }}
+@stop
+
 @section('content')
 
     <div class="row">
@@ -254,4 +258,12 @@
         </div>
     </div>
     <!-- /.row -->
+@stop
+
+@section('sub-heading')
+    @if(Auth::user()->employee->system_admin)
+        Here is a summary of the activities in your network.
+    @else
+        Here is a summary of your activities
+    @endif
 @stop

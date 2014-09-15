@@ -33,8 +33,15 @@
 </footer>
 
 	<!-- js -->
-	{{ HTML::script('https://code.jquery.com/jquery-1.10.2.min.js') }}
+	<!-- {{ HTML::script('https://code.jquery.com/jquery-1.10.2.min.js') }} -->
+	{{ HTML::script('js/jquery.min.js') }}
 	{{ HTML::script('js/bootstrap.min.js') }}
-	@yield('scripts')
+	@yield('extra-scripts')
+	<script>
+  		jQuery(document).ready(function($){
+  			$(".flash-msg").fadeIn('slow').delay(5000).fadeOut('slow');
+			@yield('scripts')
+  		});
+  	</script>
 </body>
 </html>
