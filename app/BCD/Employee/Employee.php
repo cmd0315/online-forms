@@ -21,7 +21,7 @@ class Employee extends \Eloquent implements UserInterface, RemindableInterface {
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['username', 'first_name', 'middle_name', 'last_name', 'email', 'mobile', 'department_id', 'position'];
+	protected $fillable = ['username', 'first_name', 'middle_name', 'last_name', 'birthdate', 'address', 'email', 'mobile', 'department_id', 'position'];
 
 	/**
 	 * Specifies the model/s that are affected with the changes (db update/delete) made in this model
@@ -45,9 +45,9 @@ class Employee extends \Eloquent implements UserInterface, RemindableInterface {
 	 *
 	 * @return dependency between the two models
 	 */
-    // public function department() {
-    //     return $this->belongsTo('Department', 'department_id', 'department_id')->withTrashed();
-    // }
+    public function department() {
+        return $this->belongsTo('BCD\Department\Department', 'department_id', 'department_id')->withTrashed();
+    }
 
     /**
      * Check if user has system admin position
@@ -61,6 +61,15 @@ class Employee extends \Eloquent implements UserInterface, RemindableInterface {
     	else {
     		return false;
     	}
+    }
+
+    public function getHeadAttribute() {
+        if($this->position == 1) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     public function getFullNameAttribute() {
@@ -79,6 +88,10 @@ class Employee extends \Eloquent implements UserInterface, RemindableInterface {
         else {
             return 'Member Employee';
         }
+    }
+
+    public function scopeHead($query) {
+        return $query->where('position', '1');
     }
 
 }

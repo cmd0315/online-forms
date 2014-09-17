@@ -115,17 +115,17 @@
     <div class="collapse navbar-collapse navbar-ex1-collapse">
         <ul class="nav navbar-nav side-nav">
             <li>
-                <a href="#"> Dashboard</a>
+                <a href="{{ URL::route('dashboard') }}"> Dashboard</a>
             </li>
             @if(Auth::user()->employee->system_admin)
                 <li class="active">
                     <a href="javascript:;" data-toggle="collapse" data-target="#employees-menu"> Employees <b class="caret"></b></a>
                     <ul id="employees-menu" class="collapse">
                         <li>
-                            <a href="#">Add Employee</a>
+                            <a href="{{ URL::route('employees.create') }}">Add Employee</a>
                         </li>
                         <li>
-                            <a href="#">Manage Employee Records</a>
+                            <a href="{{ URL::route('employees.index') }}">Manage Employee Records</a>
                         </li>
                     </ul>
                 </li>

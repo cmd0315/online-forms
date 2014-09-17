@@ -1,4 +1,4 @@
-<div class="panel panel-danger">
+<div class="panel panel-warning">
     <div class="panel-heading">
         <h3 class="panel-title">Settings</h3>
     </div>

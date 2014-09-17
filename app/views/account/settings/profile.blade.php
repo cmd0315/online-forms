@@ -17,7 +17,7 @@
                             <p> Username: </p>
                         </div>
                         <div class="col-lg-8">
-                            <p>{{$user->username}}</p>
+                            <p>{{ e($user->username) }}</p>
                         </div>
                     </div>
                     <div class="row">
@@ -25,7 +25,7 @@
                             <p> Date Joined: <p>
                         </div>
                         <div class="col-lg-8">
-                            <p>{{$user->account->created_at}}</p>
+                            <p>{{ e($user->account->created_at) }}</p>
                         </div>
                     </div>
                     <div class="row">
@@ -33,7 +33,7 @@
                             <p> Last Updated: <p>
                         </div>
                         <div class="col-lg-8">
-                            <p>{{$user->account->updated_at}}</p>
+                            <p>{{ e($user->account->updated_at) }}</p>
                         </div>
                     </div>
                     <div class="row">
@@ -41,7 +41,13 @@
                             <p> Password: </p>
                         </div>
                         <div class="col-lg-8">
-                            <p>*** <small><a href="{{URL::route('accounts.edit', $user->username)}}">(Change Password)</a></small></p>
+                            <p>*** <small>
+                                @if((Auth::user()->employee->system_admin) && (e($user->username) !== Auth::user()->username))
+                                    <a href="#">(Reset Password)</a>
+                                @else
+                                    <a href="{{URL::route('accounts.edit', e($user->username)) }}">(Change Password)</a>
+                                @endif
+                            </small></p>
                         </div>
                     </div>
                 </div>
@@ -55,7 +61,11 @@
                             Employee Information
                         </div>
                         <div class="col-xs-9 text-right">
-                            <a href="{{ URL::route('profile.edit', $user->username) }}"><button class="btn btn-warning btn-sm">Edit Profile</button></a>
+                            @if(Auth::user()->employee->system_admin)
+                                <a href="{{ URL::route('employees.edit', e($user->username)) }}"><button class="btn btn-warning btn-sm">Edit Profile</button></a>
+                            @else
+                                <a href="{{ URL::route('profile.edit', e($user->username)) }}"><button class="btn btn-warning btn-sm">Edit Profile</button></a>    
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -66,33 +76,33 @@
                                 <div class="col-lg-7">
                                     <div class="row">
                                         <div class="col-lg-4"> Name: </div>
-                                        <div class="col-lg-8"> {{$user->full_name}} </div>
+                                        <div class="col-lg-8"> {{ e($user->full_name) }} </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-4"> Birthdate: </div>
-                                        <div class="col-lg-8">  </div>
+                                        <div class="col-lg-8">  {{ date('Y-m-d', strtotime(e($user->birthdate))) }}</div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-4"> Address: </div>
-                                        <div class="col-lg-8"> {{$user->full_name}} </div>
+                                        <div class="col-lg-8"> {{ e($user->address) }} </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-4"> Email Address: </div>
-                                        <div class="col-lg-8"> {{$user->email}} </div>
+                                        <div class="col-lg-8"> {{ e($user->email) }} </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-4"> Mobile Number: </div>
-                                        <div class="col-lg-8"> {{$user->mobile}} </div>
+                                        <div class="col-lg-8"> {{ e($user->mobile) }} </div>
                                     </div>
                                 </div>
                                 <div class="col-lg-5">
                                     <div class="row">
                                         <div class="col-lg-4">Department:</div>
-                                        <div class="col-lg-8">{{$user->department_id}}</div>
+                                        <div class="col-lg-8">{{ e($user->department->department_name) }}</div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-4">Position:</div>
-                                        <div class="col-lg-8">{{$user->position_title}}</div>
+                                        <div class="col-lg-8">{{ e($user->position_title) }}</div>
                                     </div>
                                 </div>
                             </div>

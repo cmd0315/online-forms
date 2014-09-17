@@ -23,7 +23,7 @@ class CreateEmployeesTable extends Migration {
 			$table->string('address', 500);
 			$table->string('email', 50)->unique();
 			$table->string('mobile', 15)->unique()->nullable();
-			$table->string('department_id', 10)->unique();
+			$table->string('department_id', 10);
 			$table->integer('position')->default(0); //company position(member, department head, system admin); default is member
 			$table->timestamps();
 		});

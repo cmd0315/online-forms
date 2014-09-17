@@ -45,8 +45,8 @@
 						</div><!-- .form-group -->
 					</div>
 				</div><!-- .row -->
-				<div class="row">
-					<div class="col-lg-2 col-lg-offset-10">
+				<div class="row pull-right">
+					<div class="col-lg-12">
 					<button type="submit" class="btn btn-lg btn-warning" id="submit_form" name="submit_form">Submit</button>
 					</div>
 				</div><!-- /row -->

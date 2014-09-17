@@ -26,7 +26,7 @@ $app = new Illuminate\Foundation\Application;
 
 $env = $app->detectEnvironment(array(
 
-	'local' => array('http://localhost'),
+	'local' => array('CharisseDalida'),
 	'production' => array('http://bcdpinpoint.com/online-forrms'),
 
 ));

@@ -1,8 +1,18 @@
 <?php
 
 use BCD\Admin\Account;
+use BCD\Forms\Login;
+use Laracasts\Validation\FormValidationException;
 
 class HomeController extends \BaseController {
+	/**
+	 * @var \BCD\Forms\Login
+	 */
+	protected $loginForm;
+
+	function __construct(Login $loginForm) {
+		$this->loginForm = $loginForm;
+	}
 
 	/**
 	 * Display the home page
@@ -29,40 +39,34 @@ class HomeController extends \BaseController {
 	 * @return dashboard view if successful else return a redirect to the signin form
 	 */
 	public function postSignIn() {
-		$validator = Validator::make(Input::all(),
-			array(
-				'username' => 'required|max:20|min:5|',
-				'password' => 'required'
-			)
-		);
 
-		if($validator->fails()) {
-			//Redirect to signin page if there are validation errors 
-			return 	Redirect::route('home.signin')
-					->withErrors($validator)
-					->withInput();
+		try {
+			$this->loginForm->validate(Input::all());
+		}
+		catch(FormValidationException $error) {
+			return Redirect::back()->withInput()->withErrors($error->getErrors());
+		}
+
+
+		$remember = (Input::has('remember')) ? true : false;
+
+		$username = Input::get('username');
+		$password = Input::get('password');
+
+		$auth = Auth::attempt(array(
+			'username' => $username,
+			'password' => $password,
+			'status' => 0
+		), $remember);
+
+		if($auth){
+			//Redirect to intended page
+			return Redirect::intended(URL::route('dashboard'))
+					->with('global', 'Welcome, ' . $username . '!');
 		}
 		else {
-			$remember = (Input::has('remember')) ? true : false;
-
-			$username = Input::get('username');
-			$password = Input::get('password');
-
-			$auth = Auth::attempt(array(
-				'username' => $username,
-				'password' => $password,
-				'status' => 0
-			), $remember);
-
-			if($auth){
-				//Redirect to intended page
-				return Redirect::intended(URL::route('dashboard'))
-						->with('global', 'Welcome, ' . $username . '!');
-			}
-			else {
-				return  Redirect::route('home.signin')
-						->with('global-error', 'Wrong username or password');
-			}
+			return  Redirect::route('home.signin')
+					->with('global-error', 'Wrong username or password');
 		}
 
 	}

@@ -1,12 +1,17 @@
 <?php
 use BCD\Employee\Employee;
+use BCD\Forms\UpdateProfile;
+use Laracasts\Validation\FormValidationException;
+
 
 class ProfilesController extends \BaseController {
 
 	protected $user;
+	protected $updateProfileForm;
 
-	public function __construct() {
+	public function __construct(UpdateProfile $updateProfileForm) {
 		$this->user = new Employee;
+		$this->updateProfileForm = $updateProfileForm;
 	}
 	/**
 	 * Display a listing of the resource.
@@ -70,12 +75,32 @@ class ProfilesController extends \BaseController {
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  int  $id
+	 * @param  String  $username
 	 * @return Response
 	 */
-	public function update($id)
+	public function update($username)
 	{
-		//
+		//check if user exists
+		try {
+			$employee = $this->user->whereUsername($username)->firstOrFail();
+		}
+		catch(ModelNotFoundException $e) {
+			return  Redirect::route('profile.edit', ['username' => $username])
+					->with('global-error', 'System error: Saving employee information failed');
+		}
+
+		//validate form
+		$input = Input::only('first_name', 'middle_name', 'last_name', 'birthdate', 'address', 'email', 'mobile');
+		try {
+			$this->updateProfileForm->validate($input);
+		}
+		catch(FormValidationException $error) {
+			return Redirect::back()->withErrors($error->getErrors())->withInput();
+		}
+
+		$employee->fill($input)->save();
+		return 	Redirect::back()
+				->with('global-successful', 'Profile information successfully changed!');
 	}
 
 

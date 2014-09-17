@@ -1,7 +1,7 @@
 @extends('layout.inner.master')
 
 @section('breadcrumbs')
-  {{ Breadcrumbs::render('change-password') }}
+  {{ Breadcrumbs::render('update-profile') }}
 @stop
 
 @section('content')
@@ -46,7 +46,7 @@
 							<div class="form-group">
 							<label for="mobile" class="col-sm-4 control-label">Birthdate</label>
 								<div class="col-sm-8">
-									<input type="date" class="form-control" id="birthdate" name="birthdate" value="">
+									<input type="date" class="form-control" id="birthdate" name="birthdate" value="{{ e($employee->birthdate) }}">
 									@if($errors->has('birthdate'))
 										<p class="bg-danger">{{ $errors->first('birthdate') }}</p>
 									@endif
@@ -55,7 +55,7 @@
 							<div class="form-group">
 								<label for="address" class="col-sm-4 control-label">Address</label>
 								<div class="col-sm-8">
-									<input type="text" class="form-control" id="address" name="address" value="">
+									<input type="text" class="form-control" id="address" name="address" value="{{ e($employee->address) }}">
 									@if($errors->has('address'))
 										<p class="bg-danger">{{ $errors->first('address') }}</p>
 									@endif
@@ -82,19 +82,19 @@
 							<div class="form-group">
 								<label for="position" class="col-sm-4 control-label">Department</label>
 								<div class="col-sm-8">
-									{{ e($employee->department_id) }}
+									<p class="form-control-static">{{ e($employee->department->department_name) }}</p>
 								</div>
 							</div><!-- .form-group -->
 							<div class="form-group">
 								<label for="position" class="col-sm-4 control-label">Positon</label>
 								<div class="col-sm-8">
-									{{ e($employee->position_title) }}
+									<p class="form-control-static">{{ e($employee->position_title) }}</p>
 								</div>
 							</div><!-- .form-group -->
 						</div>
 					</div><!-- .row -->
-					<div class="row mt">
-						<div class="col-lg-1 col-lg-offset-11">
+					<div class="row pull-right">
+						<div class="col-lg-12">
 							<button type="submit" class="btn btn-lg btn-warning" id="submit_form" name="submit_form">Save</button>
 						</div>
 					</div><!-- .row -->					

@@ -19,6 +19,7 @@ class CreateDepartmentsTable extends Migration {
 			$table->string('department_name', 100)->unique();
 			$table->integer('status')->default(0); //existing or not; default is existing
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 

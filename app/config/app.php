@@ -13,7 +13,7 @@ return array(
 	|
 	*/
 
-	'debug' => true,
+	'debug' => false,
 
 	/*
 	|--------------------------------------------------------------------------
@@ -124,6 +124,8 @@ return array(
 		'DaveJamesMiller\Breadcrumbs\ServiceProvider',
 		'Thujohn\Pdf\PdfServiceProvider',
 		'Way\Generators\GeneratorsServiceProvider',
+		'Laracasts\Validation\ValidationServiceProvider',
+		'Laracasts\Commander\CommanderServiceProvider',
 
 	),
 

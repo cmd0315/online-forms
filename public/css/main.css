@@ -43,6 +43,13 @@ header .intro-text {
     border-bottom: 2px solid #e67e22;
     margin-bottom: 0;
 }
+/* Tables */
+.table-big {
+    font-size: 13px;
+}
+.table-toolbar {
+    margin-bottom: 15px;
+}
 
 /* Footer */
 #copyright {

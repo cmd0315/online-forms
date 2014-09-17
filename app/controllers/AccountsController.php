@@ -1,12 +1,14 @@
 <?php
 use BCD\Employee\Account;
+use BCD\Forms\ChangePassword;
+use Laracasts\Validation\FormValidationException;
 
 class AccountsController extends \BaseController {
 
-	protected $account;
+	protected $changePasswordForm;
 
-	public function __construct() {
-		$this->account = new Account;
+	function __construct(ChangePassword $changePasswordForm) {
+		$this->changePasswordForm  = $changePasswordForm;
 	}
 
 	/**
@@ -40,48 +42,36 @@ class AccountsController extends \BaseController {
 	 */
 	public function update($username)
 	{
+		try {
+			$this->changePasswordForm->validate(Input::all());
+		}
+		catch(FormValidationException $error) {
+			return Redirect::back()->withInput()->withErrors($error->getErrors());
+		}
 		
-		$validator = Validator::make(Input::all(), 
-			array(
-				'old_password' => 'required',
-				'password' => 'required|max:50|min:6',
-				'password_again' => 'required|same:password'
-			) 
-		);
+		$user 				= $this->account->whereUsername($username)->firstOrFail();
 
+		$old_password 		= Input::get('old_password');
+		$new_password 		= Input::get('password');
 
-		if($validator->fails()) {
-			return 	Redirect::route('accounts.edit', $username)
-					->withErrors($validator)
-					->withInput();
+		$return_msg = '';
+		$global_type = '';
+
+		if(Hash::check($old_password, $user->getAuthPassword())) {
+			$user->password = Hash::make($new_password);
+
+			if($user->save()){
+				$global_type = 'global-successful';
+				$return_msg = 'Password has been successfully changed!';
+			}
 		}
 		else {
-			$user 				= $this->account->whereUsername($username)->firstOrFail();
-
-			$old_password 		= Input::get('old_password');
-			$new_password 		= Input::get('password');
-
-			$return_msg = '';
-			$global_type = '';
-
-			if(Hash::check($old_password, $user->getAuthPassword())) {
-				$user->password = Hash::make($new_password);
-
-				if($user->save()){
-					$global_type = 'global-successful';
-					$return_msg = 'Password has been successfully changed!';
-				}
-			}
-			else {
-				$global_type = 'global-error';
-				$return_msg = 'Old password given does not match record!';
-			}
-
-			return  Redirect::route('accounts.edit', $username)
-					->with($global_type, $return_msg);
+			$global_type = 'global-error';
+			$return_msg = 'Old password given does not match record!';
 		}
+
 		return  Redirect::route('accounts.edit', $username)
-				->with('global-error', 'Cannot change password'); //fallback
+				->with($global_type, $return_msg);
 	}
 
 
