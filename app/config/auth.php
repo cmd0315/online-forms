@@ -28,7 +28,7 @@ return array(
 	|
 	*/
 
-	'model' => 'BCD\Employee\Account', 
+	'model' => 'BCD\Employees\Account', 
 
 	/*
 	|--------------------------------------------------------------------------

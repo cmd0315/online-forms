@@ -92,24 +92,26 @@
                 </li>
             </ul>
         </li>
-        <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ Auth::user()->username}} <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-                <li>
-                    <a href="{{ URL::route('profile.index') }}"> Profile</a>
-                </li>
-               <li>
-                    <a href="#"> Inbox</a>
-                </li>
-                <li>
-                    <a href="#"> Settings</a>
-                </li>
-                <li class="divider"></li>
-                <li>
-                    <a href="{{ URL::route('home.signout') }}"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
-                </li>
-            </ul>
-        </li>
+        @if($currentUser)
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ $currentUser->username}} <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="{{ URL::route('profile.show', ['username' => $currentUser->username]) }}"> Profile</a>
+                    </li>
+                   <li>
+                        <a href="#"> Inbox</a>
+                    </li>
+                    <li>
+                        <a href="#"> Settings</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="{{ URL::route('sessions.signout') }}"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                    </li>
+                </ul>
+            </li>
+        @endif
     </ul>
     <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
     <div class="collapse navbar-collapse navbar-ex1-collapse">
@@ -117,8 +119,8 @@
             <li>
                 <a href="{{ URL::route('dashboard') }}"> Dashboard</a>
             </li>
-            @if(Auth::user()->employee->system_admin)
-                <li class="active">
+            @if($currentUser && $currentUser->employee->system_admin)
+                <li>
                     <a href="javascript:;" data-toggle="collapse" data-target="#employees-menu"> Employees <b class="caret"></b></a>
                     <ul id="employees-menu" class="collapse">
                         <li>
@@ -130,7 +132,15 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="#"> Departments</a>
+                    <a href="javascript:;" data-toggle="collapse" data-target="#departments-menu"> Departments <b class="caret"></b></a>
+                    <ul id="departments-menu" class="collapse">
+                        <li>
+                            <a href="{{ URL::route('departments.create') }}">Add Department</a>
+                        </li>
+                        <li>
+                            <a href="{{ URL::route('departments.index') }}">Manage Department Records</a>
+                        </li>
+                    </ul>
                 </li>
                 <li>
                     <a href="#"> Clients</a>

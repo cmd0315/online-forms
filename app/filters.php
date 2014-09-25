@@ -43,7 +43,7 @@ Route::filter('auth', function()
 		}
 		else
 		{
-			return Redirect::guest(URL::route('home.signin'));
+			return Redirect::guest(URL::route('home'));
 		}
 	}
 });
@@ -66,8 +66,8 @@ Route::filter('auth.basic', function()
 */
 
 Route::filter('guest', function()
-{
-	if (Auth::check()) return Redirect::to('/');
+{	
+	if (Auth::check()) return Redirect::to('dashboard');
 });
 
 /*

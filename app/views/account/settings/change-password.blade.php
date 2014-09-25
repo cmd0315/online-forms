@@ -12,7 +12,7 @@
 				@include('layout.inner.settings._navigation')
 			</div>
 			<div class="col-lg-7 col-lg-offset-1">
-				{{ Form::open(array('class' => 'form-horizontal', 'route' => array('accounts.update', $username), 'method' => 'PATCH')) }}
+				{{ Form::open(['class' => 'form-horizontal', 'route' => ['accounts.update', $currentUser->username], 'method' => 'PATCH']) }}
 					<div class="row">
 						<h4>Account Details</h4>
 						<div class="col-lg-12">
@@ -47,7 +47,7 @@
 				</div><!-- .row -->
 				<div class="row pull-right">
 					<div class="col-lg-12">
-					<button type="submit" class="btn btn-lg btn-warning" id="submit_form" name="submit_form">Submit</button>
+						<button type="submit" class="btn btn-lg btn-warning" id="submit_form" name="submit_form">Submit</button>
 					</div>
 				</div><!-- /row -->
 			</div>
@@ -55,4 +55,8 @@
 		{{ Form::close() }}
 	</div>
 </div><!-- .row -->
+@stop
+
+@section('sub-heading')
+   {{$currentUser->username}}
 @stop

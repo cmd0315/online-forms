@@ -1,14 +1,20 @@
 <?php
-use BCD\Employee\Employee;
+use BCD\Employees\Employee;
 
 class DashboardController extends \BaseController {
-
+	
+	/**
+	* Constructor
+	*/
+	function __construct() {
+		$this->beforeFilter('auth');
+	}
 	/**
 	 * Display the home page
 	 *
-	 * @return home page view
+	 * @return View
 	 */
-	public function getIndex() {
+	public function index() {
 		return View::make('account.dashboard', ['pageTitle' => 'Dashboard']);
 	}
 

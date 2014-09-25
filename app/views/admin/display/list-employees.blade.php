@@ -33,12 +33,14 @@
 				</div><!-- .btn-toolbar -->
 			</div>
 			<div class="col-lg-3">
-				<div class="input-group input-group-sm">
-					<input type="text" class="form-control">
-					<span class="input-group-btn">
-						<button class="btn btn-warning" type="button">Search</button>
-					</span>
-				</div><!-- /input-group -->
+				 {{ Form::open(['method' => 'GET', 'route' => 'employees.index']) }}
+			      <div class="input-group input-group-sm">
+			         {{ Form::input('search', 'q', null, ['class' => 'form-control', 'placeholder' => 'Search']) }}
+			          <span class="input-group-btn">
+			            <button class="btn btn-default btn-warning" type="submit">Search</button>
+			          </span>
+			      </div><!-- /input-group -->
+			    {{ Form::close() }}
 			</div>
 		</div>
 		<div class="row">

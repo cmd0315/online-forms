@@ -16,6 +16,13 @@
 	</div>
 @endif
 
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+  	@yield('modal-content')
+  </div>
+</div><!-- .modal -->
+
 <!-- Footer -->
 <footer>
     <div class="footer-above">
@@ -36,12 +43,7 @@
 	<!-- {{ HTML::script('https://code.jquery.com/jquery-1.10.2.min.js') }} -->
 	{{ HTML::script('js/jquery.min.js') }}
 	{{ HTML::script('js/bootstrap.min.js') }}
+	{{ HTML::script('js/scripts.js') }}
 	@yield('extra-scripts')
-	<script>
-  		jQuery(document).ready(function($){
-  			$(".flash-msg").fadeIn('slow').delay(5000).fadeOut('slow');
-			@yield('scripts')
-  		});
-  	</script>
 </body>
 </html>

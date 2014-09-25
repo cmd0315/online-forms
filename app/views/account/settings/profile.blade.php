@@ -1,15 +1,28 @@
 @extends('layout.inner.master')
 
 @section('breadcrumbs')
-  {{ Breadcrumbs::render('my-profile') }}
+     @if(($currentUser->employee->system_admin) && (e($user->username) !== $currentUser->username))
+        {{ Breadcrumbs::render('show-employee', e($user->username)) }}
+    @else
+        {{ Breadcrumbs::render('my-profile', e($currentUser->username)) }}
+    @endif
 @stop
 
 @section('content')
     <div class="row">
         <div class="col-lg-4">
-            <div class="panel panel-success">
+            <div class="panel panel-danger">
                 <div class="panel-heading">
-                    Account Details
+                     <div class="row">
+                        <div class="col-xs-5">
+                            Account Details
+                        </div>
+                        <div class="col-xs-7 text-right">
+                            @if(($currentUser->employee->system_admin) && (e($user->username) !== $currentUser->username))
+                                <button class="btn btn-danger btn-sm" name="remove-acct-btn" id="remove-acct-btn" data-toggle="modal" data-target="#myModal">Remove Account</button>
+                            @endif
+                        </div>
+                    </div>
                 </div>
                 <div class="panel-body">
                     <div class="row">
@@ -33,7 +46,7 @@
                             <p> Last Updated: <p>
                         </div>
                         <div class="col-lg-8">
-                            <p>{{ e($user->account->updated_at) }}</p>
+                            <p>{{ e($user->account->last_profile_update) }}</p>
                         </div>
                     </div>
                     <div class="row">
@@ -42,7 +55,7 @@
                         </div>
                         <div class="col-lg-8">
                             <p>*** <small>
-                                @if((Auth::user()->employee->system_admin) && (e($user->username) !== Auth::user()->username))
+                                @if(($currentUser->employee->system_admin) && (e($user->username) !== $currentUser->username))
                                     <a href="#">(Reset Password)</a>
                                 @else
                                     <a href="{{URL::route('accounts.edit', e($user->username)) }}">(Change Password)</a>
@@ -61,7 +74,7 @@
                             Employee Information
                         </div>
                         <div class="col-xs-9 text-right">
-                            @if(Auth::user()->employee->system_admin)
+                            @if(($currentUser->employee->system_admin) && (e($user->username) !== $currentUser->username))
                                 <a href="{{ URL::route('employees.edit', e($user->username)) }}"><button class="btn btn-warning btn-sm">Edit Profile</button></a>
                             @else
                                 <a href="{{ URL::route('profile.edit', e($user->username)) }}"><button class="btn btn-warning btn-sm">Edit Profile</button></a>    
@@ -143,4 +156,23 @@
 
 @section('sub-heading')
    {{$user->username}}
+@stop
+
+@section('modal-content')
+<div class="modal-content">
+  {{ Form::open(['id' => 'modal-form', 'route' => ['employees.destroy', e($user->username)], 'method' => 'DELETE']) }}
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+      <h4 class="modal-title" id="myModalLabel">Deactivate Employee Account</h4>
+    </div>
+    <div class="modal-body">
+      Are you sure you want to deactivate <span id="employee-full-name">employee</span>'s account?
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      {{ Form::submit('OK', array('class' => 'btn btn-warning')) }}
+    </div>
+    {{ Form::token() }}
+  {{ Form::close() }}
+</div><!-- .modal-content -->
 @stop

@@ -1,61 +1,47 @@
 <?php
-use BCD\Employee\Employee;
+use BCD\Employees\Employee;
 use BCD\Forms\UpdateProfile;
-use Laracasts\Validation\FormValidationException;
 
 
 class ProfilesController extends \BaseController {
 
+	/**
+	* @var user
+	*/
 	protected $user;
+
+	/**
+	* @var updateProfileForm
+	*/
 	protected $updateProfileForm;
 
-	public function __construct(UpdateProfile $updateProfileForm) {
+	/**
+	* Constructor
+	*
+	* @param $updateProfileForm
+	*/
+	public function __construct(UpdateProfile $updateProfileForm) 
+	{
 		$this->user = new Employee;
 		$this->updateProfileForm = $updateProfileForm;
+
+		$this->beforeFilter('auth');
+
+		$this->beforeFilter('csrf', array('on' => 'post'));
 	}
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index()
-	{
-		$user = $this->user->whereUsername(Auth::user()->username)->firstOrFail();
-		return View::make('account.settings.profile', ['pageTitle' => 'My Profile'], compact('user'));
-	}
-
-
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		//
-	}
-
-
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function store()
-	{
-		//
-	}
-
+	
 
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  int  $id
+	 * @param  String  $username
 	 * @return Response
 	 */
-	public function show($id)
+	public function show($username)
 	{
-		//
+		
+		$user = $this->user->whereUsername(Auth::user()->username)->firstOrFail();
+		return View::make('account.settings.profile', ['pageTitle' => 'My Profile'], compact('user'));
 	}
 
 
@@ -90,14 +76,10 @@ class ProfilesController extends \BaseController {
 		}
 
 		//validate form
+		
 		$input = Input::only('first_name', 'middle_name', 'last_name', 'birthdate', 'address', 'email', 'mobile');
-		try {
-			$this->updateProfileForm->validate($input);
-		}
-		catch(FormValidationException $error) {
-			return Redirect::back()->withErrors($error->getErrors())->withInput();
-		}
-
+		$this->updateProfileForm->validate($input);
+		
 		$employee->fill($input)->save();
 		return 	Redirect::back()
 				->with('global-successful', 'Profile information successfully changed!');

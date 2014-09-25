@@ -5,5 +5,5 @@
 @stop
 
 @section('content')
-<a href="{{ URL::route('home.signin') }}"><button class="btn btn-lg btn-warning"> Sign in</button></a>
+<a href="{{ URL::route('sessions.create') }}"><button class="btn btn-lg btn-warning"> Sign in</button></a>
 @stop

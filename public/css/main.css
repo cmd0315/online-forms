@@ -34,7 +34,7 @@ header .container .row {
 }
 header .intro-text {
     display: block;
-    font-family: "Vaud Bold",Helvetica,Arial,sans-serif;
+    font-family: "Vaud Bold", Helvetica,Arial,sans-serif;
 }
 /* Navbar */
 .navbar-default {
@@ -110,7 +110,7 @@ footer .footer-above {
 }
 .navbar-inverse {
     background-color: #06a885;
-    border-color: #e67e22;
+    border-color: transparent;
 }
 .navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
     border-color: #e67e22;
@@ -175,7 +175,7 @@ li.message-footer {
 }
 #page-wrapper {
     width: 100%;
-    min-height: 650px;
+    min-height: 700px;
     padding: 0;
     background-color: #fff;
 }

@@ -97,7 +97,7 @@
 								</div>
 							</div><!-- .row -->
 							<div class="row">
-								<div class="col-lg-4">
+								<div class="col-lg-5">
 									<div class="form-group">
 										<label for="birthdate" class="col-sm-3 control-label">Birthdate</label>
 										<div class="col-sm-9">
@@ -107,32 +107,27 @@
 											@endif
 										</div>
 									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="email" class="col-sm-2 control-label">Email</label>
-										<div class="col-sm-10">
-											<input type="email" class="form-control" id="email" name="email"{{ (Input::old('email')) ? ' value ="' . Input::old('email') . '"' : '' }}>
-											@if($errors->has('email'))
-												<p class="bg-danger">{{ $errors->first('email') }}</p>
-											@endif
-										</div>
-									</div><!-- .form-group -->
-									<div class="form-group">
-										<label for="mobile" class="col-sm-2 control-label">Mobile Number</label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="mobile" name="mobile"{{ (Input::old('mobile')) ? ' value ="' . Input::old('mobile') . '"' : '' }}>
-											@if($errors->has('mobile'))
-												<p class="bg-danger">{{ $errors->first('mobile') }}</p>
-											@endif
-										</div>
-									</div><!-- .form-group -->
 								</div>
-								<div class="col-lg-8">
+								<div class="col-lg-7">
 									<div class="form-group">
 										<label for="address" class="col-sm-2 control-label">Address</label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="address" name="address"{{ (Input::old('address')) ? ' value ="' . Input::old('address') . '"' : '' }}>
 											@if($errors->has('address'))
 												<p class="bg-danger">{{ $errors->first('address') }}</p>
+											@endif
+										</div>
+									</div><!-- .form-group -->
+								</div>
+							</div><!-- .row -->
+							<div class="row">
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label for="email" class="col-sm-2 control-label">Email</label>
+										<div class="col-sm-10">
+											<input type="email" class="form-control" id="email" name="email"{{ (Input::old('email')) ? ' value ="' . Input::old('email') . '"' : '' }}>
+											@if($errors->has('email'))
+												<p class="bg-danger">{{ $errors->first('email') }}</p>
 											@endif
 										</div>
 									</div><!-- .form-group -->
@@ -145,12 +140,14 @@
 											@endif
 										</div>
 									</div><!-- .form-group -->
+								</div>
+								<div class="col-lg-6">
 									<div class="form-group">
-										<label for="position" class="col-sm-2 control-label">Position</label>
+										<label for="mobile" class="col-sm-2 control-label">Mobile Number</label>
 										<div class="col-sm-10">
-											{{ Form::select('position', array('0' => 'Member', '1' => 'Head'), Input::old('position'), array('class' => 'form-control')) }}
-											@if($errors->has('position'))
-												<p class="bg-danger">{{ $errors->first('position') }}</p>
+											<input type="text" class="form-control" id="mobile" name="mobile"{{ (Input::old('mobile')) ? ' value ="' . Input::old('mobile') . '"' : '' }}>
+											@if($errors->has('mobile'))
+												<p class="bg-danger">{{ $errors->first('mobile') }}</p>
 											@endif
 										</div>
 									</div><!-- .form-group -->
@@ -163,7 +160,7 @@
 							<button type="submit" class="btn btn-lg btn-warning" id="submit_form" name="submit_form">Submit</button>
 						</div>
 					</div><!-- .row -->
-			    	{{ Form::token() }}
+					{{ Form::token() }}
 			    {{ Form::close() }}
 			</div>
 		</div><!-- .row -->

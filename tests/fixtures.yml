@@ -1,0 +1,8 @@
+BCD\Employees\Account:
+ username: $string
+ password: $string
+ remember_token: $string
+ status: '0'
+ created_at: $date
+ updated_at: $date
+ deleted_at: NULL

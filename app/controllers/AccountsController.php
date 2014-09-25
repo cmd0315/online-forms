@@ -1,26 +1,25 @@
 <?php
-use BCD\Employee\Account;
-use BCD\Forms\ChangePassword;
+use BCD\Employees\Account;
+use BCD\Forms\ChangePasswordForm;
 use Laracasts\Validation\FormValidationException;
 
 class AccountsController extends \BaseController {
 
+	/**
+	* @var ChangePasswordForm $changePasswordForm
+	*/
 	protected $changePasswordForm;
 
-	function __construct(ChangePassword $changePasswordForm) {
-		$this->changePasswordForm  = $changePasswordForm;
-	}
-
 	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index()
-	{
-		//
+	* Constructor
+	*
+	* @param ChangePasswordForm $changePasswordForm
+	*/
+	function __construct(ChangePasswordForm $changePasswordForm) {
+		$this->changePasswordForm  = $changePasswordForm;
+		$this->beforeFilter('auth');
+		$this->beforeFilter('csrf', array('on' => 'post'));
 	}
-
 
 	/**
 	 * Show the form for changing the password of the logged in user.
@@ -49,7 +48,7 @@ class AccountsController extends \BaseController {
 			return Redirect::back()->withInput()->withErrors($error->getErrors());
 		}
 		
-		$user 				= $this->account->whereUsername($username)->firstOrFail();
+		$user 				= Account::whereUsername($username)->firstOrFail();
 
 		$old_password 		= Input::get('old_password');
 		$new_password 		= Input::get('password');
@@ -58,7 +57,7 @@ class AccountsController extends \BaseController {
 		$global_type = '';
 
 		if(Hash::check($old_password, $user->getAuthPassword())) {
-			$user->password = Hash::make($new_password);
+			$user->password = $new_password;
 
 			if($user->save()){
 				$global_type = 'global-successful';

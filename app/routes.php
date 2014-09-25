@@ -2,7 +2,7 @@
 /* Home */
 Route::get('/',[
 	'as' => 'home',
-	'uses' => 'HomeController@getIndex'
+	'uses' => 'HomeController@index'
 ]);
 
 
@@ -41,13 +41,13 @@ Route::group(array('before' => 'auth'), function(){
 	*/
 	Route::get('/dashboard', [
 		'as' => 'dashboard',
-		'uses' => 'DashboardController@getIndex'
+		'uses' => 'DashboardController@index'
 	]);
 
 	/*  Sign out (GET) */
 	Route::get('/sign-out', [
-		'as' => 'home.signout',
-		'uses' => 'HomeController@getSignOut'
+		'as' => 'sessions.signout',
+		'uses' => 'SessionsController@destroy'
 	]);
 });
 
@@ -64,15 +64,15 @@ Route::group(array('before' => 'guest'), function(){
 
 		/* Sign in (POST) */
 		Route::post('/sign-in', [
-			'as' => 'home.signin-post',
-			'uses' => 'HomeController@postSignIn'
+			'as' => 'sessions.store',
+			'uses' => 'SessionsController@store'
 		]);
 			
 	});
 
 	/* Sign in (GET) */
 	Route::get('/sign-in', [
-		'as' => 'home.signin',
-		'uses' => 'HomeController@getSignIn'
+		'as' => 'sessions.create',
+		'uses' => 'SessionsController@create'
 	]);
 });
