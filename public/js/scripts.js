@@ -13,4 +13,24 @@ jQuery(document).ready(function($){
 		$('#department_id').val(departmentID);
 		$('#department_id').attr('readonly', false);
     });
+
+	$('#remove-btn').on('click', function() {
+		$('.btn-delete').css('display', 'inline-block');
+		$(this).css('display', 'none');
+		$('#cancel-btn').css('display', 'inline-block');
+    });
+
+    $('#cancel-btn').on('click', function() {
+		$('.btn-delete').css('display', 'none');
+		$('#remove-btn').css('display', 'inline-block');
+		$(this).css('display', 'none');
+    });
+
+	 $('.btn-delete').on('click', function(){
+	 	var value = $(this).val();
+	 	var employee_name = $(this).attr('id');
+	 	$("#modal-form").attr("action", value);
+	 	$("#employee-full-name").html(employee_name);
+	 	$('#myModal').modal('show');
+	 });
 });

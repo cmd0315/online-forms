@@ -55,8 +55,10 @@
                         </div>
                         <div class="col-lg-8">
                             <p>*** <small>
-                                @if(($currentUser->employee->system_admin) && (e($user->username) !== $currentUser->username))
-                                    <a href="#">(Reset Password)</a>
+                                @if(e($user->username) !== $currentUser->username)
+                                    @if($currentUser->employee->system_admin)
+                                        <a href="#">(Reset Password)</a>
+                                    @endif
                                 @else
                                     <a href="{{URL::route('accounts.edit', e($user->username)) }}">(Change Password)</a>
                                 @endif
@@ -74,10 +76,12 @@
                             Employee Information
                         </div>
                         <div class="col-xs-9 text-right">
-                            @if(($currentUser->employee->system_admin) && (e($user->username) !== $currentUser->username))
-                                <a href="{{ URL::route('employees.edit', e($user->username)) }}"><button class="btn btn-warning btn-sm">Edit Profile</button></a>
+                            @if(e($user->username) !== $currentUser->username)
+                                @if($currentUser->employee->system_admin)
+                                    <a href="{{ URL::route('employees.edit', e($user->username)) }}"><button class="btn btn-warning btn-sm">Edit Profile</button></a>
+                                @endif
                             @else
-                                <a href="{{ URL::route('profile.edit', e($user->username)) }}"><button class="btn btn-warning btn-sm">Edit Profile</button></a>    
+                                <a href="{{ URL::route('profile.edit', e($user->username)) }}"><button class="btn btn-warning btn-sm">Edit Profile</button></a>
                             @endif
                         </div>
                     </div>

@@ -147,7 +147,7 @@
                 </li>
             @endif
             <li>
-                <a href="#"> Forms</a>
+                <a href="{{ URL::route('forms.index') }}"> Forms</a>
             </li>
         </ul>
     </div>

@@ -1,17 +1,17 @@
 <?php
 use BCD\Employees\Employee;
-use BCD\Forms\UpdateProfile;
+use BCD\Forms\UpdateProfileForm;
 
 
 class ProfilesController extends \BaseController {
 
 	/**
-	* @var user
+	* @var Employee $user
 	*/
 	protected $user;
 
 	/**
-	* @var updateProfileForm
+	* @var UpdateProfileForm updateProfileForm
 	*/
 	protected $updateProfileForm;
 
@@ -20,14 +20,14 @@ class ProfilesController extends \BaseController {
 	*
 	* @param $updateProfileForm
 	*/
-	public function __construct(UpdateProfile $updateProfileForm) 
+	public function __construct(UpdateProfileForm $updateProfileForm) 
 	{
 		$this->user = new Employee;
 		$this->updateProfileForm = $updateProfileForm;
 
 		$this->beforeFilter('auth');
 
-		$this->beforeFilter('csrf', array('on' => 'post'));
+		$this->beforeFilter('csrf', ['on' => 'post']);
 	}
 	
 
@@ -40,7 +40,7 @@ class ProfilesController extends \BaseController {
 	public function show($username)
 	{
 		
-		$user = $this->user->whereUsername(Auth::user()->username)->firstOrFail();
+		$user = $this->user->whereUsername($username)->firstOrFail();
 		return View::make('account.settings.profile', ['pageTitle' => 'My Profile'], compact('user'));
 	}
 

@@ -268,8 +268,19 @@ ul.in {
     margin: 1em 0.5em;
     padding: 0;
 }
+
+/* BUTTONS */
+.btn-delete {
+    background-color: transparent;
+    color: red;
+    font-weight: bold;
+}
 /* ~-- INNER PAGES -- */
 
+/* MARK */
+mark {
+    background: #f0ad4e;
+}
 
 /* Font */
 @font-face {

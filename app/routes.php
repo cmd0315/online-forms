@@ -11,6 +11,7 @@ Route::resource('accounts', 'AccountsController');
 Route::resource('profile', 'ProfilesController');
 Route::resource('employees', 'EmployeesController');
 Route::resource('departments', 'DepartmentsController');
+Route::resource('forms', 'FormsController');
 
 /*
 *

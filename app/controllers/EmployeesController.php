@@ -61,6 +61,8 @@ class EmployeesController extends \BaseController {
 	 */
 	public function index()
 	{	
+		$search = '';
+		
 		if($search = Request::get('q')) {
 			$employees = $this->employees->search($search);
 		}
@@ -68,7 +70,7 @@ class EmployeesController extends \BaseController {
 			$employees = $this->employees->getRegisteredEmployees();
 		}
 
-		return View::make('admin.display.list-employees', ['pageTitle' => 'Manage Employee Records'], compact('employees'));
+		return View::make('admin.display.list-employees', ['pageTitle' => 'Manage Employee Records'], compact('employees', 'search'));
 	}
 
 

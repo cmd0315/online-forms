@@ -1,7 +1,7 @@
 @extends('layout.inner.master')
 
 @section('breadcrumbs')
-  {{ Breadcrumbs::render('change-password') }}
+  {{ Breadcrumbs::render('change-password', e($currentUser->username)) }}
 @stop
 
 @section('content')
@@ -12,7 +12,7 @@
 				@include('layout.inner.settings._navigation')
 			</div>
 			<div class="col-lg-7 col-lg-offset-1">
-				{{ Form::open(['class' => 'form-horizontal', 'route' => ['accounts.update', $currentUser->username], 'method' => 'PATCH']) }}
+				{{ Form::open(['class' => 'form-horizontal', 'route' => ['accounts.update', e($currentUser->username)], 'method' => 'PATCH']) }}
 					<div class="row">
 						<h4>Account Details</h4>
 						<div class="col-lg-12">

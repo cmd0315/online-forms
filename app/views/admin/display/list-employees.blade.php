@@ -13,7 +13,8 @@
 					<div class="btn-group btn-group-sm">
 						<a href="{{ URL::route('employees.create') }}" class="btn btn-primary">Add Employee</a>
 						<button type="button" class="btn btn-warning">Export List</button>
-  						<button type="button" class="btn btn-danger">Remove Employee</button>
+  						<a class="btn btn-danger" id="remove-btn" name="remove-btn">Remove Employee</a>
+      					<a class="btn btn-default" id="cancel-btn" name="cancel-btn" style="display:none">Cancel Remove</a>
 					</div>
 					<div class="btn-group btn-group-sm">
 						<div class="form-group">
@@ -28,7 +29,6 @@
 								</select>
 							</div>
 						</div><!-- .form-group -->
-
 					</div>
 				</div><!-- .btn-toolbar -->
 			</div>
@@ -41,6 +41,11 @@
 			          </span>
 			      </div><!-- /input-group -->
 			    {{ Form::close() }}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-12">
+				<h4>Search: <mark>{{ $search }}</mark></h4>
 			</div>
 		</div>
 		<div class="row">
@@ -86,6 +91,9 @@
 							      <td> {{ e($employee->mobile) }} </td>
 							      <td> {{ e($employee->account->updated_at) }} </td>
 							      <td> {{ e($employee->account->created_at) }} </td>
+									@if(($deleteStatus = e($employee->deleted_at)) == NULL)
+										<td><button class="btn btn-delete" id="{{ e($employee->full_name) }}" value="{{ URL::route('employees.destroy', e($employee->username)) }}" style="display:none;">X</button></td>
+									@endif
 							    </tr>
 							@endforeach
 							</tbody>
@@ -99,4 +107,23 @@
 		</div>
 	</div>
 </div><!-- .row -->
+@stop
+
+@section('modal-content')
+<div class="modal-content">
+  {{ Form::open(['id' => 'modal-form', 'route' => ['employees.destroy'], 'method' => 'DELETE']) }}
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+      <h4 class="modal-title" id="myModalLabel">Deactivate Employee Account</h4>
+    </div>
+    <div class="modal-body">
+      Are you sure you want to deactivate <span id="employee-full-name">employee</span>'s account?
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      {{ Form::submit('OK', array('class' => 'btn btn-warning')) }}
+    </div>
+    {{ Form::token() }}
+  {{ Form::close() }}
+</div><!-- .modal-content -->
 @stop

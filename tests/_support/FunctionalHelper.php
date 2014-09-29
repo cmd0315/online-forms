@@ -5,6 +5,7 @@ namespace Codeception\Module;
 // all public methods declared in helper class will be available in $I
 
 use Laracasts\TestDummy\Factory as TestDummy;
+use Illuminate\Support\Facades\Hash;
 
 class FunctionalHelper extends \Codeception\Module
 {
@@ -12,7 +13,10 @@ class FunctionalHelper extends \Codeception\Module
 		$username = 'crist_lopez2';
 		$password = 'testing1234';
 
-		$this->haveAnAccount(compact('username', 'password'));
+		 $this->haveAnAccount([
+            'username' => $username,
+            'password' => Hash::make($password)
+        ]);
 
 		$I = $this->getModule('Laravel4');
 		$I->amOnPage('/sign-in');

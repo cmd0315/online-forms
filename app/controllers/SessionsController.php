@@ -31,18 +31,18 @@ class SessionsController extends \BaseController {
 
 
 	/**
-	 * Login user
+	 * Logs in user to website
 	 *
 	 * @return Response
 	 */
 	public function store()
 	{
-		$formData = Input::only('username', 'password');
-		$this->loginForm->validate($formData);
+		$input = Input::only('username', 'password');
+		$this->loginForm->validate($input);
 
 		$remember = (Input::has('remember')) ? true : false;
 
-		if(Auth::attempt($formData, $remember)){
+		if(Auth::attempt($input, $remember)){
 			//Redirect to intended page
 			return Redirect::intended('dashboard')
 					->with('global', 'You are now logged in!');

@@ -1,5 +1,5 @@
 BCD\Employees\Account:
- username: $string
+ username: $string$integer
  password: $string
  remember_token: $string
  status: '0'

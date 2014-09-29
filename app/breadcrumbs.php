@@ -8,9 +8,9 @@ Breadcrumbs::register('my-profile', function($breadcrumbs, $username) {
     $breadcrumbs->push('My Profile', route('profile.show', $username));
 });
 
-Breadcrumbs::register('change-password', function($breadcrumbs) {
-    $breadcrumbs->parent('my-profile');
-    $breadcrumbs->push('Change Password', route('accounts.edit'));
+Breadcrumbs::register('change-password', function($breadcrumbs, $username) {
+    $breadcrumbs->parent('my-profile', $username);
+    $breadcrumbs->push('Change Password', route('accounts.edit', $username));
 });
 
 Breadcrumbs::register('update-profile', function($breadcrumbs, $username) {

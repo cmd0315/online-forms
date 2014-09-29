@@ -99,7 +99,7 @@ Route::filter('csrf', function()
 
 Route::filter('role', function()
 { 
-  if ( Auth::user()->employee->position !== 2) {
+  if ( Auth::user()->employee->position != 2) {
      // redirect to dashboard page if function is not available for regular users
      return Redirect::to('dashboard'); 
    }

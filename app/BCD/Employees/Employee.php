@@ -95,6 +95,7 @@ class Employee extends Eloquent implements UserInterface, RemindableInterface {
         return $query->where('position', '1');
     }
 
+
     public function scopeSearch($query, $search) {
         return $query->where(function($query) use ($search)
         {
@@ -102,9 +103,13 @@ class Employee extends Eloquent implements UserInterface, RemindableInterface {
                     ->orWhere('first_name', 'LIKE', "%$search%")
                     ->orWhere('middle_name', 'LIKE', "%$search%")
                     ->orWhere('last_name', 'LIKE', "%$search%")
+                    ->orWhere('address', 'LIKE', "%$search%")
                     ->orWhere('email', 'LIKE', "%$search%")
-                    ->orWhere('mobile', 'LIKE', "%$search%");
-        });
+                    ->orWhere('mobile', 'LIKE', "%$search%")
+                    ->orWhereHas('department', function($q) use ($search) {
+                        $q->where('department_name', 'LIKE', "%$search%");
+                    })->get();
+        })->where('position', '<', '2'); //exclude system admin
     }
 
     /**
