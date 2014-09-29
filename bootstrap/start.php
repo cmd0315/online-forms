@@ -24,12 +24,16 @@ $app = new Illuminate\Foundation\Application;
 |
 */
 
-$env = $app->detectEnvironment(array(
+// $env = $app->detectEnvironment(array(
 
-	'local' => array('CharisseDalida'),
-	'production' => array('http://bcdpinpoint.com/online-forrms'),
+// 	'local' => array('CharisseDalida'),
+// 	'production' => array('http://bcdpinpoint.com/online-forrms'),
 
-));
+// ));
+
+$env = $app->detectEnvironment(function() {
+	return getenv('APP_ENV') ?: 'CharisseDalida';
+});
 
 /*
 |--------------------------------------------------------------------------
