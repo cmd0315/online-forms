@@ -10,11 +10,6 @@
 		"laracasts/validation" : "1.1.*",
 		"laracasts/commander" : "~1.0"
 	},
-	"require-dev" : {
-		"way/generators": "2.*",
-		"codeception/codeception" : "~2.0",
-		"laracasts/testdummy" : "~1.0"
-	},
 	"autoload": {
 		"classmap": [
 			"app/commands",
