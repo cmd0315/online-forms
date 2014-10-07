@@ -3,6 +3,7 @@
 use BCD\Employees\Employee;
 
 class EmployeeRepository {
+
 	/**
 	* Persists an Employee
 	*
@@ -35,10 +36,6 @@ class EmployeeRepository {
 		return $employee->push();
 	}
 
-	public function getRegisteredEmployees() {
-		return Employee::where('position', '<', 2)->paginate(5); //exclude system administrator
-	}
-
 	/**
 	* Find employee
 	* 
@@ -59,7 +56,32 @@ class EmployeeRepository {
 		return $employee->delete();
 	}
 
-	public function search($search) {
-		return Employee::search($search)->paginate(5);
+	/**
+	* Get all employees beside with position of system admin
+	*
+	* @return Employee
+	*/
+	public function getRegisteredEmployees() {
+		return Employee::where('position', '<', 2); //exclude system administrator
+	}
+	
+	/**
+	* Return paginated results with search and filter values
+	* @param String
+	* @param array
+	* @return QueryBuilder
+	*/
+	public function paginateResults($search, array $filterOptions) {
+		return $this->getRegisteredEmployees()->search($search)->sort($filterOptions)->paginate(5);
+	}
+
+
+	/**
+	* Return total number of registered employees (except system admin)
+	*
+	* @return int 
+	*/
+	public function total() {
+		return $this->getRegisteredEmployees()->count();
 	}
 }

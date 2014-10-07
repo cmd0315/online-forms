@@ -2,6 +2,7 @@
 use BCD\Core\CommandBus;
 use BCD\DepartmentRegistration\AddDepartmentCommand;
 use BCD\DepartmentRegistration\UpdateDepartmentCommand;
+use BCD\DepartmentRegistration\RemoveDepartmentCommand;
 use BCD\Forms\AddDepartmentForm;
 use BCD\Forms\UpdateDepartmentProfileForm;
 use BCD\Departments\DepartmentRepository;
@@ -52,8 +53,13 @@ class DepartmentsController extends \BaseController {
 	 */
 	public function index()
 	{
-		$departments = $this->departments->getList();
-		return View::make('admin.display.list-departments', ['pageTitle' => 'Manage Department Records'], compact('departments'));
+		$search = Request::get('q');
+		$sortBy = Request::get('sortBy');
+		$direction = Request::get('direction');
+
+		$departments = $this->departments->paginateResults($search, compact('sortBy', 'direction'));
+		$total_departments = $this->departments->total();
+		return View::make('admin.display.list-departments', ['pageTitle' => 'Manage Department Records'], compact('departments', 'total_departments', 'search'));
 	}
 
 
@@ -64,7 +70,7 @@ class DepartmentsController extends \BaseController {
 	 */
 	public function create()
 	{
-		return View::make('admin.create.department', ['pageTitle' => 'Add Department']);
+		return View::make('admin.create.department', ['pageTitle' => 'Add Department Record']);
 	}
 
 
@@ -83,13 +89,13 @@ class DepartmentsController extends \BaseController {
 		$registration = $this->execute(new AddDepartmentCommand($department_id, $department_name));
 
 		if($registration) {
-			return 	Redirect::route('departments.create')
-					->with('global-successful', 'Department Added!');
+			Flash::success('Department Added!');
 		}
 		else {
-				return 	Redirect::route('departments.create')
-						->with('global-error', 'Failed to add department');
+			Flash::error('Failed to add department!');
 		}
+
+		return Redirect::route('departments.create');
 	}
 
 
@@ -138,25 +144,38 @@ class DepartmentsController extends \BaseController {
 		$updateDepartment = $this->execute(new UpdateDepartmentCommand($id, $department_id, $department_name, $department_head));
 
 		if($updateDepartment) {
-			return 	Redirect::route('departments.edit', $department_id)
-					->with('global-successful', 'Department Profile Updated!');
+			Flash::success('Department Profile Updated!');
 		}
 		else {
-			return 	Redirect::route('departments.edit', $department_id)
-					->with('global-error', 'Failed to edit department');
+			Flash::error('Failed to edit department!');
 		}
+
+		return Redirect::route('departments.edit', $department_id);
 	}
 
 
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  int  $id
+	 * @param  String  $id
 	 * @return Response
 	 */
 	public function destroy($id)
 	{
-		//
+		$removeDepartment = $this->execute(
+			new RemoveDepartmentCommand($id)
+		);
+
+		if($removeDepartment) {
+			Flash::success('Department successfully removed!');
+
+		}
+		else{
+			Flash::success('Failed to remove department!');
+
+		}
+		
+		return 	Redirect::route('departments.index');
 	}
 
 

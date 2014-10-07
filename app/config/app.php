@@ -13,7 +13,7 @@ return array(
 	|
 	*/
 
-	'debug' => true,
+	'debug' => false,
 
 	/*
 	|--------------------------------------------------------------------------
@@ -123,8 +123,10 @@ return array(
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'DaveJamesMiller\Breadcrumbs\ServiceProvider',
 		'Thujohn\Pdf\PdfServiceProvider',
+		'Way\Generators\GeneratorsServiceProvider',
 		'Laracasts\Validation\ValidationServiceProvider',
 		'Laracasts\Commander\CommanderServiceProvider',
+		'Laracasts\Flash\FlashServiceProvider',
 
 	),
 
@@ -194,7 +196,8 @@ return array(
 		'View'            => 'Illuminate\Support\Facades\View',
 		'Breadcrumbs' 		=> 'DaveJamesMiller\Breadcrumbs\Facade',
 		'Carbon'			=> 'Carbon\Carbon',
-		'PDF' => 'Thujohn\Pdf\PdfFacade',
+		'PDF' 				=> 'Thujohn\Pdf\PdfFacade',
+		'Flash'				=> 'Laracasts\Flash\Flash',
 	),
 
 );

@@ -1,6 +1,7 @@
 ---
 
 version: 1
+strategy: fullsync
 composer:
    mode: always
    method: install

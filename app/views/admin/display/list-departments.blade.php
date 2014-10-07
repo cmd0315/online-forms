@@ -13,28 +13,30 @@
 					<div class="btn-group btn-group-sm">
 						<a href="{{ URL::route('departments.create') }}" class="btn btn-primary">Add Department</a>
 						<button type="button" class="btn btn-warning">Export List</button>
-  						<button type="button" class="btn btn-danger">Remove Department</button>
-					</div>
-					<div class="btn-group btn-group-sm">
-						<div class="form-group">
-							<label for="filter-option" class="col-sm-5 control-label">Filter by:</label>
-							<div class="col-sm-7">
-								<select name="filter-option" id="filter-option">
-									<option value="name">Name</option>
-									<option value="date_added">Date Added</option>
-								</select>
-							</div>
-						</div><!-- .form-group -->
+  						<button type="button" class="btn btn-danger" id="remove-btn" name="remove-btn">Remove Department</button>
+  						<a class="btn btn-default cancel-btn" id="cancel-btn1" name="cancel-btn1">Cancel Remove</a>
 					</div><!-- .btn-group -->
 				</div><!-- .btn-toolbar -->
 			</div>
 			<div class="col-lg-3">
-				<div class="input-group input-group-sm">
-					<input type="text" class="form-control">
-					<span class="input-group-btn">
-						<button class="btn btn-warning" type="button">Search</button>
-					</span>
-				</div><!-- /input-group -->
+				{{ Form::open(['method' => 'GET', 'route' => 'departments.index']) }}
+			      <div class="input-group input-group-sm">
+			         {{ Form::input('search', 'q', null, ['class' => 'form-control', 'placeholder' => 'Search']) }}
+			          <span class="input-group-btn">
+			            <button class="btn btn-default btn-warning" type="submit">Search</button>
+			          </span>
+			      </div><!-- /input-group -->
+			    {{ Form::close() }}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-2">
+				<h4>Total Departments: <small>{{ $total_departments }}</small></h4>
+			</div>
+			<div class="col-lg-10">
+				@if(isset($search))
+					<h4>Search: <mark>{{ $search }}</mark></h4>
+				@endif
 			</div>
 		</div>
 		<div class="row">
@@ -45,11 +47,11 @@
 							<thead>
 							  <tr>
 							    <td>#</td>
-							    <td>Department ID</td>
-							    <td>Name</td>
-							    <td>Head Employee</td>
-							    <td>Last Updated At</td>
-							    <td>Date Joined</td>
+							    <td>{{ sort_departments_by('department_id', 'ID') }}</td>
+							    <td>{{ sort_departments_by('department_name', 'Name') }}</td>
+							    <td>{{ sort_departments_by('last_name', 'Head Employee') }}</td>
+							    <td>{{ sort_departments_by('updated_at', 'Last Updated At') }}</td>
+							    <td>{{ sort_departments_by('created_at', 'Date Joined') }}</td>
 							    <td></td>
 							  </tr>
 							</thead>
@@ -58,11 +60,14 @@
 							@foreach($departments as $department)
 							    <tr>
 							      <td>{{ ++$counter }}</td>
-							      <td>{{ $departmentID = e($department->department_id) }}</td>
-							      <td> <a href="{{ URL::route('departments.show', ['department_id' => $departmentID]) }}">{{ e($department->department_name) }} </a></td>
+							      <td><a href="{{ URL::route('departments.show', ['department_id' => $departmentID = e($department->department_id)]) }}">{{ $departmentID }}</a></td>
+							      <td> {{ e($department->department_name) }} </td>
 							      <td> {{ $department->getDepartmentHead() }} </td>
 							      <td> {{ e($department->updated_at) }} </td>
 							      <td> {{ e($department->created_at) }} </td>
+									@if(($deleteStatus = e($department->deleted_at)) == NULL)
+										<td><button class="btn btn-delete" id="{{ e($department->department_name) }}" value="{{ URL::route('departments.destroy', e($department->department_id)) }}" style="display:none;">X</button></td>
+									@endif
 							    </tr>
 							@endforeach
 							</tbody>
@@ -76,4 +81,22 @@
 		</div>
 	</div>
 </div><!-- .row -->
+@stop
+
+@section('modal-content')
+<div class="modal-content">
+	{{ Form::open(['id' => 'modal-form', 'route' => ['employees.destroy'], 'method' => 'DELETE']) }}
+		<div class="modal-header">
+			<h4 class="modal-title" id="myModalLabel">Remove Department</h4>
+		</div>
+		<div class="modal-body">
+			Are you sure you want to remove <span id="subject-name"></span> department?
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-default cancel-btn" id="cancel-btn2" data-dismiss="modal">Cancel</button>
+			{{ Form::submit('OK', array('class' => 'btn btn-warning')) }}
+		</div>
+		{{ Form::token() }}
+	{{ Form::close() }}
+</div><!-- .modal-content -->
 @stop

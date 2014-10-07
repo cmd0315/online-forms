@@ -27,11 +27,11 @@
 										</div>
 									</div><!-- .form-group -->
 									<div class="form-group">
-										<label for="department" class="col-sm-4 control-label">Name</label>
+										<label for="department_name" class="col-sm-4 control-label">Name</label>
 										<div class="col-sm-8">
 											<input type="text" class="form-control" id="department_name" name="department_name">
-											@if($errors->has('department'))
-												<p class="bg-danger">{{ $errors->first('department') }}</p>
+											@if($errors->has('department_name'))
+												<p class="bg-danger">{{ $errors->first('department_name') }}</p>
 											@endif
 										</div>
 									</div><!-- .form-group -->

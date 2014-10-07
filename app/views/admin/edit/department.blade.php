@@ -1,5 +1,8 @@
 @extends('layout.inner.master')
 
+@section('breadcrumbs')
+  {{ Breadcrumbs::render('edit-department', e($department->department_id)) }}
+@stop
 
 @section('content')
 	<div class="row">
@@ -8,7 +11,7 @@
 				<div class="col-lg-12">
 					<div class="panel panel-warning">
 						<div class="panel-heading">
-							<h4>Employee Information</h4>
+							<h4>Department Information</h4>
 						</div>
 						<div class="panel-body">
 							{{ Form::open(['class' => 'form-horizontal', 'route' => ['departments.update', e($department->id)], 'method' => 'PATCH'])}}

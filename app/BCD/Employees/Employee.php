@@ -24,6 +24,13 @@ class Employee extends Eloquent implements UserInterface, RemindableInterface {
 	 */
 	protected $fillable = ['username', 'first_name', 'middle_name', 'last_name', 'birthdate', 'address', 'email', 'mobile', 'department_id', 'position'];
 
+    /**
+    * List of datatable column names that can be filtered
+    * @var array
+    */
+    protected $filter_fields = ['username', 'last_name', 'birthdate', 'address', 'department_id', 'email', 'position', 'created_at', 'updated_at'];
+
+
 	/**
 	 * Specifies the model/s that are affected with the changes (db update/delete) made in this model
 	 *
@@ -64,6 +71,11 @@ class Employee extends Eloquent implements UserInterface, RemindableInterface {
     	}
     }
 
+    /**
+    * Check if employee position is head (= 1)
+    *
+    * @return boolean
+    */
     public function getHeadAttribute() {
         if($this->position == 1) {
             return true;
@@ -73,10 +85,20 @@ class Employee extends Eloquent implements UserInterface, RemindableInterface {
         }
     }
 
+    /**
+    * Get employee's full name by concating his first, middle and last names 
+    *
+    * @return String 
+    */
     public function getFullNameAttribute() {
     	return ucfirst($this->first_name) . ' ' . ucfirst($this->middle_name) . ' ' . ucfirst($this->last_name);
     }
 
+    /**
+    * Translate employee's position into words 
+    *
+    * @return String 
+    */
     public function getPositionTitleAttribute() {
         $position = $this->position;
 
@@ -91,32 +113,91 @@ class Employee extends Eloquent implements UserInterface, RemindableInterface {
         }
     }
 
+    /**
+    * Get employees with position as head employee
+    *
+    * @param $query
+    * @return $query
+    */
     public function scopeHead($query) {
         return $query->where('position', '1');
     }
 
-
+    /**
+    * Return table rows containing search value
+    *
+    * @param $query
+    * @param String
+    * @return $query
+    */
     public function scopeSearch($query, $search) {
-        return $query->where(function($query) use ($search)
-        {
-            $query->where('username', 'LIKE', "%$search%")
-                    ->orWhere('first_name', 'LIKE', "%$search%")
-                    ->orWhere('middle_name', 'LIKE', "%$search%")
-                    ->orWhere('last_name', 'LIKE', "%$search%")
-                    ->orWhere('address', 'LIKE', "%$search%")
-                    ->orWhere('email', 'LIKE', "%$search%")
-                    ->orWhere('mobile', 'LIKE', "%$search%")
-                    ->orWhereHas('department', function($q) use ($search) {
-                        $q->where('department_name', 'LIKE', "%$search%");
-                    })->get();
-        })->where('position', '<', '2'); //exclude system admin
+        if(isset($search)) {
+            return $query->where(function($query) use ($search)
+            {
+                $table_name = $this->table . '.*';
+                $query->select($table_name)
+                        ->where($this->table . '.username', 'LIKE', "%$search%")
+                        ->orWhere($this->table . '.first_name', 'LIKE', "%$search%")
+                        ->orWhere($this->table . '.middle_name', 'LIKE', "%$search%")
+                        ->orWhere($this->table . '.last_name', 'LIKE', "%$search%")
+                        ->orWhere($this->table . '.address', 'LIKE', "%$search%")
+                        ->orWhere($this->table . '.email', 'LIKE', "%$search%")
+                        ->orWhere($this->table . '.mobile', 'LIKE', "%$search%")
+                        ->orWhereHas('department', function($q) use ($search) {
+                            $q->where('department_name', 'LIKE', "%$search%");
+                        })->get();
+            });
+        }
+        else {
+         return $query;
+        }
+    }
+
+    /**
+    * Sort datatable by the given database field and sort query direction
+    *
+    * @param array $params
+    * @return Employee
+    */
+    public function scopeSort($query, array $params) {
+        if($this->isSortable($params)) {
+            $sortBy = $params['sortBy'];
+            $direction = $params['direction'];
+
+            if($sortBy == 'created_at' || $sortBy == 'updated_at'){
+                $table_name = $this->table . '.*';
+                $table_primary_key = $this->table . '.username';
+                return $query
+                        ->select($table_name) // Avoid 'ambiguous column name' for paginate() method
+                        ->leftJoin('accounts', $table_primary_key, '=', 'accounts.username') // Include related table
+                        ->orderBy('accounts.' . $sortBy, $direction); // Finally sort by related column
+            }
+            else {
+                return $query->orderBy($sortBy, $direction);
+            }
+        }
+        else {
+            return $query;
+        }
+    }
+
+
+    /**
+    * Check if sort can be performed on the datatable
+    *
+    * @param array $params
+    * @return boolean
+    */
+    public function isSortable(array $params) {
+        if(in_array($params['sortBy'], $this->filter_fields)) {
+            return $params['sortBy'] and $params['direction'];
+        }
     }
 
     /**
     * Register an employee
     *
-    * @param String $username, String $first_name, String $middle_name, String $last_name, 
-    * @param String $birthdate, String $address, String $email, String $mobile, Integer $department_id, Integer $position
+    * @param String
     * @return Employee
     *
     */

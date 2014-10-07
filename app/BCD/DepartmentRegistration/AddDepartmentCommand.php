@@ -15,6 +15,7 @@ class AddDepartmentCommand {
 	/**
 	* Constructor
 	*
+	* @param String
 	*/
 	function __construct($department_id, $department_name) {
 		$this->department_id = $department_id;

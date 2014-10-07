@@ -31,6 +31,7 @@ class Account extends Eloquent implements UserInterface, RemindableInterface {
 	 * The db table columns that can be filled
 	 *
 	 * @var array
+     */
 	protected $fillable = ['username', 'password', 'status'];
 
     protected $dates = ['deleted_at'];

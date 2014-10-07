@@ -27,6 +27,8 @@ class UpdateDepartmentCommandHandler implements CommandHandler {
 	public function handle($command) {
 		$department = $this->departmentRepository->getDepartmentByID($command->id);
 
+		$updateDepartment = "";
+		
 		if($department) {
 			$department->department_id = $command->department_id;
 			$department->department_name = $command->department_name;

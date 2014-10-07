@@ -11,6 +11,7 @@
 				                {{ isset($pageTitle) ? $pageTitle : ''}} <small>@yield('sub-heading')</small>
 				            </h1>
 				            @yield('breadcrumbs')
+				            @include('flash::message')
 				        </div>
 				    </div>
 				    <!-- /.row -->

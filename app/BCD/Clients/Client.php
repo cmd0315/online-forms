@@ -1,4 +1,4 @@
-<?php namespace BCD\Departments;
+<?php namespace BCD\Clients;
 
 use Illuminate\Auth\UserTrait;
 use Illuminate\Auth\UserInterface;
@@ -7,7 +7,8 @@ use Illuminate\Auth\Reminders\RemindableInterface;
 use Illuminate\Database\Eloquent\SoftDeletingTrait;
 use Eloquent, Carbon;
 
-class Department extends Eloquent implements UserInterface, RemindableInterface {
+class Client extends Eloquent {
+
 	use UserTrait, RemindableTrait, SoftDeletingTrait;
 
 	/**
@@ -15,33 +16,37 @@ class Department extends Eloquent implements UserInterface, RemindableInterface 
 	 *
 	 * @var string
 	 */
-	protected $table = 'departments';
+	protected $table = 'clients';
 
 	/**
-	 * The db table columns that can be filled
+	 * The fields that are allowed to be filled.
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['department_id', 'department_name', 'status'];
+	protected $fillable = array('client_id', 'client_name', 'address', 'cp_first_name', 'cp_middle_name', 'cp_last_name', 'email', 'mobile', 'telephone', 'status');
 
-    /**
+	protected $dates = ['deleted_at'];
+
+	/**
     * List of datatable column names that can be filtered
     *
     * @var array
     */
-    protected $filter_fields = ['department_id', 'department_name', 'created_at', 'updated_at'];
+    protected $filter_fields = ['client_id', 'client_name', 'address', 'cp_last_name', 'email', 'mobile', 'telephone', 'created_at', 'updated_at'];
 
-
-    protected $dates = ['deleted_at'];
-
-    /**
-    * Relationship with Employee model
+	/**
+    * Create instance of Client
+    *
+    * @param String $client_id
+    * @param String $client_name
     */
-    public function employees() {
-    	return $this->hasMany('BCD\Employees\Employee', 'department_id', 'department_id');
+    public static function register($client_id, $client_name, $address, $cp_first_name, $cp_middle_name, $cp_last_name, $email, $mobile, $telephone) {
+    	$client = new static(compact('client_id', 'client_name', 'address', 'cp_first_name', 'cp_middle_name', 'cp_last_name', 'email', 'mobile', 'telephone'));
+
+    	return $client;
     }
 
-    /**
+     /**
     * Convert the format of the date the department was last updated into a readable form
     * 
     * @return Carbon
@@ -57,36 +62,11 @@ class Department extends Eloquent implements UserInterface, RemindableInterface 
         return Carbon::create($year, $month, $day, $hr, $min, $sec)->diffForHumans();
     }
 
-    /**
-    * Get head employee for department
-    * 
-    * if exists, @return String full_name of employee
-    * else, @return String 'None'
-    */
-    public function getDepartmentHead() {
-        $headEmployee = $this->employees()->where('position', '1')->first();
-        if($headEmployee) {
-            return $headEmployee->full_name;
-        }
-        else{
-            return 'None';
-        }
-
+    public function getContactPersonAttribute() {
+        return ucfirst($this->cp_first_name) . ' ' . ucfirst($this->cp_middle_name) . ' ' . ucfirst($this->cp_last_name);
     }
 
-    /**
-    * Create instance of Department
-    *
-    * @param String $department_id
-    * @param String $department_name
-    */
-    public static function register($department_id, $department_name) {
-    	$department = new static(compact('department_id', 'department_name'));
-
-    	return $department;
-    }
-
-    /**
+     /**
     * Return table rows containing search value
     *
     * @param $query
@@ -99,12 +79,17 @@ class Department extends Eloquent implements UserInterface, RemindableInterface 
             {
                 $table_name = $this->table . '.*';
                 $query->select($table_name)
-                        ->where($this->table . '.department_id', 'LIKE', "%$search%")
-                        ->orWhere($this->table . '.department_name', 'LIKE', "%$search%");
+                        ->where($this->table . '.client_id', 'LIKE', "%$search%")
+                        ->orWhere($this->table . '.client_name', 'LIKE', "%$search%")
+                        ->orWhere($this->table . '.address', 'LIKE', "%$search%")
+                        ->orWhere($this->table . '.cp_first_name', 'LIKE', "%$search%")
+                        ->orWhere($this->table . '.cp_middle_name', 'LIKE', "%$search%")
+                        ->orWhere($this->table . '.cp_last_name', 'LIKE', "%$search%")
+                        ->orWhere($this->table . '.email', 'LIKE', "%$search%");
             });
         }
         else {
-         return $query;
+        	return $query;
         }
     }
 
@@ -112,24 +97,13 @@ class Department extends Eloquent implements UserInterface, RemindableInterface 
     * Sort datatable by the given database field and sort query direction
     *
     * @param array $params
-    * @return Employee
+    * @return Client
     */
     public function scopeSort($query, array $params) {
         if($this->isSortable($params)) {
             $sortBy = $params['sortBy'];
             $direction = $params['direction'];
-
-            if($sortBy == 'last_name'){
-                $table_name = $this->table . '.*';
-                $table_primary_key = $this->table . '.department_id';
-                return $query
-                        ->select($table_name) // Avoid 'ambiguous column name' for paginate() method
-                        ->leftJoin('employees', $table_primary_key, '=', 'employees.department_id') // Include related table
-                        ->orderBy('employees.' . $sortBy, $direction); // Finally sort by related column
-            }
-            else {
-                return $query->orderBy($sortBy, $direction);
-            }
+            return $query->orderBy($sortBy, $direction);
         }
         else {
             return $query;
@@ -147,6 +121,4 @@ class Department extends Eloquent implements UserInterface, RemindableInterface 
             return $params['sortBy'] and $params['direction'];
         }
     }
-
-
 }

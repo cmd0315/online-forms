@@ -143,7 +143,15 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="#"> Clients</a>
+                    <a href="javascript:;" data-toggle="collapse" data-target="#clients-menu"> Clients <b class="caret"></b></a>
+                    <ul id="clients-menu" class="collapse">
+                        <li>
+                            <a href="{{ URL::route('clients.create') }}">Add Client</a>
+                        </li>
+                        <li>
+                            <a href="{{ URL::route('clients.index') }}">Manage Client Records</a>
+                        </li>
+                    </ul>
                 </li>
             @endif
             <li>

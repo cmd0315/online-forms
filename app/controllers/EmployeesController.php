@@ -13,13 +13,11 @@ class EmployeesController extends \BaseController {
 	use CommandBus;
 
 	/**
-	*
 	* @var RegisterEmployeeForm $registerEmployeeForm
 	*/
 	private $registerEmployeeForm;
 
 	/**
-	*
 	* @var UpdateEmployeeForm $updateEmployeeForm
 	*/
 	private $updateEmployeeForm;
@@ -33,6 +31,7 @@ class EmployeesController extends \BaseController {
 	* @var DepartmentRepository $departments
 	*/
 	protected $departments;
+
 
 	/**
 	* Constructor
@@ -61,18 +60,17 @@ class EmployeesController extends \BaseController {
 	 */
 	public function index()
 	{	
-		$search = '';
-		
-		if($search = Request::get('q')) {
-			$employees = $this->employees->search($search);
-		}
-		else {
-			$employees = $this->employees->getRegisteredEmployees();
-		}
+		$search = Request::get('q');
+		$sortBy = Request::get('sortBy');
+		$direction = Request::get('direction');
 
-		return View::make('admin.display.list-employees', ['pageTitle' => 'Manage Employee Records'], compact('employees', 'search'));
+		$total_employees = $this->employees->total();
+
+		$employees = $this->employees->paginateResults($search, compact('sortBy', 'direction'));
+		//$employees = $this->employees->search($search)->paginate(5);
+
+		return View::make('admin.display.list-employees', ['pageTitle' => 'Manage Employee Records'], compact('employees', 'total_employees', 'search'));
 	}
-
 
 	/**
 	 * Show the form for adding an employee record
@@ -84,7 +82,6 @@ class EmployeesController extends \BaseController {
 		$departments = $this->departments->listDepartmentByName();
 		return View::make('admin.create.employee', ['pageTitle' => 'Add Employee Record'], compact('departments'));
 	}
-
 
 	/**
 	 * Store a newly created employee record in the accounts and employees table
@@ -102,14 +99,13 @@ class EmployeesController extends \BaseController {
 		);
 
 		if($registration) {
-			return 	Redirect::route('employees.create')
-						->with('global-successful', 'Employee account successfully created!');
+			Flash::success('Employee account successfully created!');
 		}
 		else {
-			return 	Redirect::route('employees.create')
-					->with('global', 'Failed to create employee account!');
+			Flash::error('Failed to create employee account!');
 		}
-
+		
+		return Redirect::route('employees.create');
 	}
 
 	/**
@@ -124,7 +120,6 @@ class EmployeesController extends \BaseController {
 		return View::make('account.settings.profile', ['pageTitle' => 'Employee Profile'], compact('user'));
 	}
 
-
 	/**
 	 * Show the form for editing employee information.
 	 *
@@ -137,7 +132,6 @@ class EmployeesController extends \BaseController {
 		$departments = $this->departments->orderByName();
 		return View::make('admin.edit.employee', ['pageTitle' => 'Edit Employee Profile'], compact('employee', 'departments'));
 	}
-
 
 	/**
 	 * Update the employee information
@@ -156,16 +150,14 @@ class EmployeesController extends \BaseController {
 		);
 
 		if($updateEmployee) {
-			return 	Redirect::route('employees.edit', $username)
-						->with('global-successful', 'Employee account successfully updated!');
+			Flash::success('Employee account successfully updated!');
 		}
 		else {
-			return 	Redirect::route('employees.edit', $username)
-					->with('global', 'Failed to update employee account!');
-		}		
+			Flash::error('Failed to update employee account!');
+		}	
 
+		return Redirect::route('employees.edit', $username);	
 	}
-
 
 	/**
 	 * Remove the specified resource from storage.
@@ -180,16 +172,15 @@ class EmployeesController extends \BaseController {
 		);
 
 		if($removeEmployee) {
-			return 	Redirect::route('employees.index')
-						->with('global-successful', 'Employee account successfully removed!');
+			Flash::success('Employee account successfully removed!');
 
 		}
 		else{
-			return 	Redirect::route('employees.edit', $username)
-					->with('global', 'Failed to remove employee account!');
+			Flash::success('Failed to remove employee account!');
 
 		}
+		
+		return 	Redirect::route('employees.index');
 	}
-
 
 }
