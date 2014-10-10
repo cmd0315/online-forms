@@ -14,11 +14,11 @@
                             Department Information
                         </div>
                         <div class="col-xs-6 text-right">
-                            @if(($currentUser->employee->system_admin))
-                            <div class="btn-group btn-group-sm">
-                                <a href="{{ URL::route('departments.edit', e($department->department_id)) }}" class="btn btn-primary">Edit</a>  
-                                <a href="{{ URL::route('departments.destroy', e($department->department_id)) }}" class="btn btn-danger">Remove</a>   
-                            </div><!-- .btn-group -->
+                            @if(($currentUser->system_admin))
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{{ URL::route('departments.edit', e($department->department_id)) }}" class="btn btn-primary">Edit</a>  
+                                   <button class="btn btn-danger btn-sm" name="remove-department-acct-btn" id="remove-department-acct-btn" data-toggle="modal" data-target="#myModal">Remove</button>
+                                </div><!-- .btn-group -->
                             @endif
                         </div>
                     </div>
@@ -67,8 +67,11 @@
                             List of Members
                         </div>
                         <div class="col-xs-9 text-right">
-                            @if(($currentUser->employee->system_admin))
-                                <a href="#"><button class="btn btn-warning btn-sm">Export List</button></a>
+                            @if(($currentUser->system_admin))
+                                <div class="btn-group btn-group-sm">
+                                    <a href="#" class="btn btn-primary">Add Member</a>  
+                                    <a href="#" class="btn btn-warning">Export List</a>   
+                                </div><!-- .btn-group -->
                             @endif
                         </div>
                     </div>
@@ -119,4 +122,22 @@
 
 @section('sub-heading')
    {{$department->department_name}}
+@stop
+
+@section('modal-content')
+<div class="modal-content">
+    {{ Form::open(['id' => 'modal-form', 'route' => ['employees.destroy'], 'method' => 'DELETE']) }}
+        <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel">Remove Department</h4>
+        </div>
+        <div class="modal-body">
+            Are you sure you want to remove <span id="subject-name"></span> department?
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default cancel-btn" id="cancel-btn2" data-dismiss="modal">Cancel</button>
+            {{ Form::submit('OK', array('class' => 'btn btn-warning')) }}
+        </div>
+        {{ Form::token() }}
+    {{ Form::close() }}
+</div><!-- .modal-content -->
 @stop

@@ -25,7 +25,7 @@ jQuery(document).ready(function($){
 	* For removing table items
 	*
 	**/
-	$('.cancel-btn').hide(); // default for cancel buttons
+	$('#cancel-btn1').hide(); // default for cancel button in the button group
 	$('#remove-btn').on('click', function() {
 		$('.btn-delete').show();
 		$('.cancel-btn').show();
@@ -45,4 +45,29 @@ jQuery(document).ready(function($){
 	 	$("#subject-name").html(employee_name);
 	 	$('#myModal').modal('show');
 	 });
+
+	/**
+	* Require CE number if client is BCD or newbusiness
+	*
+	**/
+	$('#charge_to').on('change', function() {
+		var clientID = $(this).val();
+		if(clientID !== 'BCD') {
+			$('#check_num').attr('required', true);
+		}
+		else {
+			$('#check_num').attr('required', false);
+		}
+	});
+
+	/**
+	* Scroll to list of forms
+	*
+	*/
+	$('#view-forms').on('click', function(e) {
+		e.preventDefault(); 
+		$('html, body').animate({
+		    scrollTop: $("#form-list").offset().top
+		}, 2000);
+	});
 });

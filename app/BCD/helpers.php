@@ -18,4 +18,3 @@ function sort_clients_by($column, $body) {
 	$search = Request::get('q');
 	return link_to_route('clients.index', $body, ['q' => $search, 'sortBy' => $column, 'direction' => $direction]);
 }
-

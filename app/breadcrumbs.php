@@ -5,8 +5,8 @@ Breadcrumbs::register('dashboard', function($breadcrumbs) {
 });
 
 /*** USER PROFILE ***/
-Breadcrumbs::register('my-profile', function($breadcrumbs, $username) {
-    $breadcrumbs->push('My Profile', route('profile.show', $username));
+Breadcrumbs::register('my-profile', function($breadcrumbs, $username, $pageTitle) {
+    $breadcrumbs->push($pageTitle, route('profile.show', $username));
 });
 
 Breadcrumbs::register('change-password', function($breadcrumbs, $username) {
@@ -74,4 +74,14 @@ Breadcrumbs::register('client-profile', function($breadcrumbs, $id) {
 Breadcrumbs::register('edit-client', function($breadcrumbs, $id) {
     $breadcrumbs->parent('client-profile', $id);
     $breadcrumbs->push('Edit Client Information', route('clients.edit', $id));
+});
+
+/*** FORMS ***/
+Breadcrumbs::register('online-forms', function($breadcrumbs) {
+    $breadcrumbs->push('List of Forms', route('forms.index'));
+});
+
+Breadcrumbs::register('payment-request', function($breadcrumbs) {
+    $breadcrumbs->parent('online-forms');
+    $breadcrumbs->push('Request For Payment', route('rfps.index'));
 });

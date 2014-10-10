@@ -13,6 +13,7 @@ Route::resource('employees', 'EmployeesController');
 Route::resource('departments', 'DepartmentsController');
 Route::resource('clients', 'ClientsController');
 Route::resource('forms', 'FormsController');
+Route::resource('rfps', 'PaymentRequestsController');
 
 /*
 *

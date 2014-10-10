@@ -113,5 +113,5 @@
 @stop
 
 @section('sub-heading')
-   {{$currentUser->username}}
+   {{$employee->username}}
 @stop

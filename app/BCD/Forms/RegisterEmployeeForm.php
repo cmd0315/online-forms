@@ -17,7 +17,7 @@ class RegisterEmployeeForm extends FormValidator {
 		'middle_name' => 'required|max:50|min:2',
 		'last_name' => 'required|max:50|min:2',
 		'email' => 'required|max:50|email|unique:employees',
-		'birthdate' => 'required',
+		'birthdate' => 'required|date|before:1993-01-01|after:1950-01-01',
 		'address' => 'required|min:5',
 		'mobile' => 'max:15|min:11',
 		'department' => 'required'

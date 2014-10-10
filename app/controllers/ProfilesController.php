@@ -27,6 +27,8 @@ class ProfilesController extends \BaseController {
 
 		$this->beforeFilter('auth');
 
+		$this->beforeFilter('currentUser', ['only' => ['edit', 'update']]);
+
 		$this->beforeFilter('csrf', ['on' => 'post']);
 	}
 	

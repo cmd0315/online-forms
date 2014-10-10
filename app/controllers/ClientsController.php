@@ -36,6 +36,8 @@ class ClientsController extends \BaseController {
 		$this->addClientForm = $addClientForm;
 		$this->updateClientForm = $updateClientForm;
 		$this->clients = $clients;
+
+		$this->beforeFilter('role:System Administrator');
 	}
 	/**
 	 * Display a listing of the resource.

@@ -2,9 +2,9 @@
 
 @section('breadcrumbs')
      @if(($currentUser->employee->system_admin) && (e($user->username) !== $currentUser->username))
-        {{ Breadcrumbs::render('show-employee', e($user->username)) }}
+        {{ Breadcrumbs::render('show-employee', e($user->username), $pageTitle) }}
     @else
-        {{ Breadcrumbs::render('my-profile', e($currentUser->username)) }}
+        {{ Breadcrumbs::render('my-profile', e($currentUser->username), $pageTitle) }}
     @endif
 @stop
 
@@ -18,7 +18,7 @@
                             Account Details
                         </div>
                         <div class="col-xs-7 text-right">
-                            @if(($currentUser->employee->system_admin) && (e($user->username) !== $currentUser->username))
+                            @if(($currentUser->system_admin) && (e($user->username) !== $currentUser->username))
                                 <button class="btn btn-danger btn-sm" name="remove-acct-btn" id="remove-acct-btn" data-toggle="modal" data-target="#myModal">Remove Account</button>
                             @endif
                         </div>
@@ -76,12 +76,12 @@
                             Employee Information
                         </div>
                         <div class="col-xs-9 text-right">
-                            @if(e($user->username) !== $currentUser->username)
-                                @if($currentUser->employee->system_admin)
+                            @if(e($user->username) == $currentUser->username)
+                                <a href="{{ URL::route('profile.edit', e($user->username)) }}"><button class="btn btn-warning btn-sm">Edit Profile</button></a>
+                            @else
+                                @if($currentUser->system_admin)
                                     <a href="{{ URL::route('employees.edit', e($user->username)) }}"><button class="btn btn-warning btn-sm">Edit Profile</button></a>
                                 @endif
-                            @else
-                                <a href="{{ URL::route('profile.edit', e($user->username)) }}"><button class="btn btn-warning btn-sm">Edit Profile</button></a>
                             @endif
                         </div>
                     </div>

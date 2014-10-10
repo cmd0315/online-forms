@@ -9,7 +9,7 @@ class FormsController extends \BaseController {
 	 */
 	public function index()
 	{
-		return View::make('account.forms.payment-request');
+		return View::make('account.forms.index', ['pageTitle' => 'List of Forms']);
 	}
 
 

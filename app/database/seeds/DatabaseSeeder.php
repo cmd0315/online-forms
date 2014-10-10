@@ -7,16 +7,22 @@ class DatabaseSeeder extends Seeder {
 		'accounts',
 		'employees',
 		'departments',
+		'roles',
+		'account_role',
 		'clients',
 		'onlineforms',
+		'form_categories',
 		'prs'
 	];
 
 	protected $seeders = [
 		'AccountSeeder',
-		'ClientSeeder',
+		'EmployeeSeeder',
 		'DepartmentSeeder',
-		'EmployeeSeeder'
+		'RoleSeeder',
+		'AccountRoleSeeder',
+		'ClientSeeder',
+		'FormCategorySeeder'
 	];
 
 	/**

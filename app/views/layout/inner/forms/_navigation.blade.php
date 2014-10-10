@@ -7,5 +7,7 @@
     <hr>
     <li><a id="pcv" href="#">Petty Cash Voucher</a></li>
     <li><a id="cv" href="#">Check Voucher</a><li>
-    <li><a id="pr" href="#"> Payment Request</a><li>
+    <li><a id="pr" href="{{ URL::route('rfps.index') }}"> Payment Request</a><li>
 </ul>
+<br>
+<a href="{{ URL::route('forms.index')}}">List of Forms</a>

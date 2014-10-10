@@ -49,7 +49,7 @@ class Employee extends Eloquent implements UserInterface, RemindableInterface {
     }
 
     /**
-	 * Specify the kind of relationship between the employee and department model from the perspective of the employee model
+	 * Specify the kind of relationship between the employee and department models from the perspective of the employee model
 	 *
 	 * @return dependency between the two models
 	 */
@@ -57,19 +57,6 @@ class Employee extends Eloquent implements UserInterface, RemindableInterface {
         return $this->belongsTo('BCD\Departments\Department', 'department_id', 'department_id')->withTrashed();
     }
 
-    /**
-     * Check if user has system admin position
-     *
-     * @return boolean
-     */
-    public function getSystemAdminAttribute() {
-    	if($this->position == 2) {
-    		return true;
-    	}
-    	else {
-    		return false;
-    	}
-    }
 
     /**
     * Check if employee position is head (= 1)
@@ -92,6 +79,15 @@ class Employee extends Eloquent implements UserInterface, RemindableInterface {
     */
     public function getFullNameAttribute() {
     	return ucfirst($this->first_name) . ' ' . ucfirst($this->middle_name) . ' ' . ucfirst($this->last_name);
+    }
+
+    /**
+    * Return concatenated first and last names of employee
+    *
+    * @return String 
+    */
+    public function getFirstLastNameAttribute() {
+        return ucfirst($this->first_name) . ' ' . ucfirst($this->last_name);
     }
 
     /**
@@ -149,7 +145,7 @@ class Employee extends Eloquent implements UserInterface, RemindableInterface {
             });
         }
         else {
-         return $query;
+            return $query;
         }
     }
 

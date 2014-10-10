@@ -1,8 +1,8 @@
 <?php
 use BCD\Core\CommandBus;
-use BCD\Registration\RegisterEmployeeCommand;
-use BCD\Registration\UpdateEmployeeCommand;
-use BCD\Registration\RemoveEmployeeCommand;
+use BCD\Employees\Registration\RegisterEmployeeCommand;
+use BCD\Employees\Registration\UpdateEmployeeCommand;
+use BCD\Employees\Registration\RemoveEmployeeCommand;
 use BCD\Forms\RegisterEmployeeForm;
 use BCD\Forms\UpdateEmployeeForm;
 use BCD\Employees\EmployeeRepository;
@@ -35,7 +35,7 @@ class EmployeesController extends \BaseController {
 
 	/**
 	* Constructor
-	*
+	* Restrict access only for System Administrator
 	* @param RegisterEmployeeForm $registerEmployeeForm
 	*
 	*/
@@ -49,6 +49,8 @@ class EmployeesController extends \BaseController {
 		$this->departments = $departments;
 
 		$this->beforeFilter('auth');
+
+		$this->beforeFilter('role:System Administrator');
 
 		$this->beforeFilter('csrf', array('on' => 'post'));
 	}

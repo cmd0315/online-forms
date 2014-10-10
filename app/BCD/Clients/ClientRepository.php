@@ -43,6 +43,15 @@ class ClientRepository {
 	}
 
 	/**
+	* Get all clients by name to be listed on select tag
+	*
+	* @return Department
+	*/
+	public function listClientsByName() {
+		return Client::orderBy('client_name')->lists('client_name', 'client_id');
+	}
+
+	/**
 	* Return paginated results with search and filter values
 	* @param String
 	* @param array

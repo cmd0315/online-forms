@@ -9,14 +9,17 @@
 	    padding-left: 225px!important;
 	}
 	.side-nav {
+		border: none;
+		border-radius: 0;
+		overflow-y: auto;
+		padding: 0;
+	}
+	#wrapper .side-nav {
 		position: fixed;
 		top: 51px;
 		left: 225px;
 		width: 225px;
 		margin-left: -225px;
-		border: none;
-		border-radius: 0;
-		overflow-y: auto;
 		background-color: #06a885;
 	}
 	.side-nav>li>a {

@@ -1,8 +1,8 @@
 <?php
 use BCD\Core\CommandBus;
-use BCD\DepartmentRegistration\AddDepartmentCommand;
-use BCD\DepartmentRegistration\UpdateDepartmentCommand;
-use BCD\DepartmentRegistration\RemoveDepartmentCommand;
+use BCD\Departments\Registration\AddDepartmentCommand;
+use BCD\Departments\Registration\UpdateDepartmentCommand;
+use BCD\Departments\Registration\RemoveDepartmentCommand;
 use BCD\Forms\AddDepartmentForm;
 use BCD\Forms\UpdateDepartmentProfileForm;
 use BCD\Departments\DepartmentRepository;
@@ -41,6 +41,8 @@ class DepartmentsController extends \BaseController {
 		$this->departments = $departments;
 
 		$this->beforeFilter('auth');
+
+		$this->beforeFilter('role:System Administrator');
 
 		$this->beforeFilter('csrf', array('on' => 'post'));
 	}

@@ -10,7 +10,7 @@ class AddDepartmentForm extends FormValidator {
 	 * @var array
 	 */
 	protected $rules = [
-		'department_id' => 'required|max:10|min:4|unique:departments',
+		'department_id' => 'required|max:10|min:2|unique:departments',
 		'department_name' => 'required|max:20|min:2|unique:departments'
 	];
 

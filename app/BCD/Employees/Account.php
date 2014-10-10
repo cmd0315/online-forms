@@ -47,6 +47,32 @@ class Account extends Eloquent implements UserInterface, RemindableInterface {
         return $this->hasOne('BCD\Employees\Employee', 'username', 'username');
     }
 
+
+    /**
+     * Specify the kind of relationship between the employee and role models from the perspective of the employee model
+     *
+     * @return dependency between the two models
+     */
+    public function roles() {
+        return $this->belongsToMany('BCD\Employees\Role')->withTimestamps();
+    }
+
+    public function hasRole($name) {
+        foreach($this->roles as $role) {
+            if($role->name === $name) return true;
+        }
+
+        return false;
+    }
+
+    public function getSystemAdminAttribute() {
+        foreach($this->roles as $role) {
+            if($role->name === 'System Administrator') return true;
+        }
+
+        return false;
+    }
+
     /**
     * Convert the format of the date the account was last updated into a readable form
     * 

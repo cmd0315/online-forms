@@ -15,20 +15,25 @@ class CreatePrsTable extends Migration {
 		Schema::create('prs', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->string('form_num', 10)->unique();
+			$table->string('form_num', 10);
+			$table->foreign('form_num')->references('form_num')->on('onlineforms')->onDelete('restrict')->onUpdate('cascade');
 			$table->string('control_num', 30)->unique()->nullable();
 			$table->string('payee_firstname', 60);
 			$table->string('payee_middlename', 60);
 			$table->string('payee_lastname', 60);
-			$table->datetime('date_requested');
+			$table->date('date_requested');
+			$table->text('particulars');
 			$table->double('total_amount', 15, 8);
+			$table->string('client_id');
+			$table->foreign('client_id')->references('client_id')->on('clients')->onDelete('restrict')->onUpdate('cascade');
 			$table->integer('check_num');
-			$table->integer('requested_by');
-			$table->integer('department_id');
-			$table->datetime('date_needed')->nullable();
-			$table->integer('received_by')->nullable();
-			$table->integer('approved_by')->nullable();
+			$table->string('received_by');
+			$table->string('department_id');
+			$table->foreign('department_id')->references('department_id')->on('departments')->onDelete('restrict')->onUpdate('cascade');
+			$table->date('date_needed')->nullable();
+			$table->string('approved_by')->nullable();
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 

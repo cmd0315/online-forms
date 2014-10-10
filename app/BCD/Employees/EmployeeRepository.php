@@ -64,6 +64,25 @@ class EmployeeRepository {
 	public function getRegisteredEmployees() {
 		return Employee::where('position', '<', 2); //exclude system administrator
 	}
+
+	/**
+	* Get all employees with the given department id
+	*
+	* @param String
+	* @return Employee
+	*/
+	public function getEmployeesByDepartment($departmentID) {
+		return $this->getRegisteredEmployees()->where('department_id', $departmentID)->get();
+	}
+
+	/**
+	* Get all employees by position to be listed on select tag
+	*
+	* @return Employee
+	*/
+	public function listEmployeesByPosition() {
+		return Employee::where('position', '=', 1)->orderBy('last_name')->get()->lists('first_last_name', 'username');
+	}
 	
 	/**
 	* Return paginated results with search and filter values

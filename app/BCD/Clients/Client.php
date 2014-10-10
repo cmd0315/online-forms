@@ -34,6 +34,13 @@ class Client extends Eloquent {
     */
     protected $filter_fields = ['client_id', 'client_name', 'address', 'cp_last_name', 'email', 'mobile', 'telephone', 'created_at', 'updated_at'];
 
+    /**
+    * One-to-one relationship between RequestForPayment and Client
+    */
+    public function paymentRequests() {
+        return $this->hasOne('BCD\RequestForPayments\RequestForPayment', 'client_id', 'client_id');
+    }
+
 	/**
     * Create instance of Client
     *

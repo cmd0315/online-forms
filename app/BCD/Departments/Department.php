@@ -35,11 +35,19 @@ class Department extends Eloquent implements UserInterface, RemindableInterface 
     protected $dates = ['deleted_at'];
 
     /**
-    * Relationship with Employee model
+    * One-to-many Relationship between Department and Employee
     */
     public function employees() {
     	return $this->hasMany('BCD\Employees\Employee', 'department_id', 'department_id');
     }
+
+    /**
+    * One-to-one Relationship between Department and RequestForPayment
+    */
+    public function paymentRequest() {
+        return $this->belongsTo('BCD\RequestForPayments\RequestForPayment', 'department_id', 'department_id');
+    }
+
 
     /**
     * Convert the format of the date the department was last updated into a readable form

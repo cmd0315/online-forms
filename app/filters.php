@@ -96,11 +96,25 @@ Route::filter('csrf', function()
 |
 |
 */
+Route::filter('role', function($route, $request, $role)
+{
 
-Route::filter('role', function()
-{ 
-  if ( Auth::user()->employee->position != 2) {
-     // redirect to dashboard page if function is not available for regular users
-     return Redirect::to('dashboard'); 
-   }
+	if(Auth::guest() or ! Auth::user()->hasRole($role)) {
+		return Redirect::to('dashboard'); 
+	}
+});
+
+/*
+|--------------------------------------------------------------------------
+| Current User Filter
+|--------------------------------------------------------------------------
+|
+|
+*/
+Route::filter('currentUser', function($route)
+{
+
+	if(Auth::guest() or Auth::user()->username !== $route->parameter('profile')) {
+		return Redirect::to('dashboard'); 
+	}
 }); 

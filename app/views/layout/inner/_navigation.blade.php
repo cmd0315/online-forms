@@ -119,7 +119,7 @@
             <li>
                 <a href="{{ URL::route('dashboard') }}"> Dashboard</a>
             </li>
-            @if($currentUser && $currentUser->employee->system_admin)
+            @if($currentUser->system_admin)
                 <li>
                     <a href="javascript:;" data-toggle="collapse" data-target="#employees-menu"> Employees <b class="caret"></b></a>
                     <ul id="employees-menu" class="collapse">
