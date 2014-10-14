@@ -94,7 +94,7 @@
 			</div><!-- .form-group -->
 			<div class="form-group">
 				<div class="row-fluid">
-					<div class="col-lg-12 col-xs-12 meta-firsts">
+					<div class="col-lg-12 col-xs-12">
 						<label for="date_needed" class="col-sm-4 control-label form-label">Date Needed</label>
 						<div class="col-sm-8">
 							<input type="date" class="form-control" id="date_needed" name="date_needed"{{ (Input::old('date_needed')) ? ' value ="' . Input::old('date_needed') . '"' : '' }}>
@@ -104,19 +104,6 @@
 						</div>
 					</div><!-- .meta-firsts -->
 				</div><!-- .row-fluid -->
-			</div><!-- .form-group -->
-			<div class="form-group">
-				<div class="row-fluid">
-					<div class="col-lg-12 col-xs-12">
-						<label for="received_by" class="col-sm-4 control-label form-label">Received By</label>
-						<div class="col-sm-8">
-							<input type="text" class="form-control" id="received_by" name="received_by" placeholder="Name of Receiver" readonly>
-							@if($errors->has('received_by'))
-								<p class="bg-danger">{{ $errors->first('received_by') }}</p>
-							@endif
-						</div>
-					</div>
-				</div>
 			</div><!-- .form-group -->
 		</div><!-- .form-meta -->
 		<div class="col-lg-4 col-lg-offset-1 col-xs-4 col-xs-offset-1 form-inputs form-meta">
@@ -136,7 +123,7 @@
 			</div> <!-- .form-group -->
             <div class="form-group">
 				<div class="row-fluid">
-					<div class="col-lg-12 col-xs-12 meta-firsts">
+					<div class="col-lg-12 col-xs-12">
 						<label for="department_id" class="col-sm-4 control-label form-label">Department</label>
 						<div class="col-sm-8">
 							{{ Form::select('department_id', $departments, Input::old('department_id'), array('class' => 'form-control')) }}
@@ -146,15 +133,6 @@
 		                </div>
 					</div><!-- .meta-firsts -->
 				</div><!-- .row-fluid -->
-            </div><!-- .form-group -->
-            <div class="form-group">
-				<label for="approved_by" class="col-sm-5 control-label form-label">Approved By</label>
-				<div class="col-sm-7">
-					{{ Form::select('approved_by', $approvers, Input::old('approved_by'), array('class' => 'form-control')) }}
-					@if($errors->has('approved_by'))
-						<p class="bg-danger">{{ $errors->first('approved_by') }}</p>
-					@endif
-				</div>
             </div><!-- .form-group -->
 		</div><!-- .form-meta -->
 		<div class="col-lg-3 col-xs-3">

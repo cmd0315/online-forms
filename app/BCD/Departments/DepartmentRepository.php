@@ -77,6 +77,10 @@ class DepartmentRepository {
 		return Department::where('department_id', $id)->get();
 	}
 
+	public function getDepartmentName($id) {
+		return Department::where('department_id', $id)->pluck('department_name');
+	}
+
 	/**
 	* Return paginated results with search and filter values
 	* @param String

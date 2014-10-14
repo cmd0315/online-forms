@@ -27,7 +27,7 @@ class CreatePrsTable extends Migration {
 			$table->string('client_id');
 			$table->foreign('client_id')->references('client_id')->on('clients')->onDelete('restrict')->onUpdate('cascade');
 			$table->integer('check_num');
-			$table->string('received_by');
+			$table->string('received_by')->nullable();
 			$table->string('department_id');
 			$table->foreign('department_id')->references('department_id')->on('departments')->onDelete('restrict')->onUpdate('cascade');
 			$table->date('date_needed')->nullable();

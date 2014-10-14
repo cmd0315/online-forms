@@ -101,10 +101,10 @@ class EmployeesController extends \BaseController {
 		);
 
 		if($registration) {
-			Flash::success('Employee account successfully created!');
+			Flash::success('Employee account for ' . $username . ' has been successfully created! <a href="' . URL::route('employees.index') . '"> View list of employees.</a>' );
 		}
 		else {
-			Flash::error('Failed to create employee account!');
+			Flash::error('Failed to create employee account of ' . $username . '!');
 		}
 		
 		return Redirect::route('employees.create');
@@ -152,10 +152,10 @@ class EmployeesController extends \BaseController {
 		);
 
 		if($updateEmployee) {
-			Flash::success('Employee account successfully updated!');
+			Flash::success($username . ' employee account has been successfully updated! <a href="' . URL::route('employees.show', $username) . '"> View employee profile.</a>');
 		}
 		else {
-			Flash::error('Failed to update employee account!');
+			Flash::error('Failed to update employee account of ' . $username . '!');
 		}	
 
 		return Redirect::route('employees.edit', $username);	
@@ -174,11 +174,11 @@ class EmployeesController extends \BaseController {
 		);
 
 		if($removeEmployee) {
-			Flash::success('Employee account successfully removed!');
+			Flash::success('Employee account of ' . $username . ' has been successfully removed!');
 
 		}
 		else{
-			Flash::success('Failed to remove employee account!');
+			Flash::success('Failed to remove employee account of ' . $username . '!');
 
 		}
 		

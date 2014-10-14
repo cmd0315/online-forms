@@ -14,7 +14,7 @@
                             Client Information
                         </div>
                         <div class="col-xs-6 text-right">
-                            @if(($currentUser->employee->system_admin))
+                            @if(($currentUser->system_admin))
                             <div class="btn-group btn-group-sm">
                                 <a href="{{ URL::route('clients.edit', e($client->client_id)) }}" class="btn btn-primary">Edit</a>  
                                 <a href="{{ URL::route('clients.destroy', e($client->client_id)) }}" class="btn btn-danger">Remove</a>   

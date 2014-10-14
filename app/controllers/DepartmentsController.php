@@ -91,10 +91,10 @@ class DepartmentsController extends \BaseController {
 		$registration = $this->execute(new AddDepartmentCommand($department_id, $department_name));
 
 		if($registration) {
-			Flash::success('Department Added!');
+			Flash::success('Account for ' . $department_name . ' department has been successfully created! <a href="' . URL::route('departments.index') . '"> View list of departments.</a>');
 		}
 		else {
-			Flash::error('Failed to add department!');
+			Flash::error('Failed to create account for ' . $department_name .  ' department!');
 		}
 
 		return Redirect::route('departments.create');
@@ -146,10 +146,10 @@ class DepartmentsController extends \BaseController {
 		$updateDepartment = $this->execute(new UpdateDepartmentCommand($id, $department_id, $department_name, $department_head));
 
 		if($updateDepartment) {
-			Flash::success('Department Profile Updated!');
+			Flash::success('Profile of ' . $department_name . ' has been successfully updated! <a href="' . URL::route('departments.show', $department_id) . '"> View department profile.</a>');
 		}
 		else {
-			Flash::error('Failed to edit department!');
+			Flash::error('Failed to edit profile of ' . $department_name . ' department!');
 		}
 
 		return Redirect::route('departments.edit', $department_id);
@@ -164,16 +164,18 @@ class DepartmentsController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
+		$department_name = $this->departments->getDepartmentName($id); 
+
 		$removeDepartment = $this->execute(
 			new RemoveDepartmentCommand($id)
 		);
 
 		if($removeDepartment) {
-			Flash::success('Department successfully removed!');
+			Flash::success('Account of ' . $department_name  . ' department has been successfully removed!');
 
 		}
 		else{
-			Flash::success('Failed to remove department!');
+			Flash::success('Failed to remove account of ' . $department_name . ' department!');
 
 		}
 		

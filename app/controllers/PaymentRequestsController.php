@@ -81,9 +81,8 @@ class PaymentRequestsController extends \BaseController {
 		$formNum = $this->onlineForms->generateFormNum('rfp');
 		$departments = $this->departments->listDepartmentByName();
 		$clients = $this->clients->listClientsByName();
-		$approvers = $this->employees->listEmployeesByPosition();
 
-		return View::make('account.forms.rfp.create', ['pageTitle' => 'Request for Payment'], compact('formNum', 'departments', 'clients', 'approvers'));
+		return View::make('account.forms.rfp.create', ['pageTitle' => 'Request for Payment'], compact('formNum', 'departments', 'clients'));
 	}
 
 	/**
@@ -94,24 +93,24 @@ class PaymentRequestsController extends \BaseController {
 	 */
 	public function store()
 	{
-		$input = Input::only('form_num', 'payee_firstname', 'payee_middlename', 'payee_lastname', 'date_requested', 'particulars', 'total_amount', 'client_id', 'check_num', 'requestor', 'department_id', 'date_needed', 'approved_by');
+		$input = Input::only('form_num', 'payee_firstname', 'payee_middlename', 'payee_lastname', 'date_requested', 'particulars', 'total_amount', 'client_id', 'check_num', 'requestor', 'department_id', 'date_needed');
 
 		$this->createRequestForPaymentForm->validate($input);
 
 		extract($input);
 
 		$makeRequest = $this->execute(
-			new CreateRFPCommand($form_num, $payee_firstname, $payee_middlename, $payee_lastname, $date_requested, $particulars, $total_amount, $client_id, $check_num, $requestor, $department_id, $date_needed, $approved_by)
+			new CreateRFPCommand($form_num, $payee_firstname, $payee_middlename, $payee_lastname, $date_requested, $particulars, $total_amount, $client_id, $check_num, $requestor, $department_id, $date_needed)
 		);
 
 		if($makeRequest) {
-			Flash::success('You have successfully made a payment request');
+			Flash::success('You have successfully made a payment request! <a href="' . URL::route('rfps.index') . '"> View list of payment request transactions.</a>');
 		}
 		else {
 			Flash::error('Failed to make a payment request');
 		}
 		
-		return Redirect::route('rfp.create');
+		return Redirect::route('rfps.create');
 	}
 
 	/**

@@ -5,14 +5,14 @@ class CreateRFPCommand {
 	/**
 	* @var mixed
 	*/
-	public $form_num, $payee_firstname, $payee_middlename, $payee_lastname, $date_requested, $particulars, $total_amount, $client_id, $check_num, $requestor, $department_id, $date_needed, $approved_by;
+	public $form_num, $payee_firstname, $payee_middlename, $payee_lastname, $date_requested, $particulars, $total_amount, $client_id, $check_num, $requestor, $department_id, $date_needed;
 
 	/**
 	* Constructor
 	*
 	* @param mixed
 	*/
-	function __construct($form_num, $payee_firstname, $payee_middlename, $payee_lastname, $date_requested, $particulars, $total_amount, $client_id, $check_num, $requestor, $department_id, $date_needed, $approved_by) {
+	function __construct($form_num, $payee_firstname, $payee_middlename, $payee_lastname, $date_requested, $particulars, $total_amount, $client_id, $check_num, $requestor, $department_id, $date_needed) {
 
 		$this->form_num = $form_num;
 		$this->payee_firstname = $payee_firstname;
@@ -26,7 +26,6 @@ class CreateRFPCommand {
 		$this->requestor = $requestor;
 		$this->department_id = $department_id;
 		$this->date_needed = $date_needed;
-		$this->approved_by = $approved_by;
 	}
 }
 

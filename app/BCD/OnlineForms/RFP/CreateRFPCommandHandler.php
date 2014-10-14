@@ -34,7 +34,7 @@ class CreateRFPCommandHandler implements CommandHandler {
 		);
 
 		$rfp = RequestForPayment::createRequest(
-			$command->form_num, $command->payee_firstname, $command->payee_middlename, $command->payee_lastname, $command->date_requested, $command->particulars, $command->total_amount, $command->client_id, $command->check_num, $command->department_id, $command->date_needed, $command->approved_by
+			$command->form_num, $command->payee_firstname, $command->payee_middlename, $command->payee_lastname, $command->date_requested, $command->particulars, $command->total_amount, $command->client_id, $command->check_num, $command->department_id, $command->date_needed
 		);
 		
 		$this->onlineFormRepository->save($onlineForm);

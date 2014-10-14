@@ -39,6 +39,6 @@ class OnlineFormRepository {
 	public function getUserFormByCategory($category) {
 		$category_id = FormCategory::where('alias', $category)->pluck('id');
 
-		return $this->getCurrentUserForms()->where('category_id', $category_id)->get(); 
+		return $this->getCurrentUserForms()->where('category_id', $category_id)->orderBy('updated_at', 'DESC')->get(); 
 	}
 }

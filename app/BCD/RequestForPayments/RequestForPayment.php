@@ -62,9 +62,9 @@ class RequestForPayment extends Eloquent implements UserInterface, RemindableInt
     * @param mixed
     * @return RequestForPayment
     */
-    public static function createRequest($form_num, $payee_firstname, $payee_middlename, $payee_lastname, $date_requested, $particulars, $total_amount, $client_id, $check_num, $department_id, $date_needed, $approved_by) {
+    public static function createRequest($form_num, $payee_firstname, $payee_middlename, $payee_lastname, $date_requested, $particulars, $total_amount, $client_id, $check_num, $department_id, $date_needed) {
 
-    	$requestForPayment = new static(compact('form_num', 'payee_firstname', 'payee_middlename', 'payee_lastname', 'date_requested', 'particulars', 'total_amount', 'client_id', 'check_num', 'department_id', 'date_needed', 'approved_by'));
+    	$requestForPayment = new static(compact('form_num', 'payee_firstname', 'payee_middlename', 'payee_lastname', 'date_requested', 'particulars', 'total_amount', 'client_id', 'check_num', 'department_id', 'date_needed'));
 
     	return $requestForPayment;
     }

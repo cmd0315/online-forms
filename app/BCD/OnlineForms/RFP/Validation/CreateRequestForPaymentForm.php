@@ -19,7 +19,6 @@ class CreateRequestForPaymentForm extends FormValidator {
 		'client_id' => 'required',
 		'check_num' => 'numeric',
 		'department_id' => 'required',
-		'approved_by' => 'required',
 		'date_needed' => 'required|date',
 	];
 

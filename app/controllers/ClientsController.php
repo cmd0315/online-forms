@@ -85,10 +85,10 @@ class ClientsController extends \BaseController {
 		$registration = $this->execute(new AddClientCommand($client_id, $client_name, $address, $cp_first_name, $cp_middle_name, $cp_last_name, $email, $mobile, $telephone));
 
 		if($registration) {
-			Flash::success('Client Added!');
+			Flash::success('Account for' . $client_name . ' client has been successfully created! <a href="' . URL::route('clients.index') . '"> View list of clients.</a>');
 		}
 		else {
-			Flash::error('Failed to add client');
+			Flash::error('Failed to create ' . $client_name .  ' client');
 		}
 
 		return Redirect::route('clients.create');
@@ -138,10 +138,10 @@ class ClientsController extends \BaseController {
 		$updateClient = $this->execute(new UpdateClientCommand($id, $client_id, $client_name, $address, $cp_first_name, $cp_middle_name, $cp_last_name, $email, $mobile, $telephone));
 
 		if($updateClient) {
-			Flash::success('Client Profile updated!');
+			Flash::success('Client Profile of ' .  $client_name . ' has been successfully updated! <a href="' . URL::route('clients.show', $client_id) . '"> View client profile.</a>');
 		}
 		else {
-			Flash::error('Failed to edit client!');
+			Flash::error('Failed to edit client account of ' . $client_name . '!');
 		}
 
 		return Redirect::route('clients.edit', $client_id);
