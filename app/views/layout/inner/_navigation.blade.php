@@ -155,7 +155,12 @@
                 </li>
             @endif
             <li>
-                <a href="{{ URL::route('forms.index') }}"> Forms</a>
+                <a href="javascript:;" data-toggle="collapse" data-target="#forms-menu"> Forms <b class="caret"></b></a>
+                <ul id="forms-menu" class="collapse">
+                    <li>
+                        <a href="{{ URL::route('forms.index') }}">List of Forms</a>
+                    </li>
+                </ul>
             </li>
         </ul>
     </div>

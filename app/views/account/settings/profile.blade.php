@@ -4,7 +4,7 @@
      @if(($currentUser->employee->system_admin) && (e($user->username) !== $currentUser->username))
         {{ Breadcrumbs::render('show-employee', e($user->username), $pageTitle) }}
     @else
-        {{ Breadcrumbs::render('my-profile', e($currentUser->username), $pageTitle) }}
+        {{ Breadcrumbs::render('my-profile', e($currentUser->username)) }}
     @endif
 @stop
 

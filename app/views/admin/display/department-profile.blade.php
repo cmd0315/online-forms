@@ -82,7 +82,11 @@
                             @if($members->count())
                                 <ul>
                                     @foreach($members as $member)
-                                        <li><a href="{{ URL::route('employees.show', e($member->username)) }}">{{ e($member->full_name) }} </a></li>   
+                                        @if($member->head)
+                                            <li><a href="{{ URL::route('employees.show', e($member->username)) }}">{{ e($member->full_name) }} </a> ({{ e($member->position_title) }})</li>
+                                        @else
+                                            <li><a href="{{ URL::route('employees.show', e($member->username)) }}">{{ e($member->full_name) }} </a></li>
+                                        @endif  
                                     @endforeach
                                 </ul>
                             @endif

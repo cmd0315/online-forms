@@ -62,7 +62,7 @@ class SessionsController extends \BaseController {
 	public function destroy()
 	{
 		Auth::logout();
-		return Redirect::route('home')->with('global', "You are now logged out.");
+		return Redirect::route('home')->with('global', "You have been logged out.");
 	}
 
 

@@ -1,7 +1,8 @@
 <?php namespace BCD\OnlineForms;
 
-use BCD\OnlineForms\FormCategory;
 use BCD\OnlineForms\OnlineForm;
+use BCD\OnlineForms\Rejection\RejectReason;
+use BCD\OnlineForms\Rejection\RejectionHistory;
 
 class OnlineFormRepository {
 
@@ -9,19 +10,22 @@ class OnlineFormRepository {
 	* Persists the OnlineForm class
 	*
 	* @param OnlineForm $onlineForm
-	* @return 
 	*/
 	public function save(OnlineForm $onlineForm) {
 		return $onlineForm->save();
 	}
 
-	public function generateFormNum() {
-		$lastFormNum = OnlineForm::orderBy('id', 'DESC')->pluck('form_num');
+	/**
+	* Generate form number specifi for a particular type of form
+	*
+	* @param String $formType
+	* @return String
+	*/
+	public function generateFormNum($formType) {
+		$lastFormNum = OnlineForm::where('formable_type', $formType)->orderBy('id', 'DESC')->pluck('formable_id');
 
 		if($lastFormNum) {
-			$oldFormNum = explode('-', $lastFormNum);
-
-			$num = sprintf('%04d', $oldFormNum[1]);
+			$num = sprintf('%04d', $lastFormNum);
 
 			$generatedFormNum = date('y') . '-' . sprintf('%04d', $num + 1);
 
@@ -32,13 +36,81 @@ class OnlineFormRepository {
 		}
 	}
 
+	/**
+	* Return OnlineForm of current logged in user
+	*
+	* @return OnlineForm
+	*/
 	public function getCurrentUserForms() {
-		return OnlineForm::where('username', Auth::user()->username);
+		return OnlineForm::where('created_by', Auth::user()->username);
 	}
 
-	public function getUserFormByCategory($category) {
-		$category_id = FormCategory::where('alias', $category)->pluck('id');
-
-		return $this->getCurrentUserForms()->where('category_id', $category_id)->orderBy('updated_at', 'DESC')->get(); 
+	/**
+	* Return OnlineForm given their model type
+	*
+	* @param String $modelName
+	* @return OnlineForm
+	*/
+	public function getUserFormByCategory($modelName) {
+		return $this->getCurrentUserForms()->where('formable_type', $modelName)->orderBy('updated_at', 'ASC')->get(); 
 	}
+
+	/**
+	* Return OnlineForm given their row id
+	*
+	* @param int $id
+	* @return OnlineForm
+	*/
+	public function getFormByID($id) {
+		return OnlineForm::where('id', $id)->firstOrFail();
+	}
+
+	/**
+	* Return OnlineForm given their formable id
+	*
+	* @param int $id
+	* @return OnlineForm
+	*/
+	public function getFormByFormableID($id) {
+		return OnlineForm::where('formable_id', $id)->firstOrFail();
+	}
+
+	/**
+	* Get the reasons why a form can be rejected
+	*
+	* @param int $id
+	* @return array
+	*/
+	public function getFormRejectReasons($id) {
+		$rejectReasonArr = [];
+
+		$formRejectReasons = OnlineForm::where('id', $id)->firstOrFail()->formRejectReasons;
+
+		foreach($formRejectReasons as $fRR) {
+			$rejectReason = RejectReason::where('id', $fRR->reject_reason_id)->firstOrFail();
+
+			array_push($rejectReasonArr, $rejectReason); 
+		}
+
+		return $rejectReasonArr;
+
+	}
+
+	/**
+	* Return the reasons why the form was rejected
+	*
+	* @param int $id
+	* @return RejectionHistory or String
+	*/
+	public function getWhyRejected($id) {
+		$onlineForm = $this->getFormByID($id);
+
+		if($onlineForm->departmentRejected()) {
+			return $whyRejected = RejectionHistory::where('form_id', $id)->get();
+		}
+		else {
+			return '';
+		}
+	}
+
 }

@@ -70,4 +70,20 @@ jQuery(document).ready(function($){
 		    scrollTop: $("#form-list").offset().top
 		}, 2000);
 	});
+
+	/**
+	* Open or close reasons for request rejection
+	*
+	*/
+	$('#radio-reject').on('click', function(e) {
+		$('#reject-reasons').show();
+	})
+
+	if($('#radio-reject').is(':checked')) {
+		$('#reject-reasons').show();
+	}
+
+	$('#radio-approve').on('click', function(e) {
+		$('#reject-reasons').hide();
+	})
 });

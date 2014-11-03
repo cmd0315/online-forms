@@ -5,15 +5,16 @@ Route::get('/',[
 	'uses' => 'HomeController@index'
 ]);
 
-
-
 Route::resource('accounts', 'AccountsController');
 Route::resource('profile', 'ProfilesController');
 Route::resource('employees', 'EmployeesController');
 Route::resource('departments', 'DepartmentsController');
 Route::resource('clients', 'ClientsController');
 Route::resource('forms', 'FormsController');
+Route::resource('rejectreasons', 'RejectReasonsController');
+Route::get('/rfps/{id}/pdf', ['as' => 'rfps.pdf', 'uses' => 'PaymentRequestsController@pdf']);
 Route::resource('rfps', 'PaymentRequestsController');
+Route::resource('approval', 'ApprovalController', ['only' => ['index', 'show', 'edit', 'update']]);
 
 /*
 *

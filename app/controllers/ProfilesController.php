@@ -43,7 +43,7 @@ class ProfilesController extends \BaseController {
 	{
 		
 		$user = $this->user->whereUsername($username)->firstOrFail();
-		return View::make('account.settings.profile', ['pageTitle' => 'My Profile'], compact('user'));
+		return View::make('account.settings.profile', ['pageTitle' => 'Employee Profile'], compact('user'));
 	}
 
 

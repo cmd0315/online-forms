@@ -6,6 +6,8 @@ use Illuminate\Auth\Reminders\RemindableTrait;
 use Illuminate\Auth\Reminders\RemindableInterface;
 use Eloquent;
 
+use BCD\OnlineForms\OnlineForm;
+
 class Employee extends Eloquent implements UserInterface, RemindableInterface {
 
 	use UserTrait, RemindableTrait;
@@ -57,6 +59,14 @@ class Employee extends Eloquent implements UserInterface, RemindableInterface {
         return $this->belongsTo('BCD\Departments\Department', 'department_id', 'department_id')->withTrashed();
     }
 
+    public function createdOnlineForm() {
+        return $this->hasMany('BCD\OnlineForms\OnlineForm', 'created_by', 'username');
+    }
+
+     public function approvedOnlineForms() {
+        return $this->hasMany('BCD\OnlineForms\OnlineForm', 'approved_by', 'username');
+    }
+
 
     /**
     * Check if employee position is head (= 1)
@@ -65,6 +75,49 @@ class Employee extends Eloquent implements UserInterface, RemindableInterface {
     */
     public function getHeadAttribute() {
         if($this->position == 1) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
+    * Check if user is the department head given the department id
+    *
+    * @param String
+    * @return boolean
+    */
+    public function isDepartmentHead($department_id) {
+        if($this->head && $this->department_id == $department_id) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
+    * Check if employee is the right approver of the form
+    *
+    * @param int $formID
+    * @return boolean
+    */
+    public function isApprover($formID) {
+        $department_id = OnlineForm::where('id', $formID)->pluck('department_id');
+
+        return $this->isDepartmentHead($department_id);
+    }
+
+
+    /**
+    * Check if employee's department is finance (= 1)
+    *
+    * @return boolean
+    */
+    public function getFinanceDepartmentAttribute() {
+        $department_name = $this->department->department_name;
+        if($department_name == 'Finance'){
             return true;
         }
         else {
@@ -106,6 +159,15 @@ class Employee extends Eloquent implements UserInterface, RemindableInterface {
         }
         else {
             return 'Member Employee';
+        }
+    }
+
+     public function hasPosition($id) {
+        if($this->position == $id) {
+            return true;
+        }
+        else {
+            return false;
         }
     }
 

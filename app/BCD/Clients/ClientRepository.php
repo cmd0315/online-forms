@@ -52,6 +52,15 @@ class ClientRepository {
 	}
 
 	/**
+	* Get all clients ordered by client name
+	*
+	* @return Client
+	*/
+	public function orderByName() {
+		return Client::orderBy('client_name')->get();
+	}
+
+	/**
 	* Return paginated results with search and filter values
 	* @param String
 	* @param array

@@ -5,7 +5,7 @@ use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\Reminders\RemindableTrait;
 use Illuminate\Auth\Reminders\RemindableInterface;
 use Illuminate\Database\Eloquent\SoftDeletingTrait;
-use Eloquent, Carbon;
+use Eloquent, Carbon, URL;
 
 class RequestForPayment extends Eloquent implements UserInterface, RemindableInterface {
 
@@ -18,13 +18,14 @@ class RequestForPayment extends Eloquent implements UserInterface, RemindableInt
 	 */
 	protected $table = 'prs';
 
+
 	
 	/**
 	 * The db table columns that can be filled
 	 *
 	 * @var array
      */
-	protected $fillable = ['form_num', 'control_num', 'payee_firstname', 'payee_middlename', 'payee_lastname', 'date_requested', 'particulars', 'total_amount', 'client_id', 'check_num', 'department_id', 'date_needed', 'received_by', 'approved_by'];
+	protected $fillable = ['form_num', 'control_num', 'payee_firstname', 'payee_middlename', 'payee_lastname', 'date_requested', 'particulars', 'total_amount', 'client_id', 'check_num', 'date_needed'];
 
     protected $dates = ['deleted_at'];
 
@@ -32,7 +33,7 @@ class RequestForPayment extends Eloquent implements UserInterface, RemindableInt
     * One-to-one relationship between RequestForPayment and OnlineForm
     */
     public function onlineForm() {
-    	return $this->belongsTo('BCD\OnlineForms\OnlineForm', 'form_num', 'form_num');
+    	return $this->morphOne('BCD\OnlineForms\OnlineForm', 'formable');
     }
 
     /**
@@ -43,37 +44,64 @@ class RequestForPayment extends Eloquent implements UserInterface, RemindableInt
     }
 
     /**
-    * One-to-one Relationship between RequestForPayment and Department
-    */
-    public function department() {
-        return $this->hasOne('BCD\Departments\Department', 'department_id', 'department_id');
-    }
-
-    /**
-    * One-to-one Relationship between RequestForPayment and Employee for approved_by field
-    */
-    public function approver() {
-    	return $this->hasOne('BCD\Employees\Employee', 'username', 'approved_by');
-    }
-
-    /**
     * Create instance of the model.
     *
     * @param mixed
     * @return RequestForPayment
     */
-    public static function createRequest($form_num, $payee_firstname, $payee_middlename, $payee_lastname, $date_requested, $particulars, $total_amount, $client_id, $check_num, $department_id, $date_needed) {
+    public static function createRequest($form_num, $payee_firstname, $payee_middlename, $payee_lastname, $date_requested, $particulars, $total_amount, $client_id, $check_num, $date_needed) {
 
-    	$requestForPayment = new static(compact('form_num', 'payee_firstname', 'payee_middlename', 'payee_lastname', 'date_requested', 'particulars', 'total_amount', 'client_id', 'check_num', 'department_id', 'date_needed'));
+    	$requestForPayment = new static(compact('form_num', 'payee_firstname', 'payee_middlename', 'payee_lastname', 'date_requested', 'particulars', 'total_amount', 'client_id', 'check_num', 'date_needed'));
 
     	return $requestForPayment;
     }
 
+    /**
+    * Get the full name of the payee
+    *
+    * return String
+    */
     public function getPayeeFullNameAttribute() {
     	return ucfirst($this->payee_firstname) . ' ' . ucfirst($this->payee_middlename) . ' ' . ucfirst($this->payee_lastname);
     }
 
+    /**
+    * Get the total amount in the nearest hundredth
+    *
+    * @return String
+    */
     public function getTotalAmountFormattedAttribute() {
     	return sprintf('%01.2f', $this->total_amount);
     }
+
+    public function getClientFormattedAttribute() {
+        print '<a href="' . URL::route('clients.show', $this->client->client_id) . '">' . $this->client->client_name . '</a>';
+    }
+
+    /**
+    * Filter request for payments
+    *
+    * @param String
+    * @return query
+    */
+    public function scopeUserForms($query, $currentUser) {
+        $table_name = $this->table . '.*';
+        $table_primary_key = $this->table . '.id';
+
+        $query = $query->select($table_name)
+                       ->leftJoin('onlineforms', $table_primary_key, '=', 'onlineforms.formable_id'); // Include related table
+
+        if($currentUser->employee->finance_department) {
+            return $query;
+        }
+        else if($currentUser->employee->head) {
+           $query = $query->where('onlineforms.department_id', $currentUser->employee->department_id);
+        }
+        else {
+            $query = $query->where('onlineforms.created_by', $currentUser->username);
+        }
+
+        return $query;
+    }
+
 }

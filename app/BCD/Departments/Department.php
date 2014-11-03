@@ -42,10 +42,10 @@ class Department extends Eloquent implements UserInterface, RemindableInterface 
     }
 
     /**
-    * One-to-one Relationship between Department and RequestForPayment
+    * One-to-one Relationship between Department and OnlineForm
     */
-    public function paymentRequest() {
-        return $this->belongsTo('BCD\RequestForPayments\RequestForPayment', 'department_id', 'department_id');
+    public function onlineForm() {
+        return $this->belongsTo('BCD\OnlineForms\OnlineForm', 'department_id', 'department_id');
     }
 
 

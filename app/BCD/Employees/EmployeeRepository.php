@@ -76,6 +76,16 @@ class EmployeeRepository {
 	}
 
 	/**
+	* Get all employees with the given username
+	*
+	* @param String $username
+	* @return Employee
+	*/
+	public function getEmployeesByUsername($username) {
+		return Employee::where('username', $username)->firstOrFail();
+	}
+
+	/**
 	* Get all employees by position to be listed on select tag
 	*
 	* @return Employee

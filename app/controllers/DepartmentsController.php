@@ -42,9 +42,9 @@ class DepartmentsController extends \BaseController {
 
 		$this->beforeFilter('auth');
 
-		$this->beforeFilter('role:System Administrator');
+		$this->beforeFilter('role:System Administrator', ['except' => 'show']);
 
-		$this->beforeFilter('csrf', array('on' => 'post'));
+		$this->beforeFilter('csrf', ['on' => 'post']);
 	}
 
 

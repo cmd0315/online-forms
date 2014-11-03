@@ -37,7 +37,11 @@ class ClientsController extends \BaseController {
 		$this->updateClientForm = $updateClientForm;
 		$this->clients = $clients;
 
-		$this->beforeFilter('role:System Administrator');
+		$this->beforeFilter('auth');
+
+		$this->beforeFilter('role:System Administrator', ['except' => 'show']);
+
+		$this->beforeFilter('csrf', ['on' => 'post']);
 	}
 	/**
 	 * Display a listing of the resource.

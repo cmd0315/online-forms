@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateFormCategoriesTable extends Migration {
+class CreateFormRejectReasonsTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,12 +12,13 @@ class CreateFormCategoriesTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('form_categories', function(Blueprint $table)
+		Schema::create('form_reject_reasons', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->string('name', 100)->unique();
-			$table->string('alias', 10)->unique();
+			$table->string('formable_type', 250);
+			$table->integer('reject_reason_id');
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 
@@ -29,7 +30,7 @@ class CreateFormCategoriesTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('form_categories');
+		Schema::drop('form_reject_reasons');
 	}
 
 }

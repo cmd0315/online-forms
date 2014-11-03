@@ -104,6 +104,7 @@ Route::filter('role', function($route, $request, $role)
 	}
 });
 
+
 /*
 |--------------------------------------------------------------------------
 | Current User Filter
@@ -117,4 +118,20 @@ Route::filter('currentUser', function($route)
 	if(Auth::guest() or Auth::user()->username !== $route->parameter('profile')) {
 		return Redirect::to('dashboard'); 
 	}
-}); 
+});
+
+/*
+|--------------------------------------------------------------------------
+| Approver Filter
+|--------------------------------------------------------------------------
+|
+|
+*/
+Route::filter('approver', function($route)
+{
+	if(Auth::guest() or !Auth::user()->employee->isApprover($route->parameter('approval'))) {
+		return Redirect::to('dashboard'); 
+	}
+});
+
+

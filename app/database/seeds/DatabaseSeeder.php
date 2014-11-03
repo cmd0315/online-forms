@@ -11,7 +11,8 @@ class DatabaseSeeder extends Seeder {
 		'account_role',
 		'clients',
 		'onlineforms',
-		'form_categories',
+		'reject_reasons',
+		'form_reject_reasons',
 		'prs'
 	];
 
@@ -22,7 +23,8 @@ class DatabaseSeeder extends Seeder {
 		'RoleSeeder',
 		'AccountRoleSeeder',
 		'ClientSeeder',
-		'FormCategorySeeder'
+		'RejectReasonSeeder',
+		'FormRejectReasonSeeder'
 	];
 
 	/**

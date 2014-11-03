@@ -7,6 +7,7 @@ use BCD\Clients\ClientRepository;
 use BCD\Employees\EmployeeRepository;
 use BCD\OnlineForms\RFP\Validation\CreateRequestForPaymentForm;
 use BCD\OnlineForms\RFP\CreateRFPCommand;
+use BCD\OnlineForms\RFP\EditRFPCommand;
 
 class PaymentRequestsController extends \BaseController {
 
@@ -24,7 +25,7 @@ class PaymentRequestsController extends \BaseController {
 	protected $onlineForms;
 
 	/**
-	* @var RequestForPayments $requestForPayments
+	* @var RequestForPaymentRepository $requestForPayments
 	*/
 	protected $requestForPayments;
 
@@ -56,6 +57,9 @@ class PaymentRequestsController extends \BaseController {
 		$this->departments = $departments;
 		$this->clients = $clients;
 		$this->employees = $employees;
+
+		$this->beforeFilter('auth');
+		$this->beforeFilter('csrf', ['on' => 'post']);
 	}
 
 	/**
@@ -66,7 +70,7 @@ class PaymentRequestsController extends \BaseController {
 	 */
 	public function index()
 	{
-		$forms = $this->requestForPayments->getUserForms(Auth::user()->username);
+		$forms = $this->requestForPayments->getUserForms(Auth::user());
 		return View::make('account.forms.rfp.index', ['pageTitle' => 'Request For Payment'], compact('forms'));
 	}
 
@@ -78,7 +82,7 @@ class PaymentRequestsController extends \BaseController {
 	 */
 	public function create()
 	{
-		$formNum = $this->onlineForms->generateFormNum('rfp');
+		$formNum = $this->onlineForms->generateFormNum('BCD\RequestForPayments\RequestForPayment');
 		$departments = $this->departments->listDepartmentByName();
 		$clients = $this->clients->listClientsByName();
 
@@ -115,38 +119,60 @@ class PaymentRequestsController extends \BaseController {
 
 	/**
 	 * Display the specified resource.
-	 * GET /paymentrequests/{id}
+	 * GET /paymentrequests/{num}
 	 *
-	 * @param  int  $id
+	 * @param  String  $num
 	 * @return Response
 	 */
-	public function show($id)
+	public function show($num)
 	{
-		//
+
+		$form = $this->requestForPayments->getFormByFormNum($num);
+		return View::make('account.forms.rfp.display', ['pageTitle' => 'Request for Payment', 'subHeading' => 'Transaction Summary'], compact('form'));
 	}
 
 	/**
 	 * Show the form for editing the specified resource.
-	 * GET /paymentrequests/{id}/edit
+	 * GET /paymentrequests/{num}/edit
 	 *
-	 * @param  int  $id
+	 * @param  String  $num
 	 * @return Response
 	 */
-	public function edit($id)
+	public function edit($num)
 	{
-		//
+		$form = $this->requestForPayments->getFormByFormNum($num);
+		$departments = $this->departments->orderByName();
+		$clients = $this->clients->orderByName();
+		return View::make('account.forms.rfp.edit', ['pageTitle' => 'Edit Request for Payment'], compact('form', 'departments', 'clients'));
 	}
 
 	/**
 	 * Update the specified resource in storage.
-	 * PUT /paymentrequests/{id}
+	 * PUT /paymentrequests/{num}
 	 *
-	 * @param  int  $id
+	 * @param  String  $num
 	 * @return Response
 	 */
-	public function update($id)
+	public function update($num)
 	{
-		//
+		$input = Input::only('form_num', 'payee_firstname', 'payee_middlename', 'payee_lastname', 'date_requested', 'particulars', 'total_amount', 'client_id', 'check_num', 'requestor', 'department_id', 'date_needed');
+
+		$this->createRequestForPaymentForm->validate($input);
+
+		extract($input);
+
+		$editRequest = $this->execute(
+			new EditRFPCommand($form_num, $payee_firstname, $payee_middlename, $payee_lastname, $date_requested, $particulars, $total_amount, $client_id, $check_num, $requestor, $department_id, $date_needed)
+		);
+
+		if($editRequest) {
+			Flash::success('You have successfully edited the payment request! <a href="' . URL::route('rfps.show', $form_num) . '"> View payment request.</a>');
+		}
+		else {
+			Flash::error('Failed to make a payment request');
+		}
+		
+		return Redirect::route('rfps.edit', $num);
 	}
 
 	/**
@@ -159,6 +185,18 @@ class PaymentRequestsController extends \BaseController {
 	public function destroy($id)
 	{
 		//
+	}
+
+	/**
+	* Return pdf version of the form
+	*
+	* @param String $formNum
+	* @return PDF
+	*/
+	public function pdf($formNum) {
+		$rfp = $this->requestForPayments->getFormByFormNum($formNum);
+		$view = View::make('account.forms.rfp.pdf', ['pageTitle' => 'Request for Payment'], compact('rfp'));
+		return PDF::load($view, 'A4')->show();
 	}
 
 }

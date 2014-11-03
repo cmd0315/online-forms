@@ -15,7 +15,13 @@ class RequestForPaymentRepository {
 	}
 
 	public function getUserForms($currentUser) {
-		return OnlineForm::with('paymentRequest')->currentUserForms($currentUser)->formsByCategory('rfp')->paginate(5);
+		//return OnlineForm::currentUserForms($currentUser->username)->formsByCategory('BCD\RequestForPayments\RequestForPayment')->paginate(5);
+
+		return RequestForPayment::userForms($currentUser)->paginate(5);
+	}
+
+	public function getFormByFormNum($formNum) {
+		return RequestForPayment::where('form_num', $formNum)->firstOrFail();
 	}
 	
 }
