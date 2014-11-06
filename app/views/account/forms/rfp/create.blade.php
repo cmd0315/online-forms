@@ -145,6 +145,5 @@
 		</div>
 	</div><!-- .row-fluid -->
 	<input type="hidden" id="form_num" name="form_num" value="{{ $formNum }}">
-	{{ Form::token() }}
 {{ Form::close() }}
 @stop

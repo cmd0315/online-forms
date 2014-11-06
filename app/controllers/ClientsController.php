@@ -43,6 +43,8 @@ class ClientsController extends \BaseController {
 
 		$this->beforeFilter('csrf', ['on' => 'post']);
 	}
+
+	
 	/**
 	 * Display a listing of the resource.
 	 * GET /clients

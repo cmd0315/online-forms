@@ -176,7 +176,6 @@
       <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
       {{ Form::submit('OK', array('class' => 'btn btn-warning')) }}
     </div>
-    {{ Form::token() }}
   {{ Form::close() }}
 </div><!-- .modal-content -->
 @stop

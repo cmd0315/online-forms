@@ -134,7 +134,6 @@
 							<button type="submit" class="btn btn-lg btn-warning" id="submit_form" name="submit_form">Submit</button>
 						</div>
 					</div><!-- .row -->
-					{{ Form::token() }}
 			    {{ Form::close() }}
 			</div>
 		</div><!-- .row -->

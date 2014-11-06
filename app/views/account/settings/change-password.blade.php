@@ -51,7 +51,6 @@
 					</div>
 				</div><!-- /row -->
 			</div>
-			{{ Form::token() }}
 		{{ Form::close() }}
 	</div>
 </div><!-- .row -->

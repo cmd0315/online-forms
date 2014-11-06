@@ -45,6 +45,14 @@ class PaymentRequestsController extends \BaseController {
 	protected $employees;
 
 	/**
+	* Directory of the formable_type
+	*
+	* @var String
+	*/
+	protected $dir; 
+
+
+	/**
 	* Constructor
 	*
 	* @param RequestForPaymentForm $requestForPaymentForm
@@ -57,6 +65,7 @@ class PaymentRequestsController extends \BaseController {
 		$this->departments = $departments;
 		$this->clients = $clients;
 		$this->employees = $employees;
+		$this->dir = 'RequestForPayments\RequestForPayment';
 
 		$this->beforeFilter('auth');
 		$this->beforeFilter('csrf', ['on' => 'post']);
@@ -71,7 +80,8 @@ class PaymentRequestsController extends \BaseController {
 	public function index()
 	{
 		$forms = $this->requestForPayments->getUserForms(Auth::user());
-		return View::make('account.forms.rfp.index', ['pageTitle' => 'Request For Payment'], compact('forms'));
+		$formRejectReasons = $this->onlineForms->getAllFormRejectReasons($this->dir);
+		return View::make('account.forms.rfp.index', ['pageTitle' => 'Request For Payment'], compact('forms', 'formRejectReasons'));
 	}
 
 	/**

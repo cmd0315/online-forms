@@ -70,9 +70,9 @@ class ApprovalController extends \BaseController {
 	{
 		$onlineForm = $this->onlineFormRepo->getFormByID($id);
 		$rejectReasons = $this->onlineFormRepo->getFormRejectReasons($id);
-		$whyRejected = $this->onlineFormRepo->getWhyRejected($id);
+		$whyRejectedArr = $this->onlineFormRepo->getWhyRejected($id);
 
-		return View::make('account.forms.processes.approval.decision', ['pageTitle' => 'Request Decision'], compact('onlineForm', 'rejectReasons', 'whyRejected'));
+		return View::make('account.forms.processes.approval.decision', ['pageTitle' => 'Request Decision'], compact('onlineForm', 'rejectReasons', 'whyRejectedArr'));
 	}
 
 	/**

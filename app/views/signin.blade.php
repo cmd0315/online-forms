@@ -29,7 +29,6 @@
 	      </div>
 		 </div>
 		<input type="submit" name="submit" id="submit" class="btn btn-lg btn-warning" value="Sign in"/>
-		{{ Form::token() }}
 	{{ Form::close() }}
 </div><!-- #home-form -->
 @stop

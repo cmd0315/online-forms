@@ -50,7 +50,6 @@
 							</div><!-- .row -->
 						</div><!-- .panel-body -->
 					</div> <!-- .panel -->
-					{{ Form::token() }}
 			    {{ Form::close() }}
 			</div>
 		</div><!-- .row -->

@@ -29,10 +29,11 @@
 								@if($currentUser->system_admin)
 									<i><h4 class="text-warning">Reasons for Rejection</h4></i>
 									<ol>
-										<li>Incomplete attachments</li>
-										<li>Not enogh funds</li>
+										@foreach($formRejectReasons as $formRejectReason)
+											<li>{{e($formRejectReason->rejectReason->reason)}}</li>
+										@endforeach
 									</ol>
-									<a href="#" class="btn btn-warning btn-sm pull-right" id="add-rejection-reasons"> Add More</a>
+									<a href="{{ URL::route('rejectreasons.create') }}" class="btn btn-warning btn-sm pull-right" id="add-rejection-reasons"> Add More</a>
 								@endif
 							</div>
 						</div><!-- .row -->

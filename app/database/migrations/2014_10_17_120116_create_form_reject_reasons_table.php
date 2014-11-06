@@ -16,7 +16,8 @@ class CreateFormRejectReasonsTable extends Migration {
 		{
 			$table->increments('id');
 			$table->string('formable_type', 250);
-			$table->integer('reject_reason_id');
+			$table->integer('reject_reason_id')->unsigned();
+			$table->foreign('reject_reason_id')->references('id')->on('reject_reasons')->onDelete('restrict')->onUpdate('cascade');
 			$table->timestamps();
 			$table->softDeletes();
 		});

@@ -38,7 +38,7 @@
 					<h4>Search: <mark>{{ $search }}</mark></h4>
 				@endif
 			</div>
-		</div>
+		</div><!-- .row -->
 		<div class="row">
 			<div class="col-lg-12">
 			    @if($departments->count())
@@ -78,7 +78,7 @@
 			      <h5>No Results found</h5>
 			    @endif
 			</div>
-		</div>
+		</div><!-- .row -->
 	</div>
 </div><!-- .row -->
 @stop
@@ -96,7 +96,6 @@
 			<button type="button" class="btn btn-default cancel-btn" id="cancel-btn2" data-dismiss="modal">Cancel</button>
 			{{ Form::submit('OK', array('class' => 'btn btn-warning')) }}
 		</div>
-		{{ Form::token() }}
 	{{ Form::close() }}
 </div><!-- .modal-content -->
 @stop

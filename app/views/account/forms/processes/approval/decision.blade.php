@@ -66,19 +66,17 @@
                                 <div class="row" style="display:none;" id="reject-reasons">
                                     <div class="col-lg-12">
                                         <h5>Reasons:</h5>
-                                        @if($whyRejected !== '')
+                                        @if(count($whyRejectedArr) > 0 )
                                             @foreach($rejectReasons as $rr)
-                                                @foreach($whyRejected as $wR)
-                                                    @if($wR->reason_id == $rr->id)
-                                                        <div class="checkbox">
-                                                            <label> <input type="checkbox" class="reject-checkbox" name="rejectReasons[]" value="{{$rr->id}}" checked> {{$rr->reason}}</label>
-                                                        </div><!-- checkbox -->
-                                                    @else
-                                                        <div class="checkbox">
-                                                            <label> <input type="checkbox" class="reject-checkbox" name="rejectReasons[]" value="{{$rr->id}}"> {{$rr->reason}}</label>
-                                                        </div><!-- checkbox -->
-                                                    @endif
-                                                @endforeach
+                                                @if(in_array($rr->id, $whyRejectedArr))
+                                                    <div class="checkbox">
+                                                        <label> <input type="checkbox" class="reject-checkbox" name="rejectReasons[]" value="{{$rr->id}}" checked> {{$rr->reason}}</label>
+                                                    </div><!-- checkbox -->
+                                                @else
+                                                    <div class="checkbox">
+                                                        <label> <input type="checkbox" class="reject-checkbox" name="rejectReasons[]" value="{{$rr->id}}"> {{$rr->reason}}</label>
+                                                    </div><!-- checkbox -->
+                                                @endif
                                             @endforeach
                                         @else
                                             @foreach($rejectReasons as $rr)

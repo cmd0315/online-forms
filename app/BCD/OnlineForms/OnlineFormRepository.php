@@ -1,6 +1,7 @@
 <?php namespace BCD\OnlineForms;
 
 use BCD\OnlineForms\OnlineForm;
+use BCD\OnlineForms\Rejection\FormRejectReason;
 use BCD\OnlineForms\Rejection\RejectReason;
 use BCD\OnlineForms\Rejection\RejectionHistory;
 
@@ -76,6 +77,20 @@ class OnlineFormRepository {
 	}
 
 	/**
+	* Get all the reasons why a form can be rejected
+	*
+	* @param String
+	* @return FormRejectReason
+	*/
+	public function getAllFormRejectReasons($formableType) {
+		$dir = 'BCD\\';
+		$dir .= $formableType; 
+		$formRejectReasons = FormRejectReason::where('formable_type', $dir)->get();
+
+		return $formRejectReasons;
+	}
+
+	/**
 	* Get the reasons why a form can be rejected
 	*
 	* @param int $id
@@ -100,17 +115,22 @@ class OnlineFormRepository {
 	* Return the reasons why the form was rejected
 	*
 	* @param int $id
-	* @return RejectionHistory or String
+	* @return array
 	*/
 	public function getWhyRejected($id) {
+		$whyRejectedArr = [];
+
 		$onlineForm = $this->getFormByID($id);
 
 		if($onlineForm->departmentRejected()) {
-			return $whyRejected = RejectionHistory::where('form_id', $id)->get();
+			$whyRejected = RejectionHistory::where('form_id', $id)->get();
+
+			foreach($whyRejected as $wR) {
+				array_push($whyRejectedArr, $wR->reason_id);
+			}
 		}
-		else {
-			return '';
-		}
+
+		return $whyRejectedArr;
 	}
 
 }

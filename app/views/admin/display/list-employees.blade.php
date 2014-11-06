@@ -43,7 +43,7 @@
 			<div class="col-lg-12">
 			    @if($employees->count())
 			    	<div class="table-responsive">
-						<table class="table table-condensed table-hover table-big" id="employee-table">
+						<table class="table">
 							<thead>
 							  <tr>
 							    <th>#</th>
@@ -110,7 +110,6 @@
 			<button type="button" class="btn btn-default cancel-btn" id="cancel-btn2" data-dismiss="modal">Cancel</button>
 			{{ Form::submit('OK', array('class' => 'btn btn-warning')) }}
 		</div>
-		{{ Form::token() }}
 	{{ Form::close() }}
 </div><!-- .modal-content -->
 @stop

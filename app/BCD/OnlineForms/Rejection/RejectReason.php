@@ -38,7 +38,7 @@ class RejectReason extends Eloquent implements UserInterface, RemindableInterfac
     */
     public function formRejectReasons() {
 
-    	return $this->belongsToMany('BCD\OnlineForms\Rejection\FormRejectReason', 'reject_reason_id', 'id');
+    	return $this->hasMany('BCD\OnlineForms\Rejection\FormRejectReason', 'reject_reason_id', 'id');
     }
 
     /**
@@ -47,5 +47,17 @@ class RejectReason extends Eloquent implements UserInterface, RemindableInterfac
     public function rejectionHistories() {
         $this->belongsToMany('BCD\OnlineForms\Rejection\RejectionHistory', 'reason_id', 'id');
     }
+
+    /**
+    * Create an instance of the model.
+    *
+    * @param String
+    */
+    public static function add($reason) {
+        $rejectReason = new static(compact('reason'));
+
+        return $rejectReason;
+    }
+
 
 }
