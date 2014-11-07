@@ -82,7 +82,7 @@
                             @if($currentUser->employee->isDepartmentHead(e($form->onlineForm->department_id)))
                                 <a class="btn btn-danger btn-sm" href="{{ URL::route('approval.edit', e($form->onlineForm->id)) }}">Approve Request</a>
                             @endif
-                            @if($currentUser->employee->finance_department)
+                            @if($currentUser->employee->finance_department && e($form->onlineForm->departmentApproved()))
                                 <button class="btn btn-danger btn-sm">Receive Request</button>
                             @endif
                         </div>

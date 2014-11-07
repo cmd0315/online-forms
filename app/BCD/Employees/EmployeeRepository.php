@@ -64,7 +64,7 @@ class EmployeeRepository {
 	public function getRegisteredEmployees() {
 		return Employee::where('position', '<', 2); //exclude system administrator
 	}
-
+	
 	/**
 	* Get all employees with the given department id
 	*
@@ -103,7 +103,6 @@ class EmployeeRepository {
 	public function paginateResults($search, array $filterOptions) {
 		return $this->getRegisteredEmployees()->search($search)->sort($filterOptions)->paginate(5);
 	}
-
 
 	/**
 	* Return total number of registered employees (except system admin)

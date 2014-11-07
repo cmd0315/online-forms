@@ -6,6 +6,7 @@ use BCD\Forms\UpdateClientProfileForm;
 use BCD\Clients\ClientRepository;
 use BCD\Clients\Registration\AddClientCommand;
 use BCD\Clients\Registration\UpdateClientCommand;
+use BCD\OnlineForms\ExportToExcel;
 
 class ClientsController extends \BaseController {
 
@@ -163,6 +164,20 @@ class ClientsController extends \BaseController {
 	public function destroy($id)
 	{
 		//
+	}
+
+	/**
+	* Export list of clients to Excel
+	*
+	* @return Excel
+	*/
+	public function export() 
+	{
+		$clients = $this->clients->getActiveClients()->get();
+
+		$excel = new ExportToExcel($clients, 'List of Clients');
+
+		return $excel->export();
 	}
 
 }

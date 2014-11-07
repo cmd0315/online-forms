@@ -226,4 +226,18 @@ class OnlineForm extends Eloquent implements UserInterface, RemindableInterface 
             return false;
         }
     }
+
+    /**
+    * Check if the form has been approved by the department head
+    *
+    * @param boolean
+    */
+    public function departmentApproved() {
+        if($this->stage > 0) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 }

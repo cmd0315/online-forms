@@ -11,7 +11,7 @@
 						<div class="btn-toolbar" role="toolbar">
 							<div class="btn-group btn-group-sm">
 								<a href="{{ URL::route('rejectreasons.create') }}" class="btn btn-primary">Add Reason</a>
-								<button type="button" class="btn btn-warning">Export List</button>
+								<a href="{{ URL::route('rejectreasons.export') }}" class="btn btn-warning">Export List</a>
 							</div><!-- .btn-group -->
 						</div><!-- .btn-toolbar -->
 					</div>
@@ -28,11 +28,11 @@
 				</div>
 				<div class="row">
 					<div class="col-lg-2">
-						<h4>Total Reasons: <small></small></h4>
+						<h4>Total Reasons: <small>{{$total_rejectreasons}}</small></h4>
 					</div>
 					<div class="col-lg-10">
-						@if(isset($search))
-							<h4>Search: <mark></mark></h4>
+						@if(isset($search) || $search != '')
+							<h4>Search: <mark>{{ $search }}</mark></h4>
 						@endif
 					</div>
 				</div><!-- .row -->
@@ -46,10 +46,10 @@
 							<thead>
 							  <tr>
 							    <td>#</td>
-							    <td>Date Created</td>
-							    <td>Last Updated At</td>
-							    <td>Reason</td>
+							    <td>{{ sort_rejectreasons_by('reason', 'Reason') }}</td>
 							    <td>Form Type</td>
+							    <td>{{ sort_rejectreasons_by('updated_at', 'Last Updated At') }}</td>
+							    <td>{{ sort_rejectreasons_by('created_at', 'Date Created') }}</td>
 							    <td></td>
 							  </tr>
 							</thead>
@@ -58,8 +58,6 @@
 							@foreach($rejectReasons as $rejectReason)
 								<tr>
 									<td>{{ ++$counter }}</td>
-									<td>{{ e($rejectReason->created_at) }}</td>
-									<td>{{ e($rejectReason->updated_at) }}</td>
 									<td><a href="{{ URL::route('rejectreasons.edit', e($rejectReason->id)) }}">{{ e($rejectReason->reason) }}</a></td>
 									<td>
 										<ul>
@@ -68,6 +66,8 @@
 											@endforeach
 										</ul>
 									</td>
+									<td>{{ e($rejectReason->updated_at) }}</td>
+									<td>{{ e($rejectReason->created_at) }}</td>
 									<td></td>
 								</tr>
 							@endforeach

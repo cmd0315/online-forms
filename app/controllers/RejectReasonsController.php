@@ -5,6 +5,7 @@ use BCD\OnlineForms\Rejection\Validation\RejectReasonForm;
 use BCD\OnlineForms\Rejection\AddRejectReasonCommand;
 use BCD\OnlineForms\Rejection\EditRejectReasonCommand;
 use BCD\OnlineForms\Rejection\RejectReasonRepository;
+use BCD\OnlineForms\ExportToExcel;
 
 class RejectReasonsController extends \BaseController {
 
@@ -54,8 +55,15 @@ class RejectReasonsController extends \BaseController {
 	 */
 	public function index()
 	{
-		$rejectReasons = $this->rejectReasonRepo->getAll();
-		return View::make('admin.display.list-formrejectreasons', ['pageTitle' => 'Reject Reasons'], compact('rejectReasons'));
+		$search = Request::get('q');
+		$sortBy = Request::get('sortBy');
+		$direction = Request::get('direction');
+
+		$total_rejectreasons = $this->rejectReasonRepo->total();
+
+		$rejectReasons = $this->rejectReasonRepo->paginateResults($search, compact('sortBy', 'direction'));
+		//$employees = $this->employees->paginateResults($search, compact('sortBy', 'direction'));
+		return View::make('admin.display.list-formrejectreasons', ['pageTitle' => 'Reject Reasons'], compact('rejectReasons', 'total_rejectreasons', 'search'));
 	}
 
 	/**
@@ -161,6 +169,21 @@ class RejectReasonsController extends \BaseController {
 	public function destroy($id)
 	{
 		//
+	}
+
+
+	/**
+	* Export list of employees to Excel
+	*
+	* @return Excel
+	*/
+	public function export() 
+	{
+		$rejectReasons = $this->rejectReasonRepo->getAll()->get();
+
+		$excel = new ExportToExcel($rejectReasons, 'List of Reject Reasons');
+
+		return $excel->export();
 	}
 
 }

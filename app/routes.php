@@ -7,10 +7,14 @@ Route::get('/',[
 
 Route::resource('accounts', 'AccountsController');
 Route::resource('profile', 'ProfilesController');
+Route::get('employees/export', ['as' => 'employees.export', 'uses' => 'EmployeesController@export']);
 Route::resource('employees', 'EmployeesController');
+Route::get('departments/export', ['as' => 'departments.export', 'uses' => 'DepartmentsController@export']);
 Route::resource('departments', 'DepartmentsController');
+Route::get('clients/export', ['as' => 'clients.export', 'uses' => 'ClientsController@export']);
 Route::resource('clients', 'ClientsController');
 Route::resource('forms', 'FormsController');
+Route::get('rejectreasons/export', ['as' => 'rejectreasons.export', 'uses' => 'RejectReasonsController@export']);
 Route::resource('rejectreasons', 'RejectReasonsController');
 Route::get('/rfps/{id}/pdf', ['as' => 'rfps.pdf', 'uses' => 'PaymentRequestsController@pdf']);
 Route::resource('rfps', 'PaymentRequestsController');

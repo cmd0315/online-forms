@@ -62,7 +62,7 @@ class RejectReasonRepository {
 	* Return all reject reasons
 	*/
 	public function getAll() {
-		return RejectReason::orderBy('created_at', 'DESC')->paginate(15);
+		return RejectReason::where('reason', '!=', '');
 	}
 
 	/**
@@ -87,6 +87,26 @@ class RejectReasonRepository {
 		}
 
 		return $associatedFormsArr;
+	}
+
+	/**
+	* Return paginated results with search and filter values
+	* @param String
+	* @param array
+	* @return QueryBuilder
+	*/
+	public function paginateResults($search, array $filterOptions) {
+		return $this->getAll()->search($search)->sort($filterOptions)->paginate(5);
+	}
+
+
+	/**
+	* Return total number of reject reasons
+	*
+	* @return int 
+	*/
+	public function total() {
+		return $this->getAll()->count();
 	}
 
 

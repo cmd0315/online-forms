@@ -7,6 +7,7 @@ use BCD\Forms\RegisterEmployeeForm;
 use BCD\Forms\UpdateEmployeeForm;
 use BCD\Employees\EmployeeRepository;
 use BCD\Departments\DepartmentRepository;
+use BCD\OnlineForms\ExportToExcel;
 
 class EmployeesController extends \BaseController {
 
@@ -183,6 +184,20 @@ class EmployeesController extends \BaseController {
 		}
 		
 		return 	Redirect::route('employees.index');
+	}
+
+	/**
+	* Export list of employees to Excel
+	*
+	* @return Excel
+	*/
+	public function export() 
+	{
+		$employees = $this->employees->getRegisteredEmployees()->get();
+
+		$excel = new ExportToExcel($employees, 'List of Employees');
+
+		return $excel->export();
 	}
 
 }

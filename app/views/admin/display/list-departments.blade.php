@@ -12,7 +12,7 @@
 				<div class="btn-toolbar" role="toolbar">
 					<div class="btn-group btn-group-sm">
 						<a href="{{ URL::route('departments.create') }}" class="btn btn-primary">Add Department</a>
-						<button type="button" class="btn btn-warning">Export List</button>
+						<a href="{{ URL::route('departments.export') }}" class="btn btn-warning">Export List</a>
   						<button type="button" class="btn btn-danger" id="remove-btn" name="remove-btn">Remove Department</button>
   						<a class="btn btn-default cancel-btn" id="cancel-btn1" name="cancel-btn1">Cancel Remove</a>
 					</div><!-- .btn-group -->

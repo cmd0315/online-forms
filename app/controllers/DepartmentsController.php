@@ -6,6 +6,7 @@ use BCD\Departments\Registration\RemoveDepartmentCommand;
 use BCD\Forms\AddDepartmentForm;
 use BCD\Forms\UpdateDepartmentProfileForm;
 use BCD\Departments\DepartmentRepository;
+use BCD\OnlineForms\ExportToExcel;
 
 class DepartmentsController extends \BaseController {
 
@@ -180,6 +181,21 @@ class DepartmentsController extends \BaseController {
 		}
 		
 		return 	Redirect::route('departments.index');
+	}
+
+
+	/**
+	* Export list of departments to Excel
+	*
+	* @return Excel
+	*/
+	public function export() 
+	{
+		$departments = $this->departments->getActiveDepartments()->get();
+
+		$excel = new ExportToExcel($departments, 'List of Departments');
+
+		return $excel->export();
 	}
 
 

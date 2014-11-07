@@ -17,4 +17,5 @@ class BaseController extends Controller {
 		View::share('currentUser', Auth::user()); //share login user information to all views
 	}
 
+
 }
