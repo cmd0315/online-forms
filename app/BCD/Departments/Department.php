@@ -38,14 +38,14 @@ class Department extends Eloquent implements UserInterface, RemindableInterface 
     * One-to-many Relationship between Department and Employee
     */
     public function employees() {
-    	return $this->hasMany('BCD\Employees\Employee', 'department_id', 'department_id');
+    	return $this->hasMany('BCD\Employees\Employee', 'department_id', 'department_id')->withTrashed();
     }
 
     /**
     * One-to-one Relationship between Department and OnlineForm
     */
     public function onlineForm() {
-        return $this->belongsTo('BCD\OnlineForms\OnlineForm', 'department_id', 'department_id');
+        return $this->belongsTo('BCD\OnlineForms\OnlineForm', 'department_id', 'department_id')->withTrashed();
     }
 
 
@@ -71,7 +71,7 @@ class Department extends Eloquent implements UserInterface, RemindableInterface 
     * if exists, @return String full_name of employee
     * else, @return String 'None'
     */
-    public function getDepartmentHead() {
+    public function getDepartmentHeadAttribute() {
         $headEmployee = $this->employees()->where('position', '1')->first();
         if($headEmployee) {
             return $headEmployee->full_name;
@@ -99,7 +99,7 @@ class Department extends Eloquent implements UserInterface, RemindableInterface 
     *
     * @param $query
     * @param String
-    * @return $query
+    * @return Department
     */
     public function scopeSearch($query, $search) {
         if(isset($search)) {
@@ -108,19 +108,39 @@ class Department extends Eloquent implements UserInterface, RemindableInterface 
                 $table_name = $this->table . '.*';
                 $query->select($table_name)
                         ->where($this->table . '.department_id', 'LIKE', "%$search%")
-                        ->orWhere($this->table . '.department_name', 'LIKE', "%$search%");
+                        ->orWhere($this->table . '.department_name', 'LIKE', "%$search%")
+                        ->orWhereHas('employees', function($q) use ($search) {
+                            $q->where('first_name', 'LIKE', "%$search%");
+                        })
+                        ->orWhereHas('employees', function($q) use ($search) {
+                            $q->where('middle_name', 'LIKE', "%$search%");
+                        })
+                        ->orWhereHas('employees', function($q) use ($search) {
+                            $q->where('last_name', 'LIKE', "%$search%");
+                        });
+
+                if(strcasecmp($search, 'active') == 0) {
+                    $query->orWhereNull($this->table . '.deleted_at');
+                }
+                else if(strcasecmp($search, 'inactive') == 0) {
+                    $query->orWhereNotNull($this->table . '.deleted_at');
+                }
+
+                $query->get();
             });
         }
         else {
-         return $query;
+
+            return $query;
         }
     }
 
     /**
     * Sort datatable by the given database field and sort query direction
     *
+    * @param $query
     * @param array $params
-    * @return Employee
+    * @return Department
     */
     public function scopeSort($query, array $params) {
         if($this->isSortable($params)) {
@@ -129,11 +149,12 @@ class Department extends Eloquent implements UserInterface, RemindableInterface 
 
             if($sortBy == 'last_name'){
                 $table_name = $this->table . '.*';
-                $table_primary_key = $this->table . '.department_id';
+                $table_key = $this->table . '.department_id';
                 return $query
-                        ->select($table_name) // Avoid 'ambiguous column name' for paginate() method
-                        ->leftJoin('employees', $table_primary_key, '=', 'employees.department_id') // Include related table
-                        ->orderBy('employees.' . $sortBy, $direction); // Finally sort by related column
+                        ->select($table_name)
+                        ->leftJoin('employees', $table_key, '=', 'employees.department_id')
+                        ->where('employees.position', '1')
+                        ->orderBy('employees.' . $sortBy, $direction);
             }
             else {
                 return $query->orderBy($sortBy, $direction);
@@ -153,6 +174,34 @@ class Department extends Eloquent implements UserInterface, RemindableInterface 
     public function isSortable(array $params) {
         if(in_array($params['sortBy'], $this->filter_fields)) {
             return $params['sortBy'] and $params['direction'];
+        }
+    }
+
+   /**
+    * Check if the entry has already been softdeleted
+    *
+    * @return boolean
+    */
+    public function isDeleted() {
+        if($this->deleted_at !== NULL) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
+    * Return formatted status of the department based on deleted_at value
+    *
+    * @return String
+    */
+    public function getDepartmentStatusAttribute() {
+        if($this->isDeleted()) {
+            print '<span class="label label-danger">Inactive</span>';
+        }
+        else {
+            print '<span class="label label-success">Active</span>';
         }
     }
 

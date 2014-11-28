@@ -19,7 +19,11 @@
                         </div>
                         <div class="col-xs-7 text-right">
                             @if(($currentUser->system_admin) && (e($user->username) !== $currentUser->username))
-                                <button class="btn btn-danger btn-sm" name="remove-acct-btn" id="remove-acct-btn" data-toggle="modal" data-target="#myModal">Remove Account</button>
+                                @if($user->isDeleted())
+                                    <a href="{{ URL::route('employees.restore', e($user->username)) }}" class="btn btn-warning btn-sm" name="restore-acct-btn" id="restore-acct-btn">Restore Account</a>
+                                @else
+                                    <button class="btn btn-danger btn-sm" name="remove-acct-btn" id="remove-acct-btn" data-toggle="modal" data-target="#myModal">Remove Account</button>
+                                @endif
                             @endif
                         </div>
                     </div>
@@ -65,6 +69,14 @@
                             </small></p>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <p> Status: </p>
+                        </div>
+                        <div class="col-lg-8">
+                            {{ e($user->employeeStatus) }}
+                        </div>
+                    </div>
                 </div>
             </div><!-- .panel -->
         </div>
@@ -76,10 +88,10 @@
                             Employee Information
                         </div>
                         <div class="col-xs-9 text-right">
-                            @if(e($user->username) == $currentUser->username)
-                                <a href="{{ URL::route('profile.edit', e($user->username)) }}"><button class="btn btn-warning btn-sm">Edit Profile</button></a>
-                            @else
-                                @if($currentUser->system_admin)
+                            @if( !($user->isDeleted()) )
+                                @if( e($user->username) == $currentUser->username )
+                                    <a href="{{ URL::route('profile.edit', e($user->username)) }}"><button class="btn btn-warning btn-sm">Edit Profile</button></a>
+                                @elseif($currentUser->system_admin)
                                     <a href="{{ URL::route('employees.edit', e($user->username)) }}"><button class="btn btn-warning btn-sm">Edit Profile</button></a>
                                 @endif
                             @endif

@@ -19,6 +19,7 @@ class RemoveDepartmentCommandHandler implements CommandHandler {
 	* Constructor
 	*
 	* @var DepartmentRepository $departmentRepository
+	* @var EmployeeRepository $employeeRepository
 	*/
 	function __construct(DepartmentRepository $departmentRepository, EmployeeRepository $employeeRepository) {
 		$this->departmentRepository = $departmentRepository;
@@ -28,7 +29,8 @@ class RemoveDepartmentCommandHandler implements CommandHandler {
 	/**
 	* Handles the command.
 	*
-	* RemoveDepartmentCommand $command
+	* @param RemoveDepartmentCommand $command
+	* @return Department
 	*/
 	public function handle($command) {
 		$departmentRemove = $this->departmentRepository->remove($command->department_id);

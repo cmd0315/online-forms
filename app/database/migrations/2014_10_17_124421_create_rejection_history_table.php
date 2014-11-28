@@ -17,8 +17,8 @@ class CreateRejectionHistoryTable extends Migration {
 			$table->increments('id');
 			$table->integer('form_id')->unsigned();
 			$table->foreign('form_id')->references('id')->on('onlineforms')->onDelete('restrict')->onUpdate('cascade');
-			$table->integer('reason_id')->unsigned();
-			$table->foreign('reason_id')->references('id')->on('reject_reasons')->onDelete('restrict')->onUpdate('cascade');
+			$table->integer('form_reject_reason_id')->unsigned();
+			$table->foreign('form_reject_reason_id')->references('id')->on('form_reject_reasons')->onDelete('restrict')->onUpdate('cascade');
 			$table->timestamps();
 			$table->softDeletes();
 		});

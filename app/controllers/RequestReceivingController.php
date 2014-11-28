@@ -2,11 +2,11 @@
 
 use BCD\Core\CommandBus;
 use BCD\OnlineForms\OnlineFormRepository;
-use BCD\OnlineForms\ApproveRequestCommand;
+use BCD\OnlineForms\ApproveReceiveRequestCommand;
 use BCD\OnlineForms\Validation\ApprovalForm;
 
-class ApprovalController extends \BaseController {
-
+class RequestReceivingController extends \BaseController {
+	
 	use CommandBus;
 
 	/**
@@ -19,7 +19,6 @@ class ApprovalController extends \BaseController {
 	*/
 	protected $approvalForm;
 
-
 	/**
 	* Constructor
 	*
@@ -31,14 +30,13 @@ class ApprovalController extends \BaseController {
 
 		$this->beforeFilter('auth');
 
-		$this->beforeFilter('approver');
+		$this->beforeFilter('forReceiving');
 
 		$this->beforeFilter('csrf', ['on' => 'post']);
 	}
-	
+
 	/**
 	 * Display a listing of the resource.
-	 * GET /approval
 	 *
 	 * @return Response
 	 */
@@ -47,21 +45,21 @@ class ApprovalController extends \BaseController {
 		//
 	}
 
+
 	/**
 	 * Display the specified resource.
-	 * GET /approval/{id}
 	 *
 	 * @param  int  $id
 	 * @return Response
 	 */
 	public function show($id)
 	{
-		//return View::make('account.forms.processes.approval.decision', ['pageTitle' => 'Request Decision']);
+		//
 	}
+
 
 	/**
 	 * Show the form for editing the specified resource.
-	 * GET /approval/{id}/edit
 	 *
 	 * @param  int  $id
 	 * @return Response
@@ -69,15 +67,15 @@ class ApprovalController extends \BaseController {
 	public function edit($id)
 	{
 		$onlineForm = $this->onlineFormRepo->getFormByID($id);
-		$rejectReasons = $this->onlineFormRepo->getFormRejectReasons($id);
+		$formRejectReasons = $this->onlineFormRepo->getFormReceiveRejectReasons($id);
 		$whyRejectedArr = $this->onlineFormRepo->getWhyRejected($id);
 
-		return View::make('account.forms.processes.approval.decision', ['pageTitle' => 'Request Decision'], compact('onlineForm', 'rejectReasons', 'whyRejectedArr'));
+		return View::make('account.forms.processes.receiving.decision', ['pageTitle' => 'Receive Request'], compact('onlineForm', 'formRejectReasons', 'whyRejectedArr'));
 	}
+
 
 	/**
 	 * Update the specified resource in storage.
-	 * PUT /approval/{id}
 	 *
 	 * @param  int  $id
 	 * @return Response
@@ -87,26 +85,46 @@ class ApprovalController extends \BaseController {
 		$this->approvalForm->validate(Input::all());
 
 		$decisionOptions = Input::get('decisionOptions');
-		$rejectReasons = Input::get('rejectReasons');
-		$approver = Input::get('approver');
+		$formRejectReasons = Input::get('formRejectReasons');
+		$receiver = Input::get('receiver');
 
-		$approval = $this->execute(
-			new ApproveRequestCommand($id, $decisionOptions, $rejectReasons, $approver)
+		$receiving = $this->execute(
+			new ApproveReceiveRequestCommand($id, $decisionOptions, $formRejectReasons, $receiver)
 		);
 
-		if($approval) {
+		if($receiving) {
+			$formNum = $this->onlineFormRepo->getFormNum($id);
+
+			$viewRequest = '<a href="' . URL::route('rfps.show', $formNum) . '">View Request here.' . '</a>';
+			$msg = '';
+
 			if($decisionOptions == 0) {
-				Flash::success('Request approved!');
+				$msg = 'Request approved! ' . $viewRequest;
+				Flash::success($msg);
 			}
 			else {
-				Flash::success('Request rejected!');
+				$msg = 'Request rejected! ' . $viewRequest;
+				Flash::success($msg);
 			}
 		}
 		else{
 			Flash::error('Failed to make a decision');
 		}
 		
-		return Redirect::route('approval.edit', $id);
+		return Redirect::route('receiving.edit', $id);
 	}
+
+
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function destroy($id)
+	{
+		//
+	}
+
 
 }

@@ -24,7 +24,7 @@ class FormRejectReason extends Eloquent implements UserInterface, RemindableInte
 	 *
 	 * @var array
      */
-	protected $fillable = ['formable_type', 'reject_reason_id'];
+	protected $fillable = ['formable_type', 'reject_reason_id', 'process_type'];
 
     /**
     * Required attribute for soft deletion
@@ -54,8 +54,8 @@ class FormRejectReason extends Eloquent implements UserInterface, RemindableInte
     *
     * @param String
     */
-    public static function add($formable_type, $reject_reason_id) {
-        $formRejectReason = new static(compact('formable_type', 'reject_reason_id'));
+    public static function add($formable_type, $reject_reason_id, $process_type) {
+        $formRejectReason = new static(compact('formable_type', 'reject_reason_id', 'process_type'));
 
         return $formRejectReason;
     }
@@ -75,6 +75,20 @@ class FormRejectReason extends Eloquent implements UserInterface, RemindableInte
         }
         else {
             return $formType;
+        }
+    }
+
+    /**
+    * Identify if the reject reason is created for the approving or receiving of the form
+    *
+    * @return String
+    */
+    public function getProcessAttribute() {
+        if($this->process_type <= 0) {
+            return 'Department Approval';
+        }
+        else {
+            return 'Receiving';
         }
     }
 

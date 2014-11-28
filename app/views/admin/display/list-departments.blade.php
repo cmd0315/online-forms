@@ -8,15 +8,20 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="row table-toolbar">
-			<div class="col-lg-9">
+			<div class="col-lg-4">
 				<div class="btn-toolbar" role="toolbar">
 					<div class="btn-group btn-group-sm">
 						<a href="{{ URL::route('departments.create') }}" class="btn btn-primary">Add Department</a>
-						<a href="{{ URL::route('departments.export') }}" class="btn btn-warning">Export List</a>
+						<button type="button" id="{{ URL::route('departments.export') }}" class="btn btn-warning export">Export List</button>
   						<button type="button" class="btn btn-danger" id="remove-btn" name="remove-btn">Remove Department</button>
   						<a class="btn btn-default cancel-btn" id="cancel-btn1" name="cancel-btn1">Cancel Remove</a>
 					</div><!-- .btn-group -->
 				</div><!-- .btn-toolbar -->
+			</div>
+			<div class="col-lg-5">
+				<div class="progress-div" style="display:none;">
+					<i class="fa fa-lg fa-cog fa-spin"></i> Exporting the data ...
+				</div>
 			</div>
 			<div class="col-lg-3">
 				{{ Form::open(['method' => 'GET', 'route' => 'departments.index']) }}
@@ -31,11 +36,14 @@
 		</div>
 		<div class="row">
 			<div class="col-lg-2">
-				<h4>Total Departments: <small>{{ $total_departments }}</small></h4>
+				<h4>Active: <small>{{ $active_departments }}</small></h4>
 			</div>
-			<div class="col-lg-10">
+			<div class="col-lg-2">
+				<h4>Total: <small>{{ $total_departments }}</small></h4>
+			</div>
+			<div class="col-lg-8">
 				@if(isset($search))
-					<h4>Search: <mark>{{ $search }}</mark></h4>
+					<h5>Search:  <mark>{{ $search }}</mark> <a href="{{ URL::route('departments.index') }}"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></a></h5>
 				@endif
 			</div>
 		</div><!-- .row -->
@@ -49,6 +57,7 @@
 							    <td>#</td>
 							    <td>{{ sort_departments_by('department_id', 'ID') }}</td>
 							    <td>{{ sort_departments_by('department_name', 'Name') }}</td>
+							    <td>Status</td>
 							    <td>{{ sort_departments_by('last_name', 'Head Employee') }}</td>
 							    <td>{{ sort_departments_by('updated_at', 'Last Updated At') }}</td>
 							    <td>{{ sort_departments_by('created_at', 'Date Joined') }}</td>
@@ -56,16 +65,20 @@
 							  </tr>
 							</thead>
 							<tbody>
-							<?php $counter=0; ?>
 							@foreach($departments as $department)
-							    <tr>
-							      <td>{{ ++$counter }}</td>
-							      <td><a href="{{ URL::route('departments.show', ['department_id' => $departmentID = e($department->department_id)]) }}">{{ $departmentID }}</a></td>
-							      <td> {{ e($department->department_name) }} </td>
-							      <td> {{ $department->getDepartmentHead() }} </td>
-							      <td> {{ e($department->updated_at) }} </td>
-							      <td> {{ e($department->created_at) }} </td>
-									@if(($deleteStatus = e($department->deleted_at)) == NULL)
+								@if($department->isDeleted())
+							    	<tr class="danger">
+							    @else
+							    	<tr>
+							    @endif
+								      <td>{{ ++$currentRow }}</td>
+								      <td><a href="{{ URL::route('departments.show', ['department_id' => $departmentID = e($department->department_id)]) }}">{{ $departmentID }}</a></td>
+								      <td> {{ e($department->department_name) }} </td>
+								      <td> {{ e($department->department_status) }} </td>
+								      <td> {{ $department->department_head }} </td>
+								      <td> {{ e($department->updated_at) }} </td>
+								      <td> {{ e($department->created_at) }} </td>
+									@if( !($department->isDeleted()) )
 										<td><button class="btn btn-delete" id="{{ e($department->department_name) }}" value="{{ URL::route('departments.destroy', e($department->department_id)) }}" style="display:none;">X</button></td>
 									@endif
 							    </tr>

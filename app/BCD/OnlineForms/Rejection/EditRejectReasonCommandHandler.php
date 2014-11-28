@@ -32,7 +32,7 @@ class EditRejectReasonCommandHandler implements CommandHandler {
 	/**
 	* Handles the command.
 	*
-	* @param AddRejectReasonCommand $command
+	* @param EditRejectReasonCommand $command
 	*/
 	public function handle($command) {
 		
@@ -43,21 +43,36 @@ class EditRejectReasonCommandHandler implements CommandHandler {
 
 		if($saveEdit) {
 			$associatedForms = $this->rejectReasonRepo->getAssociatedForms($command->id);
+			$associatedProcesses = $this->rejectReasonRepo->getAssociatedProcesses($command->id);
 
-			foreach($command->forms as $form) {
-				if(!(in_array($form, $associatedForms))) {
-					$formRejectReason = FormRejectReason::add($form, $command->id);
 
-					$addRejectReasonToForm = $this->formRejectReasonRepo->save($formRejectReason);
-				}
-			}
 
 			foreach($associatedForms as $associatedForm) {
 				if(!(in_array($associatedForm, $command->forms))) {
-
-					$removeRejectReason = $this->formRejectReasonRepo->remove($associatedForm, $command->id);
+					foreach($associatedProcesses as $associatedProcess) {
+						if(!(in_array($associatedProcess, key($command->process_types)))) {
+							$removeRejectReason = $this->formRejectReasonRepo->remove($associatedForm, $command->id, $associatedProcess);
+						}
+					}
 				}
 			}
+
+			foreach($command->forms as $form) {
+				foreach($command->process_types as $process_type) {
+					if(!(in_array($form, $associatedForms) && !(in_array($process_type, $associatedProcesses)))) {
+						$formRejectReason = FormRejectReason::add($form, $command->id, $process_type);
+
+						$addRejectReasonToForm = $this->formRejectReasonRepo->save($formRejectReason);
+					}
+				}
+			}
+
+			// foreach($associatedProcesses as $associatedProcess) {
+			// 	if(!(in_array($associatedProcess, $command->process_types))) {
+
+			// 		$removeRejectReason = $this->formRejectReasonRepo->removeByProcess($associatedProcess, $command->id);
+			// 	}
+			// }
 		}
 
 		return $saveEdit;

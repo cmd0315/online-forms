@@ -5,6 +5,8 @@ use BCD\OnlineForms\Rejection\FormRejectReason;
 use BCD\OnlineForms\Rejection\RejectReason;
 use BCD\OnlineForms\Rejection\RejectionHistory;
 
+use BCD\RequestForPayments\RequestForPayment;
+
 class OnlineFormRepository {
 
 	/**
@@ -14,6 +16,15 @@ class OnlineFormRepository {
 	*/
 	public function save(OnlineForm $onlineForm) {
 		return $onlineForm->save();
+	}
+
+	/**
+	* Return all instance of the form including the trashed
+	*
+	* @return OnlineForm
+	*/
+	public function getAll() {
+		return OnlineForm::withTrashed();
 	}
 
 	/**
@@ -43,7 +54,7 @@ class OnlineFormRepository {
 	* @return OnlineForm
 	*/
 	public function getCurrentUserForms() {
-		return OnlineForm::where('created_by', Auth::user()->username);
+		return $this->getAll()->where('created_by', Auth::user()->username);
 	}
 
 	/**
@@ -63,7 +74,17 @@ class OnlineFormRepository {
 	* @return OnlineForm
 	*/
 	public function getFormByID($id) {
-		return OnlineForm::where('id', $id)->firstOrFail();
+		return $this->getAll()->where('id', $id)->firstOrFail();
+	}
+
+	/**
+	* Return OnlineForm given the form number
+	*
+	* @param String $formNum
+	* @return OnlineForm
+	*/
+	public function getFormByFormNum($formNum) {
+		return $this->getAll()->where('form_num', $formNum)->firstOrFail();
 	}
 
 	/**
@@ -73,7 +94,29 @@ class OnlineFormRepository {
 	* @return OnlineForm
 	*/
 	public function getFormByFormableID($id) {
-		return OnlineForm::where('formable_id', $id)->firstOrFail();
+		return $this->getAll()->where('formable_id', $id)->firstOrFail();
+	}
+
+	public function getFormType($id) {
+		$onlineForm = $this->getFormByFormableID($id);
+
+		$formType = explode('\\', $onlineForm->formable_type);
+		$formType = $formType[2];
+
+		return $formType;
+	}
+
+	public function getFormNum($id) {
+		$formType = $this->getFormType($id);
+
+		$onlineForm = $this->getFormByID($id);
+
+		if($onlineForm->isRecognized($formType)) {
+			if($formType == "RequestForPayment") {
+				return RequestForPayment::where('id', $id)->pluck('form_num');
+			}
+
+		}
 	}
 
 	/**
@@ -91,23 +134,46 @@ class OnlineFormRepository {
 	}
 
 	/**
-	* Get the reasons why a form can be rejected
+	* Get the reasons why a form can be rejected by a department
 	*
 	* @param int $id
 	* @return array
 	*/
-	public function getFormRejectReasons($id) {
-		$rejectReasonArr = [];
+	public function getFormDepartmentRejectReasons($id) {
+		$formRejectReasonArr = [];
 
 		$formRejectReasons = OnlineForm::where('id', $id)->firstOrFail()->formRejectReasons;
 
 		foreach($formRejectReasons as $fRR) {
-			$rejectReason = RejectReason::where('id', $fRR->reject_reason_id)->firstOrFail();
+			if($fRR->process_type < 1) {
+				array_push($formRejectReasonArr, $fRR); 
 
-			array_push($rejectReasonArr, $rejectReason); 
+			}
 		}
 
-		return $rejectReasonArr;
+		return $formRejectReasonArr;
+
+	}
+
+	/**
+	* Get the reasons why a form can be rejected by a receiver
+	*
+	* @param int $id
+	* @return array
+	*/
+	public function getFormReceiveRejectReasons($id) {
+		$formRejectReasonArr = [];
+
+		$formRejectReasons = $this->getFormByID($id)->formRejectReasons;
+
+		foreach($formRejectReasons as $fRR) {
+			if($fRR->process_type >= 1) {
+				array_push($formRejectReasonArr, $fRR); 
+
+			}
+		}
+
+		return $formRejectReasonArr;
 
 	}
 
@@ -122,15 +188,24 @@ class OnlineFormRepository {
 
 		$onlineForm = $this->getFormByID($id);
 
-		if($onlineForm->departmentRejected()) {
+		if($onlineForm->departmentRejected() || $onlineForm->receiverRejected()) {
 			$whyRejected = RejectionHistory::where('form_id', $id)->get();
 
 			foreach($whyRejected as $wR) {
-				array_push($whyRejectedArr, $wR->reason_id);
+				array_push($whyRejectedArr, $wR->form_reject_reason_id);
 			}
 		}
 
 		return $whyRejectedArr;
+	}
+
+	/**
+	* Soft delete an online form entity
+	*
+	* @param int $id
+	*/
+	public function closeRequest($id) {
+		return $this->getFormByID($id)->delete();
 	}
 
 }

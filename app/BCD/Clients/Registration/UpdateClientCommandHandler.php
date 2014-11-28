@@ -23,6 +23,7 @@ class UpdateClientCommandHandler implements CommandHandler {
 	* Handles the command
 	*
 	* @param UpdateClientCommand $command
+	* @return Client
 	*/
 	public function handle($command) {
 		$client = $this->clientsRepository->getClientById($command->id);
@@ -43,6 +44,6 @@ class UpdateClientCommandHandler implements CommandHandler {
 			$updateClient = $this->clientsRepository->save($client);
 		}
 
-		return $updateClient;
+		return $client;
 	}
 }

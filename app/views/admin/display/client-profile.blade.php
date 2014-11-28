@@ -16,8 +16,12 @@
                         <div class="col-xs-6 text-right">
                             @if(($currentUser->system_admin))
                             <div class="btn-group btn-group-sm">
-                                <a href="{{ URL::route('clients.edit', e($client->client_id)) }}" class="btn btn-primary">Edit</a>  
-                                <a href="{{ URL::route('clients.destroy', e($client->client_id)) }}" class="btn btn-danger">Remove</a>   
+                                @if( !($client->isDeleted()) )
+                                    <a href="{{ URL::route('clients.edit', e($client->client_id)) }}" class="btn btn-primary">Edit</a>  
+                                    <a href="{{ URL::route('clients.destroy', e($client->client_id)) }}" class="btn btn-danger">Remove</a>
+                                @else
+                                    <a href="{{ URL::route('clients.restore', e($client->client_id)) }}" class="btn btn-warning">Restore</a>
+                                @endif
                             </div><!-- .btn-group -->
                             @endif
                         </div>

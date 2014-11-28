@@ -59,7 +59,6 @@ footer .footer-above {
     padding: 50px 0;
     background-color: #06a885;
     color: #fff;
-    border-top: 2px solid #f15828;
 }
 
 
@@ -263,11 +262,27 @@ li.message-footer {
     padding: 0;
     background-color: #fff;
 }
-.side-nav ul>li>a {
-    color: #E0E0E0;
-}
 ul.in {
     list-style-type: none;
+}
+
+/* SIDE NAV */
+#wrapper .side-nav {
+    margin-top: 20px;
+}
+.side-nav h4{
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: normal;
+}
+.side-nav ul {
+    padding: 10px 0px 30px;
+    text-align: center;
+    background-color: #21B898;
+}
+.side-nav ul>li>a {
+    font-size: 14px;
+    color: #ffffff;
 }
 
 /* ACTIVITY LIST */
@@ -288,6 +303,14 @@ ul.in {
 .activitylist li ul li {
     list-style: none;
     border: 0;
+}
+
+/* WHY REJECTED LIST*/
+ul.why-rejected-list {
+    font-size: 13px;
+    list-style-type: square;
+    -webkit-padding-start: 20px;
+    margin-top: 5px;
 }
 
 /* FORMS */
@@ -384,6 +407,7 @@ ul.in {
     border-top: 0;
 }
 
+
 /* ~-- INNER PAGES -- */
 
 /* MARK */
@@ -394,17 +418,17 @@ mark {
 /* Font */
 @font-face {
     font-family: "Vaud";
-    src: url(./fonts/VaudBook_0.ttf);
+    src: url(fonts/VaudBook_0.ttf);
 }
 
 @font-face {
     font-family: "Vaud Bold";
-    src: url(./fonts/VaudBold.ttf);
+    src: url(fonts/VaudBold.ttf);
 }
 
 @font-face {
     font-family: "Vaud Italic";
-    src: url(./fonts/VaudBookIt.ttf);
+    src: url(fonts/VaudBookIt.ttf);
 }
 
 @font-face {

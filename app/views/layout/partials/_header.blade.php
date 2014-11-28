@@ -6,5 +6,9 @@
 	<title>{{ isset($pageTitle) ? $pageTitle : '' }} | BCD Online Forms </title>
 	<link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
 	{{ HTML::style('css/bootstrap.css') }}
+	{{ HTML::style('css/bootstrap-multiselect.css') }}
+
+
+	{{ HTML::style('css/fonts/font-awesome/css/font-awesome.css') }}
 	{{ HTML::style('css/main.css') }}
 </head>

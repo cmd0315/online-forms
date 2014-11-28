@@ -12,8 +12,17 @@
                     <div class="panel panel-warning">
                         <div class="panel-heading">
                              <div class="row">
-                                <div class="col-xs-5">
+                                <div class="col-lg-7">
                                     Metadata
+                                </div>
+                                <div class="col-lg-5 text-right">
+                                    @if(e($currentUser->username) == e($form->onlineForm->created_by))
+                                        @if(!($form->onlineForm->closed()))
+                                            <button type="button" class="btn btn-danger btn-sm" id="close-btn" name="close-btn" data-toggle="modal" data-target="#myModal">Close Request</button>
+                                        @else
+                                            <button type="button" class="btn btn-warning btn-sm" id="open-btn" name="open-btn" data-toggle="modal" data-target="#myModal">Open Request</button>
+                                        @endif
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -55,7 +64,12 @@
                                     <p> Request Status: </p>
                                 </div>
                                 <div class="col-lg-7">
-                                    {{ e($form->onlineForm->request_status) }}
+                                    {{ e($form->onlineForm->request_status_formatted) }}
+                                    <ul class="why-rejected-list">
+                                        @foreach($form->onlineForm->rejectHistories as $rejectHistory)
+                                            <li>{{e($rejectHistory->formRejectReasons->rejectReason->reason)}}</li>
+                                        @endforeach
+                                    </ul>
                                 </div>
                             </div><!-- .row -->
                         </div>
@@ -76,14 +90,14 @@
                             Details
                         </div>
                         <div class="col-lg-3 text-right">
-                            @if(e($currentUser->username) == e($form->onlineForm->created_by))
+                            @if($currentUser->employee->isForEditing(e($form->onlineForm->id)))
                                 <a class="btn btn-danger btn-sm" href="{{ URL::route('rfps.edit', e($form->form_num)) }}">Edit Request</a>
                             @endif
-                            @if($currentUser->employee->isDepartmentHead(e($form->onlineForm->department_id)))
+                            @if($currentUser->employee->isForApproving(e($form->onlineForm->id)))
                                 <a class="btn btn-danger btn-sm" href="{{ URL::route('approval.edit', e($form->onlineForm->id)) }}">Approve Request</a>
                             @endif
-                            @if($currentUser->employee->finance_department && e($form->onlineForm->departmentApproved()))
-                                <button class="btn btn-danger btn-sm">Receive Request</button>
+                            @if($currentUser->employee->isForReceiving(e($form->onlineForm->id)))
+                                <a class="btn btn-danger btn-sm" href="{{ URL::route('receiving.edit', e($form->onlineForm->id) )}}">Receive Request</a>
                             @endif
                         </div>
                     </div>
@@ -238,16 +252,32 @@
 @stop
 
 @section('modal-content')
-<div class="modal-content">
-        <div class="modal-header">
-            <h4 class="modal-title" id="myModalLabel">Remove Department</h4>
-        </div>
-        <div class="modal-body">
-            Are you sure you want to remove <span id="subject-name"></span> department?
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-default cancel-btn" id="cancel-btn2" data-dismiss="modal">Cancel</button>
-            {{ Form::submit('OK', array('class' => 'btn btn-warning')) }}
-        </div>
-</div><!-- .modal-content -->
+     @if(e($currentUser->username) == e($form->onlineForm->created_by))
+        <div class="modal-content">
+            @if(!($form->onlineForm->closed()))
+                {{ Form::open(['route' => ['rfps.destroy', e($form->onlineform->id)], 'method' => 'DELETE']) }}
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">Close Request</h4>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to close this request?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default cancel-btn" id="cancel-btn2" data-dismiss="modal">Cancel</button>
+                        {{ Form::submit('Close Request', array('class' => 'btn btn-danger btn-sm')) }}
+                    </div>
+                {{ Form::close() }}
+            @else
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">Open Request</h4>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to open this request?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default cancel-btn" id="cancel-btn2" data-dismiss="modal">Cancel</button>
+                    </div>
+            @endif
+        </div><!-- .modal-content -->
+    @endif
 @stop

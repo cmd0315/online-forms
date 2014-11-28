@@ -6,7 +6,7 @@ Breadcrumbs::register('dashboard', function($breadcrumbs) {
 
 /*** USER PROFILE ***/
 Breadcrumbs::register('my-profile', function($breadcrumbs, $username) {
-    $breadcrumbs->push('My Profile', route('profile.show', $username));
+    $breadcrumbs->push('Employee Profile', route('profile.show', $username));
 });
 
 Breadcrumbs::register('change-password', function($breadcrumbs, $username) {

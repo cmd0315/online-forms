@@ -16,8 +16,12 @@
                         <div class="col-xs-6 text-right">
                             @if(($currentUser->system_admin))
                                 <div class="btn-group btn-group-sm">
-                                    <a href="{{ URL::route('departments.edit', e($department->department_id)) }}" class="btn btn-primary">Edit</a>  
-                                   <button class="btn btn-danger btn-sm" name="remove-department-acct-btn" id="remove-department-acct-btn" data-toggle="modal" data-target="#myModal">Remove</button>
+                                    @if( !($department->isDeleted()) )
+                                        <a href="{{ URL::route('departments.edit', e($department->department_id)) }}" class="btn btn-primary">Edit</a>  
+                                        <button class="btn btn-danger btn-sm" name="remove-department-acct-btn" id="remove-department-acct-btn" data-toggle="modal" data-target="#myModal">Remove</button>
+                                    @else
+                                        <a href="{{ URL::route('departments.restore', e($department->department_id)) }}" class="btn btn-warning">Restore</a>
+                                    @endif
                                 </div><!-- .btn-group -->
                             @endif
                         </div>
@@ -54,6 +58,14 @@
                         </div>
                         <div class="col-lg-8">
                             <p>{{ e($department->last_profile_update) }}</p>
+                        </div>
+                    </div><!-- .row -->
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <p> Status: <p>
+                        </div>
+                        <div class="col-lg-8">
+                            <p>{{ e($department->department_status) }}</p>
                         </div>
                     </div><!-- .row -->
                 </div>
@@ -130,7 +142,7 @@
 
 @section('modal-content')
 <div class="modal-content">
-    {{ Form::open(['id' => 'modal-form', 'route' => ['employees.destroy'], 'method' => 'DELETE']) }}
+    {{ Form::open(['id' => 'modal-form', 'route' => ['departments.destroy', e($department->department_id)], 'method' => 'DELETE']) }}
         <div class="modal-header">
             <h4 class="modal-title" id="myModalLabel">Remove Department</h4>
         </div>

@@ -8,6 +8,8 @@ use BCD\Employees\EmployeeRepository;
 use BCD\OnlineForms\RFP\Validation\CreateRequestForPaymentForm;
 use BCD\OnlineForms\RFP\CreateRFPCommand;
 use BCD\OnlineForms\RFP\EditRFPCommand;
+use BCD\OnlineForms\CloseRequest\CloseRequestCommand;
+use BCD\ExportToExcel;
 
 class PaymentRequestsController extends \BaseController {
 
@@ -55,7 +57,12 @@ class PaymentRequestsController extends \BaseController {
 	/**
 	* Constructor
 	*
-	* @param RequestForPaymentForm $requestForPaymentForm
+	* @param CreateRequestForPaymentForm $createRequestForPaymentForm
+	* @param OnlineFormRepository $onlineForms
+	* @param RequestForPaymentRepository $requestForPayments
+	* @param DepartmentRepository $departments
+	* @param ClientRepository $clients
+	* @param EmployeeRepository $employees
 	*/
 	public function __construct(CreateRequestForPaymentForm $createRequestForPaymentForm, OnlineFormRepository $onlineForms, RequestForPaymentRepository $requestForPayments, DepartmentRepository $departments, ClientRepository $clients, EmployeeRepository $employees) {
 
@@ -75,20 +82,25 @@ class PaymentRequestsController extends \BaseController {
 	 * Display a listing of the resource.
 	 * GET /paymentrequests
 	 *
-	 * @return Response
+	 * @return View
 	 */
 	public function index()
 	{
-		$forms = $this->requestForPayments->getUserForms(Auth::user());
+
+		$search = Request::get('q');
+		$sortBy = Request::get('sortBy');
+		$direction = Request::get('direction');
+
+		$forms = $this->requestForPayments->getUserForms(Auth::user(), $search, compact('sortBy', 'direction'));
 		$formRejectReasons = $this->onlineForms->getAllFormRejectReasons($this->dir);
-		return View::make('account.forms.rfp.index', ['pageTitle' => 'Request For Payment'], compact('forms', 'formRejectReasons'));
+		return View::make('account.forms.rfp.index', ['pageTitle' => 'Request For Payment'], compact('forms', 'formRejectReasons', 'search'));
 	}
 
 	/**
 	 * Show the form for creating a new resource.
 	 * GET /paymentrequests/create
 	 *
-	 * @return Response
+	 * @return View
 	 */
 	public function create()
 	{
@@ -103,15 +115,20 @@ class PaymentRequestsController extends \BaseController {
 	 * Store a newly created resource in storage.
 	 * POST /paymentrequests
 	 *
-	 * @return Response
+	 * @return Redirect
 	 */
 	public function store()
 	{
-		$input = Input::only('form_num', 'payee_firstname', 'payee_middlename', 'payee_lastname', 'date_requested', 'particulars', 'total_amount', 'client_id', 'check_num', 'requestor', 'department_id', 'date_needed');
+		$inputs = Input::only('form_num', 'payee_firstname', 'payee_middlename', 'payee_lastname', 'date_requested', 'particulars', 'total_amount', 'client_id', 'check_num', 'requestor', 'department_id', 'date_needed');
 
-		$this->createRequestForPaymentForm->validate($input);
+		try {
+			$this->createRequestForPaymentForm->validate($inputs);
+		}
+		catch(FormValidationException $error) {
+			return Redirect::back()->withInput()->withErrors($error->getErrors());
+		}
 
-		extract($input);
+		extract($inputs);
 
 		$makeRequest = $this->execute(
 			new CreateRFPCommand($form_num, $payee_firstname, $payee_middlename, $payee_lastname, $date_requested, $particulars, $total_amount, $client_id, $check_num, $requestor, $department_id, $date_needed)
@@ -132,7 +149,7 @@ class PaymentRequestsController extends \BaseController {
 	 * GET /paymentrequests/{num}
 	 *
 	 * @param  String  $num
-	 * @return Response
+	 * @return View
 	 */
 	public function show($num)
 	{
@@ -146,7 +163,7 @@ class PaymentRequestsController extends \BaseController {
 	 * GET /paymentrequests/{num}/edit
 	 *
 	 * @param  String  $num
-	 * @return Response
+	 * @return View
 	 */
 	public function edit($num)
 	{
@@ -161,15 +178,20 @@ class PaymentRequestsController extends \BaseController {
 	 * PUT /paymentrequests/{num}
 	 *
 	 * @param  String  $num
-	 * @return Response
+	 * @return Redirect
 	 */
 	public function update($num)
 	{
-		$input = Input::only('form_num', 'payee_firstname', 'payee_middlename', 'payee_lastname', 'date_requested', 'particulars', 'total_amount', 'client_id', 'check_num', 'requestor', 'department_id', 'date_needed');
+		$inputs = Input::only('form_num', 'payee_firstname', 'payee_middlename', 'payee_lastname', 'date_requested', 'particulars', 'total_amount', 'client_id', 'check_num', 'requestor', 'department_id', 'date_needed');
 
-		$this->createRequestForPaymentForm->validate($input);
+		try {
+			$this->createRequestForPaymentForm->validate($inputs);
+		}
+		catch(FormValidationException $error) {
+			return Redirect::back()->withInput()->withErrors($error->getErrors());
+		}
 
-		extract($input);
+		extract($inputs);
 
 		$editRequest = $this->execute(
 			new EditRFPCommand($form_num, $payee_firstname, $payee_middlename, $payee_lastname, $date_requested, $particulars, $total_amount, $client_id, $check_num, $requestor, $department_id, $date_needed)
@@ -190,11 +212,23 @@ class PaymentRequestsController extends \BaseController {
 	 * DELETE /paymentrequests/{id}
 	 *
 	 * @param  int  $id
-	 * @return Response
+	 * @return Redirect
 	 */
 	public function destroy($id)
 	{
-		//
+		$closeRequest = $this->execute(
+			new CloseRequestCommand($id)
+		);
+
+		if($closeRequest) {
+			Flash::success('You have successfully closed the request!');
+		}
+		else {
+			Flash::error('Failed to close the request!');
+		}
+
+
+		return Redirect::route('rfps.index');
 	}
 
 	/**
@@ -209,4 +243,17 @@ class PaymentRequestsController extends \BaseController {
 		return PDF::load($view, 'A4')->show();
 	}
 
+	/**
+	* Export list of employees to Excel
+	*
+	* @return Excel
+	*/
+	public function export() 
+	{
+		$rfps = $this->requestForPayments->getCSVReport();
+
+		$excel = new ExportToExcel($rfps, 'List of Payment Requests');
+
+		return $excel->export();
+	}
 }

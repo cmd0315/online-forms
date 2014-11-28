@@ -12,13 +12,18 @@
 				<div class="btn-toolbar" role="toolbar">
 					<div class="btn-group btn-group-sm">
 						<a href="{{ URL::route('employees.create') }}" class="btn btn-primary">Add Employee</a>
-						<a href="{{ URL::route('employees.export') }}" class="btn btn-warning">Export List</a>
+						<button type="button" id="{{ URL::route('employees.export') }}" class="btn btn-warning export">Export List</button>
   						<a class="btn btn-danger" id="remove-btn" name="remove-btn">Remove Employee</a>
   						<a class="btn btn-default cancel-btn" id="cancel-btn1" name="cancel-btn1">Cancel Remove</a>
 					</div><!-- .btn-group -->
 				</div><!-- .btn-toolbar -->
 			</div>
-			<div class="col-lg-3 col-lg-offset-5">
+			<div class="col-lg-5">
+				<div class="progress-div" style="display:none;">
+					<i class="fa fa-lg fa-cog fa-spin"></i> Exporting the data ...
+				</div>
+			</div>
+			<div class="col-lg-3">
 				{{ Form::open(['method' => 'GET', 'route' => 'employees.index']) }}
 			      <div class="input-group input-group-sm">
 			         {{ Form::input('search', 'q', null, ['class' => 'form-control', 'placeholder' => 'Search']) }}
@@ -31,11 +36,14 @@
 		</div>
 		<div class="row">
 			<div class="col-lg-2">
-				<h4>Total Employees: <small>{{ $total_employees }}</small></h4>
+				<h4>Active: <small>{{ $active_employees }}</small></h4>
 			</div>
-			<div class="col-lg-10">
-				@if(isset($search) || $search != '')
-					<h4>Search: <mark>{{ $search }}</mark></h4>
+			<div class="col-lg-2">
+				<h4>Total: <small>{{ $total_employees }}</small></h4>
+			</div>
+			<div class="col-lg-8">
+				@if(isset($search))
+					<h5>Search:  <mark>{{ $search }}</mark> <a href="{{ URL::route('employees.index') }}"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></a></h5>
 				@endif
 			</div>
 		</div>
@@ -43,11 +51,12 @@
 			<div class="col-lg-12">
 			    @if($employees->count())
 			    	<div class="table-responsive">
-						<table class="table">
+						<table class="table table-condensed table-hover table-big">
 							<thead>
 							  <tr>
 							    <th>#</th>
 							    <th>{{ sort_employees_by('username', 'Username') }}</th>
+							    <th>Status</th>
 							    <th>{{ sort_employees_by('last_name', 'Name') }}</th>
 							    <th>{{ sort_employees_by('birthdate', 'Birthdate') }}</th>
 							    <th>{{ sort_employees_by('address', 'Address') }}</th>
@@ -61,27 +70,27 @@
 							  </tr>
 							</thead>
 							<tbody>
-							<?php $counter=0; ?>
 							@foreach($employees as $employee)
-							  @if(($status = e($employee->account->status)) > 0)
+							  @if($employee->isDeleted())
 							    <tr class="danger">
 							  @else
 							    <tr>
 							  @endif
-							      <td>{{ ++$counter }}</td>
-							      <td> <a href="{{ URL::route('employees.show', ['username' => $username = e($employee->username)]) }}">{{ $username }} </a></td>
-							      <td> {{ e($employee->first_name) . " " . e($employee->middle_name) . " " . e($employee->last_name) }}</td>
-							      <td> {{ e($employee->birthdate) }} </td>
-							      <td> {{ e($employee->address) }}</td>
-							      <td> {{ e($employee->department->department_name) }} </td>
-							      <td> {{ e($employee->position_title) }} </td>
-							      <td> {{ e($employee->email) }} </td>
-							      <td> {{ e($employee->mobile) }} </td>
-							      <td> {{ e($employee->account->updated_at) }} </td>
-							      <td> {{ e($employee->account->created_at) }} </td>
-									@if(($deleteStatus = e($employee->deleted_at)) == NULL)
-										<td><button class="btn btn-delete" id="{{ e($employee->full_name) }}" value="{{ URL::route('employees.destroy', e($employee->username)) }}" style="display:none;">X</button></td>
-									@endif
+									<td>{{ ++$currentRow }}</td>
+									<td> <a href="{{ URL::route('employees.show', ['username' => $username = e($employee->username)]) }}">{{ $username }} </a></td>
+									<td> {{ e($employee->employeeStatus) }}</td>
+									<td> {{ e($employee->first_name) . " " . e($employee->middle_name) . " " . e($employee->last_name) }}</td>
+									<td> {{ e($employee->birthdate) }} </td>
+									<td> {{ e($employee->address) }}</td>
+									<td> {{ e($employee->department->department_name) }} </td>
+									<td> {{ e($employee->position_title) }} </td>
+									<td> {{ e($employee->email) }} </td>
+									<td> {{ e($employee->mobile) }} </td>
+									<td> {{ e($employee->account->updated_at) }} </td>
+									<td> {{ e($employee->account->created_at) }} </td>
+								@if( !($employee->isDeleted()) )
+									<td><button class="btn btn-delete" id="{{ e($employee->full_name) }}" value="{{ URL::route('employees.destroy', e($employee->username)) }}" style="display:none;">X</button></td>
+								@endif
 							    </tr>
 							@endforeach
 							</tbody>

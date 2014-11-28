@@ -42,7 +42,7 @@ class ProfilesController extends \BaseController {
 	public function show($username)
 	{
 		
-		$user = $this->user->whereUsername($username)->firstOrFail();
+		$user = $this->user->withTrashed()->whereUsername($username)->firstOrFail();
 		return View::make('account.settings.profile', ['pageTitle' => 'Employee Profile'], compact('user'));
 	}
 
@@ -55,7 +55,7 @@ class ProfilesController extends \BaseController {
 	 */
 	public function edit($username)
 	{
-		$employee = $this->user->whereUsername($username)->firstOrFail();
+		$employee = $this->user->withTrashed()->whereUsername($username)->firstOrFail();
 		return View::make('account.settings.update-profile', ['pageTitle' => 'Update Profile'], compact('employee'));
 	}
 
@@ -70,7 +70,7 @@ class ProfilesController extends \BaseController {
 	{
 		//check if user exists
 		try {
-			$employee = $this->user->whereUsername($username)->firstOrFail();
+			$employee = $this->user->withTrashed()->whereUsername($username)->firstOrFail();
 		}
 		catch(ModelNotFoundException $e) {
 			return  Redirect::route('profile.edit', ['username' => $username])

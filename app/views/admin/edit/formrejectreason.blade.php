@@ -17,12 +17,30 @@
 									<div class="form-group">
 										<label for="forms" class="col-sm-4 control-label">Types of Form</label>
 										<div class="col-sm-8">
-											<select class="form-control" id="forms" name="forms[]" multiple>
+											<select class="form-control multiple-select" id="forms" name="forms[]" multiple>
 												@foreach($forms as $key => $form)
 													@if(in_array($key, $associatedForms))
 														<option value="{{$key}}" selected>{{$form}}</option>
 													@else
 														<option value="{{$key}}">{{$form}}</option>
+													@endif
+												@endforeach
+											</select>
+										</div>
+									</div><!-- .form-group -->
+								</div>
+							</div><!--.row-->
+							<div class="row">
+								<div class="col-lg-12">
+									<div class="form-group">
+										<label for="process_type" class="col-sm-4 control-label">Types of Form</label>
+										<div class="col-sm-8">
+											<select class="form-control" id="process_type" name="process_type">
+												@foreach($processes as $key => $process)
+													@if(in_array($key, $associatedProcesses))
+														<option value="{{$key}}" selected>{{$process}}</option>
+													@else
+														<option value="{{$key}}">{{$process}}</option>
 													@endif
 												@endforeach
 											</select>
@@ -41,7 +59,6 @@
 											@endif
 										</div>
 									</div><!-- .form-group -->
-									<input type="button" class="btn btn-primary btn-sm pull-right" value="Add More">
 								</div>
 							</div><!--.row-->
 						</div><!-- .panel-body -->

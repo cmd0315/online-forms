@@ -24,6 +24,7 @@ class CreateRFPCommandHandler implements CommandHandler {
 	* Handles the command.
 	*
 	* @param CreateRFPCommand $command
+	* @return RequestForPayment
 	*/
 	public function handle($command) {
 		$rfp = RequestForPayment::createRequest(

@@ -51,7 +51,7 @@ class RejectReason extends Eloquent implements UserInterface, RemindableInterfac
     * Many-to-many relationship between RejectReason and RejectionHistory
     */
     public function rejectionHistories() {
-        $this->belongsToMany('BCD\OnlineForms\Rejection\RejectionHistory', 'reason_id', 'id');
+        return $this->hasMany('BCD\OnlineForms\Rejection\RejectionHistory', 'id', 'reason_id');
     }
 
     /**
@@ -91,13 +91,17 @@ class RejectReason extends Eloquent implements UserInterface, RemindableInterfac
             {
                 $table_name = $this->table . '.*';
                 $query->select($table_name)
-                        ->where($this->table . '.reason', 'LIKE', "%$search%")->get();
+                        ->where($this->table . '.reason', 'LIKE', "%$search%")
+                         ->orWhereHas('formRejectReasons', function($q) use ($search) {
+                            $q->where('reject_reason_id', "%$search%");
+                        })->get();
             });
         }
         else {
             return $query;
         }
     }
+
 
     /**
     * Sort datatable by the given database field and sort query direction
@@ -110,12 +114,21 @@ class RejectReason extends Eloquent implements UserInterface, RemindableInterfac
             $sortBy = $params['sortBy'];
             $direction = $params['direction'];
 
-            return $query->orderBy($sortBy, $direction);
+            if($sortBy == 'form_type' || $sortBy == 'process_type'){
+                $table_name = $this->table . '.*';
+                $table_primary_key = $this->table . '.id';
+                return $query
+                        ->select($table_name) // Avoid 'ambiguous column name' for paginate() method
+                        ->leftJoin('form_reject_reasons', $table_primary_key, '=', 'form_reject_reasons.reject_reason_id') // Include related table
+                        ->orderBy('form_reject_reasons.' . $sortBy, $direction); // Finally sort by related column
+            }
+            else {
+                return $query->orderBy($sortBy, $direction);
+            }
         }
         else {
             return $query;
         }
     }
-
 
 }

@@ -11,13 +11,22 @@ class DepartmentRepository {
 		return $department->save();
 	}
 
+   /**
+	* Get all departments including softdeleted, to be ordered according to the date deleted
+	*
+	* @return Department
+	*/
+	public function getAll() {
+		return Department::withTrashed()->orderBy('deleted_at', 'ASC');
+	}
+
 	/**
 	* Get all departments that are not deactivated
 	*
 	* @return Department
 	*/
 	public function getActiveDepartments() {
-		return Department::where('status', '=', 0);
+		return Department::whereNull('deleted_at');
 	}
 
 	/**
@@ -47,6 +56,7 @@ class DepartmentRepository {
 		return Department::orderBy('department_name')->paginate(5);
 	}
 
+
 	/**
 	* Get department with given table id
 	*
@@ -54,7 +64,7 @@ class DepartmentRepository {
 	* @return Department
 	*/
 	public function getDepartmentByID($id) {
-		return Department::where('id', $id)->firstOrFail();
+		return $this->getAll()->where('id', $id)->firstOrFail();
 	}
 
 	/**
@@ -64,7 +74,7 @@ class DepartmentRepository {
 	* @return Department
 	*/
 	public function getDepartmentByGeneratedID($id) {
-		return Department::where('department_id', $id)->firstOrFail();
+		return $this->getAll()->where('department_id', $id)->firstOrFail();
 	}
 
 	/**
@@ -74,21 +84,28 @@ class DepartmentRepository {
 	* @return Department
 	*/
 	public function getDepartmentsByGeneratedID($id) {
-		return Department::where('department_id', $id)->get();
+		return $this->getAll()->where('department_id', $id)->get();
 	}
 
+	/**
+	* Return name of the department
+	*
+	* @return String
+	*/
 	public function getDepartmentName($id) {
-		return Department::where('department_id', $id)->pluck('department_name');
+		return $this->getAll()->where('department_id', $id)->pluck('department_name');
 	}
 
 	/**
 	* Return paginated results with search and filter values
-	* @param String
-	* @param array
+	*
+	* @int $maxRowPerPage
+	* @param String $search
+	* @param array $filterOptions
 	* @return QueryBuilder
 	*/
-	public function paginateResults($search, array $filterOptions) {
-		return $this->getActiveDepartments()->search($search)->sort($filterOptions)->paginate(5);
+	public function paginateResults($maxRowPerPage, $search, array $filterOptions) {
+		return $this->getAll()->search($search)->sort($filterOptions)->paginate($maxRowPerPage);
 	}
 	
 	/**
@@ -97,6 +114,15 @@ class DepartmentRepository {
 	* @return int
 	*/
 	public function total() {
+		return $this->getAll()->count();
+	}
+
+   /**
+	* Return total number of active departments
+	*
+	* @return int
+	*/
+	public function totalActive() {
 		return $this->getActiveDepartments()->count();
 	}
 
@@ -104,11 +130,57 @@ class DepartmentRepository {
 	* Soft delete department profile
 	*
 	* @param String $departmentID
+	* @return Department
 	*/
 	public function remove($departmentID) {
 		$department = $this->getDepartmentByGeneratedID($departmentID);
 
 		return $department->delete();
+	}
+
+	/**
+	* Restore department account
+	*
+	* @param String $departmentID
+	* @return Department
+	*/
+	public function restore($departmentID) {
+		$department = $this->getDepartmentByGeneratedID($departmentID);
+
+		return $department->restore();
+	}
+
+	/**
+	* Return formatted results of table rows, to be used for exporting to excel
+	*
+	* @return array
+	*/
+	public function getCSVReport() {
+		$departments = $this->getAll()->get();
+
+		$csvArray = [];
+		$count = 0;
+
+		foreach($departments as $department) {
+
+			$departmentArr = [
+				'#' => ++$count,
+				'Department ID' => $department->department_id,
+				'Department Name' => $department->department_name,
+				'Department Head' => $department->department_head,
+				'Status' => $department->status,
+				'Created At' => $department['created_at']->toDateTimeString(),
+				'Updated At' => $department['updated_at']->toDateTimeString()
+			];
+
+			if($department->isDeleted()) {
+				$departmentArr['Deleted At'] = $department['deleted_at']->toDateTimeString();
+			}
+
+			array_push($csvArray, $departmentArr);
+		}
+
+		return $csvArray;
 	}
 
 }

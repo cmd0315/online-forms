@@ -42,7 +42,7 @@ class EmployeeRepository {
 	* @param String $username
 	*/
 	public function find($username) {
-		return Employee::whereUsername($username)->firstOrFail();
+		return Employee::withTrashed()->whereUsername($username)->firstOrFail();
 	}
 
 	/**
@@ -56,13 +56,27 @@ class EmployeeRepository {
 		return $employee->delete();
 	}
 
+
 	/**
-	* Get all employees beside with position of system admin
+	* Restore employee profile
+	*
+	* @param String $username
+	* @return Employee
+	*/
+	public function restore($username) {
+		$employee = $this->find($username);
+		$employee->position = 0;
+		$employee->save();
+		return $employee->restore();
+	}
+
+	/**
+	* Get all employees beside with position of system admin including softdeleted, to be ordered according to the date deleted
 	*
 	* @return Employee
 	*/
 	public function getRegisteredEmployees() {
-		return Employee::where('position', '<', 2); //exclude system administrator
+		return Employee::withTrashed()->where('position', '<', 2)->orderBy('deleted_at', 'ASC'); //exclude system administrator
 	}
 	
 	/**
@@ -96,12 +110,13 @@ class EmployeeRepository {
 	
 	/**
 	* Return paginated results with search and filter values
-	* @param String
-	* @param array
+	* @param int $maxRowPerPage
+	* @param String $search
+	* @param array $filterOptions
 	* @return QueryBuilder
 	*/
-	public function paginateResults($search, array $filterOptions) {
-		return $this->getRegisteredEmployees()->search($search)->sort($filterOptions)->paginate(5);
+	public function paginateResults($maxRowPerPage, $search, array $filterOptions) {
+		return $this->getRegisteredEmployees()->search($search)->sort($filterOptions)->paginate($maxRowPerPage);
 	}
 
 	/**
@@ -111,5 +126,53 @@ class EmployeeRepository {
 	*/
 	public function total() {
 		return $this->getRegisteredEmployees()->count();
+	}
+
+	/**
+	* Return total number of active employees (except system admin)
+	*
+	* @return int 
+	*/
+	public function activeTotal() {
+		return Employee::all()->count();
+	}
+
+	/**
+	* Return formatted results of table rows, to be used for exporting to excel
+	*
+	* @return array
+	*/
+	public function getCSVReport() {
+		$employees = $this->getRegisteredEmployees()->get();
+
+		$csvArray = [];
+		$count = 0;
+
+		foreach($employees as $employee) {
+
+			$employeeArray = [
+				'#' => ++$count,
+				'Username' => $employee->username,
+				'First Name' => $employee->first_name,
+				'Middle Name' => $employee->middle_name,
+				'Last Name' => $employee->last_name,
+				'Birthdate' => $employee->birthdate,
+				'Address' => $employee->address,
+				'Email' => $employee->email,
+				'Mobile' => $employee->mobile,
+				'Department' => $employee->department->department_name,
+				'Position' => $employee->position_title,
+				'Created At' => $employee->account['created_at']->toDateTimeString(),
+				'Updated At' => $employee->account['updated_at']->toDateTimeString()
+			];
+
+			if($employee->isDeleted()) {
+				$employeeArray['Deleted At'] = $employee->account['deleted_at']->toDateTimeString();
+			}
+
+			array_push($csvArray, $employeeArray);
+		}
+
+		return $csvArray;
 	}
 }

@@ -69,11 +69,59 @@ class Client extends Eloquent {
         return Carbon::create($year, $month, $day, $hr, $min, $sec)->diffForHumans();
     }
 
+    /**
+    * Return concatenated first, middle and last names
+    *
+    *
+    * @return String
+    */
     public function getContactPersonAttribute() {
         return ucfirst($this->cp_first_name) . ' ' . ucfirst($this->cp_middle_name) . ' ' . ucfirst($this->cp_last_name);
     }
 
-     /**
+    /**
+    * Check if the entry has already been softdeleted
+    *
+    * @return boolean
+    */
+    public function isDeleted() {
+        if($this->deleted_at !== NULL) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
+    * Return formatted status of the client based on deleted_at value
+    *
+    * @return String
+    */
+    public function getClientStatusAttribute() {
+        if($this->isDeleted()) {
+            print '<span class="label label-danger">Inactive</span>';
+        }
+        else {
+            print '<span class="label label-success">Active</span>';
+        }
+    }
+
+
+   /**
+    * Check if sort can be performed on the datatable
+    *
+    * @param array $params
+    * @return boolean
+    */
+    public function isSortable(array $params) {
+        if(in_array($params['sortBy'], $this->filter_fields)) {
+            return $params['sortBy'] and $params['direction'];
+        }
+    }
+
+
+    /**
     * Return table rows containing search value
     *
     * @param $query
@@ -93,6 +141,15 @@ class Client extends Eloquent {
                         ->orWhere($this->table . '.cp_middle_name', 'LIKE', "%$search%")
                         ->orWhere($this->table . '.cp_last_name', 'LIKE', "%$search%")
                         ->orWhere($this->table . '.email', 'LIKE', "%$search%");
+
+                if (strcasecmp($search, 'active') == 0) {
+                    $query->orWhereNull($this->table . '.deleted_at');
+                }
+                else if (strcasecmp($search, 'inactive') == 0) {
+                    $query->orWhereNotNull($this->table . '.deleted_at');
+                }
+
+                $query->get();
             });
         }
         else {
@@ -117,15 +174,5 @@ class Client extends Eloquent {
         }
     }
 
-    /**
-    * Check if sort can be performed on the datatable
-    *
-    * @param array $params
-    * @return boolean
-    */
-    public function isSortable(array $params) {
-        if(in_array($params['sortBy'], $this->filter_fields)) {
-            return $params['sortBy'] and $params['direction'];
-        }
-    }
+   
 }

@@ -1,5 +1,10 @@
 jQuery(document).ready(function($){
 	/*
+	* Multi-select
+	*/
+	$('.multiple-select').multiselect();
+
+	/*
 	* display floating flash message
 	*
 	*/
@@ -77,6 +82,17 @@ jQuery(document).ready(function($){
 	*/
 	$('#radio-reject').on('click', function(e) {
 		$('#reject-reasons').show();
+
+		/**
+		* Disable submit if form is rejected but no reject reasons were selected
+		*/
+		var rejectCheckboxes = $("input[type='checkbox']"),
+	    submitButt = $("button[type='submit']");
+		submitButt.attr("disabled", !rejectCheckboxes.is(":checked"));
+
+		rejectCheckboxes.click(function() {
+		    submitButt.attr("disabled", !rejectCheckboxes.is(":checked"));
+		});
 	})
 
 	if($('#radio-reject').is(':checked')) {
@@ -86,4 +102,26 @@ jQuery(document).ready(function($){
 	$('#radio-approve').on('click', function(e) {
 		$('#reject-reasons').hide();
 	})
+
+	$('.export').click(function() {
+	   var exportLink = this.id;
+
+	   $.ajax(
+		{
+		  type: 'GET',
+		  url: exportLink, data: {}, 
+		  beforeSend: function(XMLHttpRequest)
+		  {
+	   		$('.progress-div').show();
+
+		  },
+
+		  success: function(data){
+		    // successful completion handler
+		    $('.progress-div').hide();
+		    window.location = exportLink;
+		  }
+		});
+	});
+
 });

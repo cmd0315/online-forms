@@ -122,14 +122,43 @@ Route::filter('currentUser', function($route)
 
 /*
 |--------------------------------------------------------------------------
+| Editable User Filter
+|--------------------------------------------------------------------------
+|
+|
+*/
+Route::filter('profileEditable', function($route)
+{
+
+	if( (Auth::guest() or (Auth::user()->employee->isDeleted() == true)) ) {
+		return Redirect::to('dashboard'); 
+	}
+});
+
+/*
+|--------------------------------------------------------------------------
 | Approver Filter
 |--------------------------------------------------------------------------
 |
 |
 */
-Route::filter('approver', function($route)
+Route::filter('forApproving', function($route)
 {
-	if(Auth::guest() or !Auth::user()->employee->isApprover($route->parameter('approval'))) {
+	if(Auth::guest() or !Auth::user()->employee->isForApproving($route->parameter('approval'))) {
+		return Redirect::to('dashboard'); 
+	}
+});
+
+/*
+|--------------------------------------------------------------------------
+| Receiver Filter
+|--------------------------------------------------------------------------
+|
+|
+*/
+Route::filter('forReceiving', function($route)
+{
+	if(Auth::guest() or !Auth::user()->employee->isForReceiving($route->parameter('receiving'))) {
 		return Redirect::to('dashboard'); 
 	}
 });

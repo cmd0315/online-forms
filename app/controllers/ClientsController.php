@@ -1,42 +1,53 @@
 <?php
-
 use BCD\Core\CommandBus;
 use BCD\Forms\AddClientForm;
 use BCD\Forms\UpdateClientProfileForm;
 use BCD\Clients\ClientRepository;
 use BCD\Clients\Registration\AddClientCommand;
 use BCD\Clients\Registration\UpdateClientCommand;
-use BCD\OnlineForms\ExportToExcel;
+use BCD\Clients\Registration\RemoveClientCommand;
+use BCD\Clients\Registration\RestoreClientCommand;
+use BCD\ExportToExcel;
 
 class ClientsController extends \BaseController {
 
 	use CommandBus;
 
 	/**
-	* @var AddClientForm
+	* @var AddClientForm $addClientForm
 	*/
 	protected $addClientForm;
 
 	/**
-	* @var UpdateClientForm
+	* @var UpdateClientForm $updateClientForm
 	*/
 	protected $updateClientForm;
 
 	/**
-	* @var ClientRepository
+	* @var ClientRepository $clients
 	*/
 	protected $clients;
+
+	/**
+	* Maximum number of rows to be display per page
+	*
+	* @var int $maxRowPerPage
+	*/
+	protected $maxRowPerPage;
 
 	/**
 	* Constructor
 	*
 	* @param AddClientForm $addClientForm
+	* @param UpdateClientProfileForm $updateClientForm
 	* @param ClientRepository $clients
 	*/
 	public function __construct(AddClientForm $addClientForm, UpdateClientProfileForm $updateClientForm, ClientRepository $clients) {
 		$this->addClientForm = $addClientForm;
 		$this->updateClientForm = $updateClientForm;
 		$this->clients = $clients;
+
+		$this->maxRowPerPage = 5;
 
 		$this->beforeFilter('auth');
 
@@ -50,7 +61,7 @@ class ClientsController extends \BaseController {
 	 * Display a listing of the resource.
 	 * GET /clients
 	 *
-	 * @return Response
+	 * @return View
 	 */
 	public function index()
 	{
@@ -58,18 +69,26 @@ class ClientsController extends \BaseController {
 		$sortBy = Request::get('sortBy');
 		$direction = Request::get('direction');
 
-		//$clients = Client::where('status', '=', 0)->paginate(5);
-		$clients = $this->clients->paginateResults($search, compact('sortBy', 'direction'));
+		$currentPage = 1;
+
+		if (Request::get('page')) {
+			$currentPage = Request::get('page');
+		}
+
+		$currentRow =  ($this->maxRowPerPage * ($currentPage - 1)) ;
+
+		$clients = $this->clients->paginateResults($this->maxRowPerPage, $search, compact('sortBy', 'direction'));
+		$active_clients = $this->clients->totalActive();
 		$total_clients = $this->clients->total();
 
-		return View::make('admin.display.list-clients', ['pageTitle' => 'Manage Client Records'], compact('clients', 'total_clients', 'search'));
+		return View::make('admin.display.list-clients', ['pageTitle' => 'Manage Client Records'], compact('clients', 'active_clients', 'total_clients', 'search', 'currentRow'));
 	}
 
 	/**
 	 * Show the form for creating a new resource.
 	 * GET /clients/create
 	 *
-	 * @return Response
+	 * @return View
 	 */
 	public function create()
 	{
@@ -80,14 +99,20 @@ class ClientsController extends \BaseController {
 	 * Store a newly created resource in storage.
 	 * POST /clients
 	 *
-	 * @return Response
+	 * @return Redirect
 	 */
 	public function store()
 	{
-		$input = Input::only('client_id', 'client_name', 'address', 'cp_first_name', 'cp_middle_name', 'cp_last_name', 'email', 'mobile', 'telephone');
-		$this->addClientForm->validate($input);
+		$inputs = Input::only('client_id', 'client_name', 'address', 'cp_first_name', 'cp_middle_name', 'cp_last_name', 'email', 'mobile', 'telephone');
 
-		extract($input);
+		try {
+			$this->addClientForm->validate($inputs);
+		}
+		catch(FormValidationException $error) {
+			return Redirect::back()->withInput()->withErrors($error->getErrors());
+		}
+
+		extract($inputs);
 
 		$registration = $this->execute(new AddClientCommand($client_id, $client_name, $address, $cp_first_name, $cp_middle_name, $cp_last_name, $email, $mobile, $telephone));
 
@@ -103,27 +128,27 @@ class ClientsController extends \BaseController {
 
 	/**
 	 * Display the specified resource.
-	 * GET /clients/{id}
+	 * GET /clients/{clientID}
 	 *
-	 * @param  String  $id
-	 * @return Response
+	 * @param  String  $clientID
+	 * @return View
 	 */
-	public function show($id)
+	public function show($clientID)
 	{
-		$client = $this->clients->getClientByAssignedId($id);
+		$client = $this->clients->getClientByAssignedId($clientID);
 		return View::make('admin.display.client-profile', ['pageTitle' => 'Client Profile'], compact('client'));
 	}
 
 	/**
 	 * Show the form for editing the specified resource.
-	 * GET /clients/{id}/edit
+	 * GET /clients/{clientID}/edit
 	 *
-	 * @param  String  $id
-	 * @return Response
+	 * @param  String  $clientID
+	 * @return View
 	 */
-	public function edit($id)
+	public function edit($clientID)
 	{
-		$client = $this->clients->getClientByAssignedId($id);
+		$client = $this->clients->getClientByAssignedId($clientID);
 		return View::make('admin.edit.client', ['pageTitle' => 'Edit Client Information'], compact('client'));
 	}
 
@@ -132,15 +157,20 @@ class ClientsController extends \BaseController {
 	 * PUT /clients/{id}
 	 *
 	 * @param  String  $id
-	 * @return Response
+	 * @return Redirect
 	 */
 	public function update($id)
 	{
-		$input = Input::only('client_id', 'client_name', 'address', 'cp_first_name', 'cp_middle_name', 'cp_last_name', 'email', 'mobile', 'telephone');
+		$inputs = Input::only('client_id', 'client_name', 'address', 'cp_first_name', 'cp_middle_name', 'cp_last_name', 'email', 'mobile', 'telephone');
 		
-		$this->updateClientForm->validate($input);
+		try {
+			$this->updateClientForm->validate($inputs);
+		}
+		catch(FormValidationException $error) {
+			return Redirect::back()->withInput()->withErrors($error->getErrors());
+		}
 
-		extract($input);
+		extract($inputs);
 
 		$updateClient = $this->execute(new UpdateClientCommand($id, $client_id, $client_name, $address, $cp_first_name, $cp_middle_name, $cp_last_name, $email, $mobile, $telephone));
 
@@ -156,14 +186,29 @@ class ClientsController extends \BaseController {
 
 	/**
 	 * Remove the specified resource from storage.
-	 * DELETE /clients/{id}
+	 * DELETE /clients/{clientID}
 	 *
-	 * @param  int  $id
+	 * @param  String  $clientID
 	 * @return Response
 	 */
-	public function destroy($id)
+	public function destroy($clientID)
 	{
-		//
+		$client_name = $this->clients->getClientByAssignedId($clientID)->client_name; 
+
+		$removeClient = $this->execute(
+			new RemoveClientCommand($clientID)
+		);
+
+		if($removeClient) {
+			Flash::success('Account of ' . $client_name  . ' client has been successfully removed!');
+
+		}
+		else{
+			Flash::success('Failed to remove account of ' . $client_name . ' client!');
+
+		}
+		
+		return 	Redirect::route('clients.index');
 	}
 
 	/**
@@ -173,11 +218,39 @@ class ClientsController extends \BaseController {
 	*/
 	public function export() 
 	{
-		$clients = $this->clients->getActiveClients()->get();
+		$clients = $this->clients->getCSVReport();
 
 		$excel = new ExportToExcel($clients, 'List of Clients');
 
 		return $excel->export();
+	}
+
+	/**
+	 * Restore the specified resource from storage.
+	 * RESTORE /clients/{clientID}
+	 *
+	 * @param  String  $clientID
+	 * @return Redirect
+	 */
+	public function restore($clientID) {
+
+		$client_name = $this->clients->getClientByAssignedId($clientID)->client_name; 
+
+		$restoreClient = $this->execute(
+			new RestoreClientCommand($clientID)
+		);
+
+		if($restoreClient) {
+			Flash::success('Account of ' . $client_name  . ' client has been successfully restored!');
+
+		}
+		else{
+			Flash::success('Failed to restore account of ' . $client_name . ' client!');
+
+		}
+		
+		return 	Redirect::route('clients.index');
+
 	}
 
 }

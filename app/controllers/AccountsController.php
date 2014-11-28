@@ -25,7 +25,7 @@ class AccountsController extends \BaseController {
 	 * Show the form for changing the password of the logged in user.
 	 *
 	 * @param  String  $username
-	 * @return Response
+	 * @return View
 	 */
 	public function edit($username)
 	{
@@ -37,7 +37,7 @@ class AccountsController extends \BaseController {
 	 * Update the password of the logged in user
 	 *
 	 * @param  String  $username
-	 * @return Response
+	 * @return Redirect
 	 */
 	public function update($username)
 	{
@@ -53,24 +53,19 @@ class AccountsController extends \BaseController {
 		$old_password 		= Input::get('old_password');
 		$new_password 		= Input::get('password');
 
-		$return_msg = '';
-		$global_type = '';
-
 		if(Hash::check($old_password, $user->getAuthPassword())) {
 			$user->password = $new_password;
 
-			if($user->save()){
-				$global_type = 'global-successful';
-				$return_msg = 'Password has been successfully changed!';
+			if( !($user->save()) ){
+				Flash::error('Error: Failed saving new password!');
 			}
+			Flash::success('Password has been successfully changed!');
 		}
 		else {
-			$global_type = 'global-error';
-			$return_msg = 'Old password given does not match record!';
+			Flash::error('Old password given does not match record!');
 		}
 
-		return  Redirect::route('accounts.edit', $username)
-				->with($global_type, $return_msg);
+		return  Redirect::route('accounts.edit', $username);
 	}
 
 

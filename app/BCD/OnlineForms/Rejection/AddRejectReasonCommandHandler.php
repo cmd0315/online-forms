@@ -47,7 +47,7 @@ class AddRejectReasonCommandHandler implements CommandHandler {
 
 			if($addRejectReason && $id) {
 				foreach($command->forms as $form) {
-					$formRejectReason = FormRejectReason::add($form, $id);
+					$formRejectReason = FormRejectReason::add($form, $id, $command->process_type);
 
 					$addRejectReasonToForm = $this->formRejectReasonRepo->save($formRejectReason);
 				}

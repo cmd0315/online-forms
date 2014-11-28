@@ -91,17 +91,17 @@ tr.row-line td {
 
 @font-face {
     font-family: "Vaud";
-    src: url(./fonts/VaudBook_0.ttf);
+    src: url(fonts/VaudBook_0.ttf);
 }
 
 @font-face {
     font-family: "Vaud Bold";
-    src: url(./fonts/VaudBold.ttf);
+    src: url(fonts/VaudBold.ttf);
 }
 
 @font-face {
     font-family: "Vaud Italic";
-    src: url(./fonts/VaudBookIt.ttf);
+    src: url(fonts/VaudBookIt.ttf);
 }
 
 @font-face {

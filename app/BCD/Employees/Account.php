@@ -34,6 +34,11 @@ class Account extends Eloquent implements UserInterface, RemindableInterface {
      */
 	protected $fillable = ['username', 'password', 'status'];
 
+    /**
+    * Required for softdeletion of records
+    *
+    * @var array
+    */
     protected $dates = ['deleted_at'];
 
 
@@ -57,6 +62,12 @@ class Account extends Eloquent implements UserInterface, RemindableInterface {
         return $this->belongsToMany('BCD\Employees\Role')->withTimestamps();
     }
 
+    /**
+    * Check if the user has the specified role
+    *
+    * @param String $name
+    * @return boolean
+    */
     public function hasRole($name) {
         foreach($this->roles as $role) {
             if($role->name === $name) return true;
@@ -65,6 +76,11 @@ class Account extends Eloquent implements UserInterface, RemindableInterface {
         return false;
     }
 
+    /**
+    * Check if the user is the system administrator
+    *
+    * @return boolean
+    */
     public function getSystemAdminAttribute() {
         foreach($this->roles as $role) {
             if($role->name === 'System Administrator') return true;
@@ -99,7 +115,7 @@ class Account extends Eloquent implements UserInterface, RemindableInterface {
     }
 
     /**
-    * Add an employee account
+    * Add an employee account by inserting a new record
     *
     * @param String $username
     * @param String $password
@@ -111,7 +127,19 @@ class Account extends Eloquent implements UserInterface, RemindableInterface {
     	return $account;
     }
 
-
+   /**
+    * Check if the entry has already been softdeleted
+    *
+    * @return boolean
+    */
+    public function isDeleted() {
+        if($this->deleted_at !== NULL) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
 }
 

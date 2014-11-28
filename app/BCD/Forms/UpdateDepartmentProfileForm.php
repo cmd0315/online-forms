@@ -11,7 +11,7 @@ class UpdateDepartmentProfileForm extends FormValidator {
 	 */
 	protected $rules = [
 		'department_id' => 'required|max:10|min:4',
-		'department_head' => 'required'
+		'department_name' => 'required|max:20|min:2'
 	];
 
 } 

@@ -24,9 +24,9 @@
                         </div>
                         <div class="col-lg-4 text-right">
                             Status: 
-                            @if(e($onlineForm->stage) == 1 && e($onlineForm->status) == 0)
+                            @if(e($onlineForm->departmentApproved()))
                                 <span class="label label-success"> Approved</span>
-                            @elseif(e($onlineForm->stage) == 0 && e($onlineForm->status) == 1)
+                            @elseif(e($onlineForm->departmentRejected()))
                                 <span class="label label-danger"> Rejected</span>
                             @else
                                 <span class="label label-default"> Pending</span>
@@ -45,7 +45,7 @@
                                     <div class="col-lg-12">
                                         <div class="radio">
                                             <label> 
-                                                @if(e($onlineForm->stage) == 1 && e($onlineForm->status) == 0)
+                                                @if(e($onlineForm->departmentApproved()))
                                                     <input type="radio" name="decisionOptions" id="radio-approve" value="0" checked> Accept Request
                                                 @else
                                                     <input type="radio" name="decisionOptions" id="radio-approve" value="0"> Accept Request
@@ -54,7 +54,7 @@
                                         </div>
                                         <div class="radio">
                                             <label>
-                                                @if(e($onlineForm->stage) == 0 && e($onlineForm->status) == 1)
+                                                @if(e($onlineForm->departmentRejected()))
                                                     <input type="radio" name="decisionOptions" id="radio-reject" value="1" checked> Reject Request
                                                 @else
                                                     <input type="radio" name="decisionOptions" id="radio-reject" value="1"> Reject Request
@@ -67,31 +67,31 @@
                                     <div class="col-lg-12">
                                         <h5>Reasons:</h5>
                                         @if(count($whyRejectedArr) > 0 )
-                                            @foreach($rejectReasons as $rr)
-                                                @if(in_array($rr->id, $whyRejectedArr))
+                                            @foreach($formRejectReasons as $formRejectReason)
+                                                @if(in_array($formRejectReason->id, $whyRejectedArr))
                                                     <div class="checkbox">
-                                                        <label> <input type="checkbox" class="reject-checkbox" name="rejectReasons[]" value="{{$rr->id}}" checked> {{$rr->reason}}</label>
+                                                        <label> <input type="checkbox" class="reject-checkbox" name="formRejectReasons[]" value="{{$formRejectReason->id}}" checked> {{$formRejectReason->rejectReason->reason}}</label>
                                                     </div><!-- checkbox -->
                                                 @else
                                                     <div class="checkbox">
-                                                        <label> <input type="checkbox" class="reject-checkbox" name="rejectReasons[]" value="{{$rr->id}}"> {{$rr->reason}}</label>
+                                                        <label> <input type="checkbox" class="reject-checkbox" name="formRejectReasons[]" value="{{$formRejectReason->id}}"> {{$formRejectReason->rejectReason->reason}}</label>
                                                     </div><!-- checkbox -->
                                                 @endif
                                             @endforeach
                                         @else
-                                            @foreach($rejectReasons as $rr)
+                                            @foreach($formRejectReasons as $formRejectReason)
                                                 <div class="checkbox">
-                                                    <label> <input type="checkbox" class="reject-checkbox" name="rejectReasons[]" value="{{$rr->id}}"> {{$rr->reason}}</label>
+                                                    <label> <input type="checkbox" class="reject-checkbox" name="formRejectReasons[]" value="{{$formRejectReason->id}}"> {{$formRejectReason->rejectReason->reason}}</label>
                                                 </div><!-- checkbox -->
                                             @endforeach
                                         @endif
 
                                     </div>
-                                </div>
+                                </div><!-- .row -->
                                 <div class="row">
                                     <div class="col-lg-12 text-right">
                                         <a class="btn btn-default" href="{{ URL::route('approval.show', e($onlineForm->id)) }}">Review Request</a>
-                                        <button type="submit" class="btn btn-warning">Submit</button>
+                                        <button type="submit" class="btn btn-warning" id="submit-decision">Submit</button>
                                     </div>
                                 </div><!-- .row -->
                                 <input type="hidden" id="approver" name="approver" value="{{$currentUser->username}}">

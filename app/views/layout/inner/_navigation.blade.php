@@ -99,11 +99,8 @@
                     <li>
                         <a href="{{ URL::route('profile.show', ['username' => $currentUser->username]) }}"> Profile</a>
                     </li>
-                   <li>
-                        <a href="#"> Inbox</a>
-                    </li>
                     <li>
-                        <a href="#"> Settings</a>
+                        <a href="{{ URL::route('accounts.edit', $currentUser->username) }}"> Settings</a>
                     </li>
                     <li class="divider"></li>
                     <li>
@@ -117,11 +114,17 @@
     <div class="collapse navbar-collapse navbar-ex1-collapse">
         <ul class="nav navbar-nav side-nav">
             <li>
-                <a href="{{ URL::route('dashboard') }}"> Dashboard</a>
+                <a href="{{ URL::route('dashboard') }}" class="text-center">
+                    <i class="fa fa-tachometer fa-lg"></i>
+                    <h4>Dashboard</h4>
+                </a>
             </li>
             @if($currentUser->system_admin)
                 <li>
-                    <a href="javascript:;" data-toggle="collapse" data-target="#employees-menu"> Employees <b class="caret"></b></a>
+                    <a href="javascript:;" data-toggle="collapse" data-target="#employees-menu" class="text-center">
+                        <i class="fa fa-user fa-lg"></i>
+                        <h4>Employees</h4>
+                    </a>
                     <ul id="employees-menu" class="collapse">
                         <li>
                             <a href="{{ URL::route('employees.create') }}">Add Employee</a>
@@ -132,7 +135,10 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="javascript:;" data-toggle="collapse" data-target="#departments-menu"> Departments <b class="caret"></b></a>
+                    <a href="javascript:;" data-toggle="collapse" data-target="#departments-menu" class="text-center">
+                        <i class="fa fa-building fa-lg"></i>
+                        <h4>Departments</h4>
+                    </a>
                     <ul id="departments-menu" class="collapse">
                         <li>
                             <a href="{{ URL::route('departments.create') }}">Add Department</a>
@@ -143,7 +149,10 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="javascript:;" data-toggle="collapse" data-target="#clients-menu"> Clients <b class="caret"></b></a>
+                    <a href="javascript:;" data-toggle="collapse" data-target="#clients-menu" class="text-center">
+                        <i class="fa fa-suitcase fa-lg"></i>
+                        <h4>Clients</h4>
+                    </a>
                     <ul id="clients-menu" class="collapse">
                         <li>
                             <a href="{{ URL::route('clients.create') }}">Add Client</a>
@@ -155,11 +164,19 @@
                 </li>
             @endif
             <li>
-                <a href="javascript:;" data-toggle="collapse" data-target="#forms-menu"> Forms <b class="caret"></b></a>
+                <a href="javascript:;" data-toggle="collapse" data-target="#forms-menu" class="text-center">
+                    <i class="fa fa-file-text fa-lg"></i>
+                    <h4>Forms</h4>
+                </a>
                 <ul id="forms-menu" class="collapse">
                     <li>
                         <a href="{{ URL::route('forms.index') }}">List of Forms</a>
                     </li>
+                    @if($currentUser->system_admin)
+                        <li>
+                            <a href="{{ URL::route('rejectreasons.index') }}">Reject Reasons</a>
+                        </li>
+                    @endif
                 </ul>
             </li>
         </ul>

@@ -26,7 +26,7 @@ class AddDepartmentCommandHandler implements CommandHandler {
 	* Handle the command
 	*
 	* @param AddDepartmentCommand $command
-	* @return mixed
+	* @return Department
 	*
 	*/
 	public function handle($command) {

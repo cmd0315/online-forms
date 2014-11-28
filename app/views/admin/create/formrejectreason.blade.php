@@ -17,9 +17,22 @@
 									<div class="form-group">
 										<label for="forms" class="col-sm-4 control-label">Types of Form</label>
 										<div class="col-sm-8">
-											{{ Form::select('forms[]', $forms, Input::old('forms'), array('multiple', 'class' => 'form-control')) }}
+											{{ Form::select('forms[]', $forms, Input::old('forms'), ['multiple', 'class' => 'multiple-select form-control']) }}
 											@if($errors->has('forms'))
 												<p class="bg-danger">{{ $errors->first('forms') }}</p>
+											@endif
+										</div>
+									</div><!-- .form-group -->
+								</div>
+							</div><!--.row-->
+							<div class="row">
+								<div class="col-lg-12">
+									<div class="form-group">
+										<label for="process_type" class="col-sm-4 control-label">Use For</label>
+										<div class="col-sm-8">
+											{{ Form::select('process_type', $processes, Input::old('process_type'), ['class' => 'form-control']) }}
+											@if($errors->has('process_type'))
+												<p class="bg-danger">{{ $errors->first('process_type') }}</p>
 											@endif
 										</div>
 									</div><!-- .form-group -->
@@ -36,7 +49,6 @@
 											@endif
 										</div>
 									</div><!-- .form-group -->
-									<input type="button" class="btn btn-primary btn-sm pull-right" value="Add More">
 								</div>
 							</div><!--.row-->
 						</div><!-- .panel-body -->

@@ -1,7 +1,6 @@
 <?php namespace BCD\Employees;
 
 use BCD\Employees\Account;
-use Hash;
 
 class AccountRepository {
 	/**
@@ -19,17 +18,30 @@ class AccountRepository {
 	* @param String $username
 	*/
 	public function find($username) {
-		return Account::whereUsername($username)->firstOrFail();
+		return Account::withTrashed()->whereUsername($username)->firstOrFail();
 	}
 
 	/**
 	* Soft delete employee account
 	*
 	* @param String $username
+	* @return Account
 	*/
 	public function remove($username) {
-		$account = Account::whereUsername($username)->firstOrFail();
+		$account = Account::withTrashed()->whereUsername($username)->firstOrFail();
 
 		return $account->delete();
+	}
+
+	/**
+	* Restore employee account
+	*
+	* @param String $username
+	* @return Account
+	*/
+	public function restore($username) {
+		$account = $this->find($username);
+
+		return $account->restore();
 	}
 }

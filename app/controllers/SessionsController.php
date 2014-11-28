@@ -14,7 +14,6 @@ class SessionsController extends \BaseController {
 	*/
 	function __construct(LoginForm $loginForm) {
 		$this->loginForm = $loginForm;
-
 		$this->beforeFilter('guest', ['except' => 'destroy']);
 	}
 
@@ -22,7 +21,7 @@ class SessionsController extends \BaseController {
 	/**
 	 * Show the form for signing in.
 	 *
-	 * @return Response
+	 * @return View
 	 */
 	public function create()
 	{
@@ -33,7 +32,7 @@ class SessionsController extends \BaseController {
 	/**
 	 * Logs in user to website
 	 *
-	 * @return Response
+	 * @return Redirect
 	 */
 	public function store()
 	{
@@ -42,22 +41,21 @@ class SessionsController extends \BaseController {
 
 		$remember = (Input::has('remember')) ? true : false;
 
-		if(Auth::attempt($input, $remember)){
-			//Redirect to intended page
-			return Redirect::intended('dashboard')
-					->with('global', 'You are now logged in!');
-		}
-		else {
+		if( !(Auth::attempt($input, $remember)) ){
 			return  Redirect::route('sessions.create')
 					->with('global-error', 'Wrong username or password');
 		}
+
+		//Redirect to intended page
+		return Redirect::intended('dashboard')
+				->with('global', 'You are now logged in!');
 	}
 
 
 	/**
 	 * Logout user
 	 *
-	 * @return Response
+	 * @return Redirect
 	 */
 	public function destroy()
 	{

@@ -6,7 +6,8 @@ class RegisterEmployeeCommand {
 
 	/**
 	* Constructor
-	* 
+	*
+	* @param mixed
 	*/
 	function __construct($username, $password, $first_name, $middle_name, $last_name, $birthdate, $address, $email, $mobile, $department_id) 
 	{

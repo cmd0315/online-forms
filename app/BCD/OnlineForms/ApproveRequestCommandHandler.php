@@ -32,6 +32,7 @@ class ApproveRequestCommandHandler implements CommandHandler {
 	public function handle($command) {
 
 		$onlineForm = $this->onlineFormRepo->getFormByID($command->formID);
+		$onlineForm->stage = 1; //update stage
 
 		if($command->decisionOptions == 0) {
 			//add user's username to OnlineForm record, update stage and status
@@ -44,27 +45,24 @@ class ApproveRequestCommandHandler implements CommandHandler {
 				}
 			}
 
-			$onlineForm->stage = 1; //update stage
 			$onlineForm->status = 0; //update status
 			$onlineForm->approved_by = $command->approver;
-			$this->onlineFormRepo->save($onlineForm);
-
 		}
 		else {
 			//add row to rejection history
-
-			foreach($command->reason_id as $reason_id) {
-				$rfp = RejectionHistory::addRow($command->formID, $reason_id);
-			
-				$this->rejectionHistoryRepo->save($rfp);
+			foreach($command->formRejectReasons as $form_reject_reason_id) {
+				if(!($this->rejectionHistoryRepo->rowHistoryExists($command->formID, $form_reject_reason_id))) {
+					$rfp = RejectionHistory::addRow($command->formID, $form_reject_reason_id);
+					$this->rejectionHistoryRepo->save($rfp);
+				}
 			}
 
-			$onlineForm->stage = 0; //update stage
 			$onlineForm->status = 1; //update status
 			$onlineForm->approved_by = NULL;
-			$this->onlineFormRepo->save($onlineForm);
 		}
-		return $onlineForm;
 
+		$this->onlineFormRepo->save($onlineForm);
+
+		return $onlineForm;
 	}
 }

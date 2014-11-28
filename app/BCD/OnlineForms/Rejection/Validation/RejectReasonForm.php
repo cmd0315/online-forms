@@ -11,6 +11,7 @@ class RejectReasonForm extends FormValidator {
 	 */
 	protected $rules = [
 		'forms' => 'required',
+		'process_type' => 'required',
 		'reason' => 'required|min:5'
 	];
 

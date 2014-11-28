@@ -32,6 +32,7 @@ class EditRFPCommandHandler implements CommandHandler {
 	* Handles the command.
 	*
 	* @param EditRFPCommand $command
+	* @return RequestForPayment
 	*/
 	public function handle($command) {
 		$rfp = $this->rfpRepository->getFormByFormNum($command->form_num);

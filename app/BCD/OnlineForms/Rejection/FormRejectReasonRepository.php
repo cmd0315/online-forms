@@ -35,9 +35,8 @@ class FormRejectReasonRepository {
 		return FormRejectReason::where('reject_reason_id', $id)->get();
 	}
 
-	public function remove($formableType, $rejectReasonID) {
-		return FormRejectReason::where('formable_type', $formableType)->where('reject_reason_id', $rejectReasonID)->delete();
+	public function remove($formableType, $rejectReasonID, $processType) {
+		return FormRejectReason::where('reject_reason_id', $rejectReasonID)->where('formable_type', $formableType)->where('process_type', $processType)->delete();
 	}
 
-	
 }

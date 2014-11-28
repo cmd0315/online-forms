@@ -47,7 +47,8 @@
 							  <tr>
 							    <td>#</td>
 							    <td>{{ sort_rejectreasons_by('reason', 'Reason') }}</td>
-							    <td>Form Type</td>
+							    <td>{{ sort_rejectreasons_by('form_type', 'Form Type') }}</td>
+							    <td>{{ sort_rejectreasons_by('process_type', 'Process') }}</td>
 							    <td>{{ sort_rejectreasons_by('updated_at', 'Last Updated At') }}</td>
 							    <td>{{ sort_rejectreasons_by('created_at', 'Date Created') }}</td>
 							    <td></td>
@@ -56,24 +57,22 @@
 							<tbody>
 							<?php $counter=0; ?>
 							@foreach($rejectReasons as $rejectReason)
-								<tr>
-									<td>{{ ++$counter }}</td>
-									<td><a href="{{ URL::route('rejectreasons.edit', e($rejectReason->id)) }}">{{ e($rejectReason->reason) }}</a></td>
-									<td>
-										<ul>
-											@foreach($rejectReason->formRejectReasons as $fRR)
-												<li>{{ e($fRR->form_type) }}</li>
-											@endforeach
-										</ul>
-									</td>
-									<td>{{ e($rejectReason->updated_at) }}</td>
-									<td>{{ e($rejectReason->created_at) }}</td>
-									<td></td>
-								</tr>
+								@foreach($rejectReason->formRejectReasons as $fRR)
+									<tr>
+										<td><a href="{{ URL::route('rejectreasons.edit', e($fRR->id)) }}">{{ ++$counter }}</a></td>
+										<td>{{ e($rejectReason->reason) }}</td>
+										<td>{{ e($fRR->form_type) }} </td>
+										<td>{{ e($fRR->process) }} </td>
+										<td>{{ e($rejectReason->updated_at) }}</td>
+										<td>{{ e($rejectReason->created_at) }}</td>
+										<td></td>
+									</tr>
+								@endforeach
 							@endforeach
 							</tbody>
 						</table>
 					</div><!-- .table-responsive -->
+					{{ $rejectReasons->appends(Request::except('page'))->links(); }}
 				@else
 			      <h5>No Results found</h5>
 			    @endif

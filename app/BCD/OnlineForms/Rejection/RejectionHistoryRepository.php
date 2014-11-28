@@ -23,4 +23,20 @@ class RejectionHistoryRepository {
 		return RejectionHistory::where('form_id', $id)->get();
 	}
 
+	/**
+	*
+	* @param int
+	* @return boolean
+	*/
+	public function rowHistoryExists($formID, $formRejectReasonID) {
+		$reject_reason_history = RejectionHistory::where('form_id', $formID)->where('form_reject_reason_id', $formRejectReasonID)->get();
+
+		if($reject_reason_history->count() > 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 }

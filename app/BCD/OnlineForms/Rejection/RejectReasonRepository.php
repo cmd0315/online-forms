@@ -76,7 +76,12 @@ class RejectReasonRepository {
 		return RejectReason::where('id', $id)->firstOrFail();
 	}
 
-
+	/**
+	* Return all associated forms for a form reject
+	*
+	* @param int $id
+	* @return array
+	*/
 	public function getAssociatedForms($id) {
 		$associatedFormsArr = [];
 
@@ -87,6 +92,24 @@ class RejectReasonRepository {
 		}
 
 		return $associatedFormsArr;
+	}
+
+	/**
+	* Return all associated process for a form reject reason
+	*
+	* @param int $id
+	* @return array
+	*/
+	public function getAssociatedProcesses($id) {
+		$associatedProcessesArr = [];
+
+		$rejectReason = $this->getReasonByID($id);
+
+		foreach($rejectReason->formRejectReasons as $formRejectReason) {
+			array_push($associatedProcessesArr, $formRejectReason->process_type);
+		}
+
+		return $associatedProcessesArr;
 	}
 
 	/**

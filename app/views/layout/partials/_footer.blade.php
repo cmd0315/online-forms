@@ -44,6 +44,7 @@
 	<!-- {{ HTML::script('https://code.jquery.com/jquery-1.10.2.min.js') }} -->
 	{{ HTML::script('js/jquery.min.js') }}
 	{{ HTML::script('js/bootstrap.min.js') }}
+	{{ HTML::script('js/bootstrap-multiselect.js') }}
 	{{ HTML::script('js/scripts.js') }}
 	@yield('extra-scripts')
 </body>

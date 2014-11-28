@@ -8,14 +8,20 @@
 <div class="row">
 	<div class="col-lg-12">
 		<div class="row table-toolbar">
-			<div class="col-lg-9">
+			<div class="col-lg-3">
 				<div class="btn-toolbar" role="toolbar">
 					<div class="btn-group btn-group-sm">
 						<a href="{{ URL::route('clients.create') }}" class="btn btn-primary">Add Client</a>
-						<a href="{{ URL::route('clients.export') }}" class="btn btn-warning">Export List</a>
-  						<button type="button" class="btn btn-danger">Remove Client</button>
+						<button type="button" id="{{ URL::route('clients.export') }}" class="btn btn-warning export">Export List</button>
+  						<button type="button" class="btn btn-danger" id="remove-btn" name="remove-btn">Remove Client</button>
+  						<a class="btn btn-default cancel-btn" id="cancel-btn1" name="cancel-btn1">Cancel Remove</a>
 					</div><!-- .btn-group -->
 				</div><!-- .btn-toolbar -->
+			</div>
+			<div class="col-lg-6">
+				<div class="progress-div" style="display:none;">
+					<i class="fa fa-lg fa-cog fa-spin"></i> Exporting the data ...
+				</div>
 			</div>
 			<div class="col-lg-3">
 				{{ Form::open(['method' => 'GET', 'route' => 'clients.index']) }}
@@ -30,14 +36,17 @@
 		</div>
 		<div class="row">
 			<div class="col-lg-2">
-				<h4>Total Clients: <small>{{ $total_clients }}</small></h4>
+				<h4>Active: <small>{{ $active_clients }}</small></h4>
 			</div>
-			<div class="col-lg-10">
+			<div class="col-lg-2">
+				<h4>Total: <small>{{ $total_clients }}</small></h4>
+			</div>
+			<div class="col-lg-8">
 				@if(isset($search))
-					<h4>Search: <mark>{{ $search }}</mark></h4>
+					<h5>Search:  <mark>{{ $search }}</mark> <a href="{{ URL::route('clients.index') }}"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></a></h5>
 				@endif
 			</div>
-		</div>
+		</div><!-- .row -->
 		<div class="row">
 			<div class="col-lg-12">
 			    @if($clients->count())
@@ -45,9 +54,10 @@
 						<table class="table table-condensed table-hover table-big" id="employee-table">
 							<thead>
 								<tr>
-								<td>#</td>
+									<td>#</td>
 									<td>{{ sort_clients_by('client_id', 'ID') }}</td>
 									<td>{{ sort_clients_by('client_name', 'Name') }}</td>
+									<td>Status</td>
 									<td>{{ sort_clients_by('address', 'Address') }}</td>
 									<td>{{ sort_clients_by('cp_last_name', 'Contact Person') }}</td>
 									<td>{{ sort_clients_by('email', 'Email Address') }}</td>
@@ -59,20 +69,27 @@
 								</tr>
 							</thead>
 							<tbody>
-							<?php $counter=0; ?>
 							@foreach($clients as $client)
-								<tr>
-									<td>{{ ++$counter }}</td>
-									<td><a href="{{ URL::route('clients.show', ['client_id' => $clientID = e($client->client_id)]) }}">{{ $clientID }}</a></td>
-									<td> {{ e($client->client_name) }} </td>
-									<td> {{ e($client->address) }} </td>
-									<td> {{ e($client->contact_person) }} </td>
-									<td> {{ e($client->email) }} </td>
-									<td> {{ e($client->mobile) }} </td>
-									<td> {{ e($client->telephone) }} </td>
-									<td> {{ e($client->updated_at) }} </td>
-									<td> {{ e($client->created_at) }} </td>
-								</tr>
+								@if($client->isDeleted())
+									<tr class="danger">
+								@else
+									<tr>
+								@endif
+										<td>{{ ++$currentRow }}</td>
+										<td><a href="{{ URL::route('clients.show', ['client_id' => $clientID = e($client->client_id)]) }}">{{ $clientID }}</a></td>
+										<td> {{ e($client->client_name) }} </td>
+										<td> {{ e($client->clientStatus) }} </td>
+										<td> {{ e($client->address) }} </td>
+										<td> {{ e($client->contact_person) }} </td>
+										<td> {{ e($client->email) }} </td>
+										<td> {{ e($client->mobile) }} </td>
+										<td> {{ e($client->telephone) }} </td>
+										<td> {{ e($client->updated_at) }} </td>
+										<td> {{ e($client->created_at) }} </td>
+										@if( !($client->isDeleted()) )
+											<td><button class="btn btn-delete" id="{{ e($client->client_name) }}" value="{{ URL::route('clients.destroy', e($client->client_id)) }}" style="display:none;">X</button></td>
+										@endif
+									</tr>
 							@endforeach
 							</tbody>
 						</table>
@@ -85,4 +102,21 @@
 		</div>
 	</div>
 </div><!-- .row -->
+@stop
+
+@section('modal-content')
+<div class="modal-content">
+	{{ Form::open(['id' => 'modal-form', 'route' => ['clients.destroy'], 'method' => 'DELETE']) }}
+		<div class="modal-header">
+			<h4 class="modal-title" id="myModalLabel">Remove Client</h4>
+		</div>
+		<div class="modal-body">
+			Are you sure you want to remove <span id="subject-name"></span> client?
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-default cancel-btn" id="cancel-btn2" data-dismiss="modal">Cancel</button>
+			{{ Form::submit('OK', array('class' => 'btn btn-warning')) }}
+		</div>
+	{{ Form::close() }}
+</div><!-- .modal-content -->
 @stop

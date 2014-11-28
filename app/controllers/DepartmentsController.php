@@ -3,10 +3,11 @@ use BCD\Core\CommandBus;
 use BCD\Departments\Registration\AddDepartmentCommand;
 use BCD\Departments\Registration\UpdateDepartmentCommand;
 use BCD\Departments\Registration\RemoveDepartmentCommand;
+use BCD\Departments\Registration\RestoreDepartmentCommand;
 use BCD\Forms\AddDepartmentForm;
 use BCD\Forms\UpdateDepartmentProfileForm;
 use BCD\Departments\DepartmentRepository;
-use BCD\OnlineForms\ExportToExcel;
+use BCD\ExportToExcel;
 
 class DepartmentsController extends \BaseController {
 
@@ -27,12 +28,20 @@ class DepartmentsController extends \BaseController {
 	*/
 	protected $departments;
 
+	/**
+	* Maximum number of rows to be display per page
+	*
+	* @var int $maxRowPerPage
+	*/
+	protected $maxRowPerPage;
+
 
 	/**
 	* Constructor
 	*
 	* @param AddDepartmentForm $addDepartmentForm 
 	* @param UpdateDepartmentProfileForm $updateDepartmentProfileForm
+	* @param DepartmentRepository $departments
 	*/
 	public function __construct(AddDepartmentForm $addDepartmentForm, UpdateDepartmentProfileForm $updateDepartmentProfileForm, DepartmentRepository $departments) {
 		$this->addDepartmentForm = $addDepartmentForm;
@@ -40,6 +49,8 @@ class DepartmentsController extends \BaseController {
 		$this->updateDepartmentProfileForm = $updateDepartmentProfileForm;
 
 		$this->departments = $departments;
+
+		$this->maxRowPerPage = 5;
 
 		$this->beforeFilter('auth');
 
@@ -60,9 +71,19 @@ class DepartmentsController extends \BaseController {
 		$sortBy = Request::get('sortBy');
 		$direction = Request::get('direction');
 
-		$departments = $this->departments->paginateResults($search, compact('sortBy', 'direction'));
+		$currentPage = 1;
+
+		if (Request::get('page')) {
+			$currentPage = Request::get('page');
+		}
+
+		$currentRow =  ($this->maxRowPerPage * ($currentPage - 1)) ;
+
+		$departments = $this->departments->paginateResults($this->maxRowPerPage, $search, compact('sortBy', 'direction'));
+		$active_departments = $this->departments->totalActive();
 		$total_departments = $this->departments->total();
-		return View::make('admin.display.list-departments', ['pageTitle' => 'Manage Department Records'], compact('departments', 'total_departments', 'search'));
+
+		return View::make('admin.display.list-departments', ['pageTitle' => 'Manage Department Records'], compact('departments', 'active_departments', 'total_departments', 'search', 'currentRow'));
 	}
 
 
@@ -85,7 +106,13 @@ class DepartmentsController extends \BaseController {
 	public function store()
 	{
 		$input = Input::only('department_id', 'department_name');
-		$this->addDepartmentForm->validate($input);
+
+		try {
+			$this->addDepartmentForm->validate($input);
+		}
+		catch(FormValidationException $error) {
+			return Redirect::back()->withInput()->withErrors($error->getErrors());
+		}
 
 		extract($input);
 
@@ -134,15 +161,20 @@ class DepartmentsController extends \BaseController {
 	 * Update the specified resource in storage.
 	 *
 	 * @param  String  $id
-	 * @return Response
+	 * @return Redirect
 	 */
 	public function update($id)
 	{
-		$input = Input::only('department_id', 'department_name', 'department_head');
+		$inputs = Input::only('department_id', 'department_name', 'department_head');
 
-		$this->updateDepartmentProfileForm->validate($input);
+		try {
+			$this->updateDepartmentProfileForm->validate($inputs);
+		}
+		catch(FormValidationException $error) {
+			return Redirect::back()->withInput()->withErrors($error->getErrors());
+		}
 
-		extract($input);
+		extract($inputs);
 
 		$updateDepartment = $this->execute(new UpdateDepartmentCommand($id, $department_id, $department_name, $department_head));
 
@@ -160,15 +192,15 @@ class DepartmentsController extends \BaseController {
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  String  $id
-	 * @return Response
+	 * @param  String  $departmentID
+	 * @return Redirect
 	 */
-	public function destroy($id)
+	public function destroy($departmentID)
 	{
-		$department_name = $this->departments->getDepartmentName($id); 
+		$department_name = $this->departments->getDepartmentName($departmentID); 
 
 		$removeDepartment = $this->execute(
-			new RemoveDepartmentCommand($id)
+			new RemoveDepartmentCommand($departmentID)
 		);
 
 		if($removeDepartment) {
@@ -191,11 +223,38 @@ class DepartmentsController extends \BaseController {
 	*/
 	public function export() 
 	{
-		$departments = $this->departments->getActiveDepartments()->get();
+		$departments = $this->departments->getCSVReport();
 
 		$excel = new ExportToExcel($departments, 'List of Departments');
 
 		return $excel->export();
+	}
+
+	/**
+	 * Restore department account of the specified resource from storage.
+	 *
+	 * @param  String  $departmentID
+	 * @return Redirect
+	 */
+	public function restore($departmentID) {
+
+		$restoreDepartment = $this->execute(
+			new RestoreDepartmentCommand($departmentID)
+		);
+
+		$msg = '<a href="' . URL::route('departments.index') . '">View list of departments.</a>';
+
+		if($restoreDepartment) {
+			$msg = 'Department account for ' . $departmentID . ' has been successfully restored! ' . $msg;
+			Flash::success($msg);
+
+		}
+		else{
+			$msg = 'Failed to restore department account of ' . $departmentID . '! ' . $msg;
+			Flash::success($msg);
+		}
+		
+		return Redirect::route('departments.show', $departmentID);
 	}
 
 

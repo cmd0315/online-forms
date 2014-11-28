@@ -12,7 +12,7 @@ class HomeController extends \BaseController {
 	/**
 	 * Display the home page
 	 *
-	 * @return home page view
+	 * @return View
 	 */
 	public function index() {
 		return View::make('home', ['pageTitle' => 'Home']);

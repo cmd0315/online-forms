@@ -18,6 +18,13 @@ class RejectReasonsController extends \BaseController {
 	*/
 	protected $forms;
 
+    /**
+    * The list of all form processes
+    *
+    * @var array
+    */
+    protected $processes;
+
 	/**
 	* @var RejectReasonForm $rejectReasonForm
 	*/
@@ -41,6 +48,8 @@ class RejectReasonsController extends \BaseController {
 
 		$this->forms = ['BCD\RequestForPayments\RequestForPayment' => 'Request For Payment', 'BCD\CheckVouchers\CheckVoucher' => 'Check Voucher', 'BCD\CashVouchers\CashVoucher' => 'Cash Voucher'];
 
+		$this->processes = ['0' => 'Department Approval', '1' => 'Receiving'];
+
 		$this->beforeFilter('auth');
 
 		$this->beforeFilter('role:System Administrator', ['except' => 'show']);
@@ -62,7 +71,6 @@ class RejectReasonsController extends \BaseController {
 		$total_rejectreasons = $this->rejectReasonRepo->total();
 
 		$rejectReasons = $this->rejectReasonRepo->paginateResults($search, compact('sortBy', 'direction'));
-		//$employees = $this->employees->paginateResults($search, compact('sortBy', 'direction'));
 		return View::make('admin.display.list-formrejectreasons', ['pageTitle' => 'Reject Reasons'], compact('rejectReasons', 'total_rejectreasons', 'search'));
 	}
 
@@ -75,7 +83,8 @@ class RejectReasonsController extends \BaseController {
 	public function create()
 	{
 		$forms = $this->forms;
-		return View::make('admin.create.formrejectreason', ['pageTitle' => 'Add Reject Reasons to Form'], compact('forms'));
+		$processes = $this->processes;
+		return View::make('admin.create.formrejectreason', ['pageTitle' => 'Add Reject Reasons to Form'], compact('forms', 'processes'));
 	}
 
 	/**
@@ -86,19 +95,24 @@ class RejectReasonsController extends \BaseController {
 	 */
 	public function store()
 	{
-		$input = Input::only('forms', 'reason');
+		$input = Input::only('forms', 'process_type', 'reason');
 		$this->rejectReasonForm->validate($input);
 		extract($input);
 
 		$addRejectReason = $this->execute(
-			new AddRejectReasonCommand($forms, $reason)
+			new AddRejectReasonCommand($forms, $process_type, $reason)
 		);
 
+		$referenceUrl = '<a href="' . URL::route('rejectreasons.index') . '">View list here.</a>';
+		$msg = '';
+
 		if($addRejectReason) {
-			Flash::success('Reason for rejection is successfully added to the form');
+			$msg = 'Reason for rejection is successfully added to the form! ' . $referenceUrl;
+			Flash::success($msg);
 		}
 		else {
-			Flash::error('Failed to add reject reason');
+			$msg = 'Failed to add reject reason! ' . $referenceUrl;
+			Flash::error($msg);
 		}
 		
 		return Redirect::route('rejectreasons.create');
@@ -127,9 +141,11 @@ class RejectReasonsController extends \BaseController {
 	{
 		$rejectReason = $this->rejectReasonRepo->getReasonByID($id);
 		$forms = $this->forms;
+		$processes = $this->processes;
 		$associatedForms = $this->rejectReasonRepo->getAssociatedForms($id);
+		$associatedProcesses = $this->rejectReasonRepo->getAssociatedProcesses($id);
 
-		return View::make('admin.edit.formrejectreason', ['pageTitle' => 'Reject Reason'], compact('rejectReason', 'forms', 'associatedForms'));
+		return View::make('admin.edit.formrejectreason', ['pageTitle' => 'Reject Reason'], compact('rejectReason', 'forms', 'processes', 'associatedForms', 'associatedProcesses'));
 	}
 
 	/**
@@ -141,19 +157,25 @@ class RejectReasonsController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		$input = Input::only('forms', 'reason');
+		$input = Input::only('forms', 'process_types', 'reason');
 		$this->rejectReasonForm->validate($input);
 		extract($input);
 
 		$addRejectReason = $this->execute(
-			new EditRejectReasonCommand($id, $forms, $reason)
+			new EditRejectReasonCommand($id, $forms, $process_types, $reason)
 		);
 
+
+		$referenceUrl = '<a href="' . URL::route('rejectreasons.index') . '">View list here.</a>';
+		$msg = '';
+
 		if($addRejectReason) {
-			Flash::success('Reason for rejection is successfully edited');
+			$msg = 'Reason for rejection is successfully edited! ' . $referenceUrl;
+			Flash::success($msg);
 		}
 		else {
-			Flash::error('Failed to edit reject reason');
+			$msg = 'Failed to edit reject reason! ' . $referenceUrl;
+			Flash::error($msg);
 		}
 		
 		return Redirect::route('rejectreasons.edit', $id);

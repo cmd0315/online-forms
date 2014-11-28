@@ -25,7 +25,7 @@ class AddClientCommandHandler implements CommandHandler {
 	* Handle the command
 	*
 	* @param AddClientCommand $command
-	* @return mixed
+	* @return Client
 	*
 	*/
 	public function handle($command) {

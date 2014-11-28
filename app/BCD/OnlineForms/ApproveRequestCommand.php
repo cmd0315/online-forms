@@ -4,17 +4,17 @@ class ApproveRequestCommand {
 	/**
 	* @var mixed
 	*/
-	public $formID, $decisionOptions, $reason_id, $approver;
+	public $formID, $decisionOptions, $formRejectReasons, $approver;
 
 	/**
 	* Constructor
 	*
 	* @param mixed
 	*/
-	function __construct($formID, $decisionOptions, $reason_id, $approver) {
+	function __construct($formID, $decisionOptions, $formRejectReasons, $approver) {
 		$this->formID = $formID;
 		$this->decisionOptions = $decisionOptions;
-		$this->reason_id = $reason_id;
+		$this->formRejectReasons = $formRejectReasons;
 		$this->approver = $approver;
 	}
 }

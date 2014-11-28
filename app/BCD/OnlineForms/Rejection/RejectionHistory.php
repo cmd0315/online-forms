@@ -24,7 +24,7 @@ class RejectionHistory extends Eloquent implements UserInterface, RemindableInte
 	 *
 	 * @var array
      */
-	protected $fillable = ['form_id', 'reason_id'];
+	protected $fillable = ['form_id', 'form_reject_reason_id'];
 
     /**
     * Required attribute for soft deletion
@@ -43,15 +43,15 @@ class RejectionHistory extends Eloquent implements UserInterface, RemindableInte
     /**
     * Many-to-many relationship between RejectionHistory and RejectReason
     */
-    public function reasons() {
-        $this->hasMany('BCD\OnlineForms\Rejection\RejectReason', 'id', 'reason_id');
+    public function formRejectReasons() {
+        return $this->belongsTo('BCD\OnlineForms\Rejection\FormRejectReason', 'form_reject_reason_id', 'id');
     }
 
     /**
     * Create an instance of the model.
     */
-    public static function addRow($form_id, $reason_id) {
-    	$rejectionHistory = new static(compact('form_id', 'reason_id'));
+    public static function addRow($form_id, $form_reject_reason_id) {
+    	$rejectionHistory = new static(compact('form_id', 'form_reject_reason_id'));
 
     	return $rejectionHistory;
     }

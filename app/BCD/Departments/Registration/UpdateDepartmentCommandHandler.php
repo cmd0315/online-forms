@@ -24,31 +24,41 @@ class UpdateDepartmentCommandHandler implements CommandHandler {
 		$this->employeeRepository = $employeeRepository;
 	}
 
+	/**
+	* Handles the command
+	*
+	* @param UpdateDepartmentCommand $command
+	* @return Department
+	*/
 	public function handle($command) {
 		$department = $this->departmentRepository->getDepartmentByID($command->id);
 
 		$updateDepartment = "";
 		
+		//Check if model exists
 		if($department) {
+			//Update department_id and department_name
 			$department->department_id = $command->department_id;
 			$department->department_name = $command->department_name;
 			$updateDepartment = $this->departmentRepository->save($department);
 
-			if($updateDepartment) {
+			//Check if saving of department is successful and if department_head as input exists
+			if($updateDepartment && $command->department_head) {
 				$previousHead = $department->employees()->where('position', '=', '1')->first();
+				/**Check if there is already an employee who is heading the department, 
+				*if yes change his position to member employee
+				*/
 				if($previousHead) {
 					$previousHead->position = 0;
 					$demotePreviousHead = $this->employeeRepository->save($previousHead);
 				}
 
+				//Chenge the chosen employee position to head employee and save
 				$nextHead = $department->employees()->where('username', $command->department_head)->firstOrFail();
-
 				$nextHead->position = 1;
-
 				$promoteMember = $this->employeeRepository->save($nextHead);
 			}
 		}
-		
-		return $updateDepartment;
+		return $department;
 	}
 }
