@@ -2,22 +2,22 @@
 
 class UpdateDepartmentCommand {
 	/**
-	* @var int
+	* @var int $id
 	*/
 	public $id;
 
 	/**
-	* @var String
+	* @var String $department_id
 	*/
 	public $department_id;
 
 	/**
-	* @var String
+	* @var String $department_name
 	*/
 	public $department_name;
 
 	/**
-	* @var String
+	* @var String $department_head
 	*/
 	public $department_head;
 
@@ -25,6 +25,7 @@ class UpdateDepartmentCommand {
 	/**
 	* Constructor
 	*
+	* @param int $id
 	* @param String $department_id
 	* @param String $department_name
 	* @param String $department_head

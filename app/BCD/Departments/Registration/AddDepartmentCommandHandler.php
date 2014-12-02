@@ -7,7 +7,7 @@ use BCD\Departments\Department;
 class AddDepartmentCommandHandler implements CommandHandler {
 
 	/**
-	* @var DepartmentRepository
+	* @var DepartmentRepository $departmentRepository
 	*/
 	protected $departmentRepository;
 
@@ -15,19 +15,16 @@ class AddDepartmentCommandHandler implements CommandHandler {
 	* Constructor
 	*
 	* @var DepartmentRepository $departmentRepository
-	*
 	*/
 	function __construct(DepartmentRepository $departmentRepository) {
 		$this->departmentRepository = $departmentRepository;
 	}
 
 	/**
-	*
 	* Handle the command
 	*
 	* @param AddDepartmentCommand $command
 	* @return Department
-	*
 	*/
 	public function handle($command) {
 		$department = Department::register(

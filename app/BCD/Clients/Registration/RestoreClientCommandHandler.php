@@ -4,6 +4,7 @@ use Laracasts\Commander\CommandHandler;
 use BCD\Clients\ClientRepository;
 
 class RestoreClientCommandHandler implements CommandHandler {
+	
 	/**
 	* @var ClientRepository $clientRepository
 	*/

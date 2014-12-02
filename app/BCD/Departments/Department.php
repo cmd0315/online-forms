@@ -13,29 +13,35 @@ class Department extends Eloquent implements UserInterface, RemindableInterface 
 	/**
 	 * The database table used by the model.
 	 *
-	 * @var string
+	 * @var String $table
 	 */
 	protected $table = 'departments';
 
 	/**
 	 * The db table columns that can be filled
 	 *
-	 * @var array
+	 * @var array $fillable
 	 */
 	protected $fillable = ['department_id', 'department_name', 'status'];
 
     /**
     * List of datatable column names that can be filtered
     *
-    * @var array
+    * @var array $filter_fields
     */
     protected $filter_fields = ['department_id', 'department_name', 'created_at', 'updated_at'];
 
-
+    /**
+    * Required for softdeletion
+    *
+    * @var array $dates
+    */
     protected $dates = ['deleted_at'];
 
     /**
     * One-to-many Relationship between Department and Employee
+    *
+    * @return Employee
     */
     public function employees() {
     	return $this->hasMany('BCD\Employees\Employee', 'department_id', 'department_id')->withTrashed();
@@ -43,6 +49,8 @@ class Department extends Eloquent implements UserInterface, RemindableInterface 
 
     /**
     * One-to-one Relationship between Department and OnlineForm
+    *
+    * @return OnlineForm
     */
     public function onlineForm() {
         return $this->belongsTo('BCD\OnlineForms\OnlineForm', 'department_id', 'department_id')->withTrashed();
@@ -98,7 +106,7 @@ class Department extends Eloquent implements UserInterface, RemindableInterface 
     * Return table rows containing search value
     *
     * @param $query
-    * @param String
+    * @param String $search
     * @return Department
     */
     public function scopeSearch($query, $search) {

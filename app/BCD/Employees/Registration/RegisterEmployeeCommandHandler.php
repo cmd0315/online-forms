@@ -35,7 +35,6 @@ class RegisterEmployeeCommandHandler implements CommandHandler {
 	*
 	* @param RegisterEmployeeCommand $command
 	* @return mixed
-	*
 	*/
 	public function handle($command) {
 		

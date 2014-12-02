@@ -65,16 +65,6 @@ jQuery(document).ready(function($){
 		}
 	});
 
-	/**
-	* Scroll to list of forms
-	*
-	*/
-	$('#view-forms').on('click', function(e) {
-		e.preventDefault(); 
-		$('html, body').animate({
-		    scrollTop: $("#form-list").offset().top
-		}, 2000);
-	});
 
 	/**
 	* Open or close reasons for request rejection
@@ -123,5 +113,24 @@ jQuery(document).ready(function($){
 		  }
 		});
 	});
+
+
+	/**
+	* Scroll to list of forms
+	*
+	*/
+	$('#view-forms').on('click', function(e) {
+		e.preventDefault(); 
+		$('html, body').animate({
+		    scrollTop: $("#form-list").offset().top
+		}, 2000);
+	});
+
+	queryString = window.location.search;
+	if(queryString.length) {
+		$('html, body').animate({
+	        scrollTop: $('#form-list').offset().top
+	    }, 'slow');
+	}
 
 });

@@ -27,12 +27,15 @@ class RequestForPaymentRepository {
 	* Return all forms made by a user
 	*
 	* @param Account $currentUser
+	* @param int $maxRowPerPage
+	* @param String $search
+	* @param array $filterOptions
 	* @return RequestForPayment
 	*/
-	public function getUserForms($currentUser, $search, array $filterOptions) {
+	public function getUserForms($currentUser, $maxRowPerPage, $search, array $filterOptions) {
 		//return OnlineForm::currentUserForms($currentUser->username)->formsByCategory('BCD\RequestForPayments\RequestForPayment')->paginate(5);
 
-		return $this->getAll()->userForms($currentUser)->search($search)->sort($filterOptions)->paginate(5);
+		return $this->getAll()->userForms($currentUser)->search($search)->sort($filterOptions)->paginate($maxRowPerPage);
 	}
 
 	/**
@@ -58,7 +61,7 @@ class RequestForPaymentRepository {
 	/**
 	* Soft delete a payment request by row id
 	*
-	* @param int id
+	* @param int $id
 	* @return RequestForPayment
 	*/
 	public function closeForm($id) {
@@ -77,7 +80,7 @@ class RequestForPaymentRepository {
 		$count = 0;
 
 		foreach($rfps as $rfp) {
-			array_push($csvArray, [
+			$rfpArr = [
 				'#' => ++$count,
 				'Form Num' => $rfp->form_num,
 				'Status' => $rfp->onlineForm->request_status,
@@ -95,7 +98,13 @@ class RequestForPaymentRepository {
 				'Approved By' => $rfp->onlineForm->approved_by_name,
 				'Received By' => $rfp->onlineForm->received_by_name
 
-			]);
+			];
+
+			if($rfp->isDeleted()) {
+				$rfpArr['Deleted At'] = $rfp->onlineForm['deleted_at']->toDateTimeString();
+			}
+
+			array_push($csvArray, $rfpArr);
 		}
 
 		return $csvArray;

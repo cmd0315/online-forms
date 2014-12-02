@@ -8,6 +8,7 @@ class EmployeeRepository {
 	* Persists an Employee
 	*
 	* @param Employee $employee
+	* @return Employee
 	*/
 	public function save(Employee $employee) {
 		return $employee->save();
@@ -40,6 +41,7 @@ class EmployeeRepository {
 	* Find employee
 	* 
 	* @param String $username
+	* @return Employee
 	*/
 	public function find($username) {
 		return Employee::withTrashed()->whereUsername($username)->firstOrFail();
@@ -82,7 +84,7 @@ class EmployeeRepository {
 	/**
 	* Get all employees with the given department id
 	*
-	* @param String
+	* @param String $departmentID
 	* @return Employee
 	*/
 	public function getEmployeesByDepartment($departmentID) {
@@ -110,6 +112,7 @@ class EmployeeRepository {
 	
 	/**
 	* Return paginated results with search and filter values
+	*
 	* @param int $maxRowPerPage
 	* @param String $search
 	* @param array $filterOptions

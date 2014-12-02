@@ -18,7 +18,8 @@ class RestoreDepartmentCommandHandler implements CommandHandler {
 	/**
 	* Constructor
 	*
-	* @var DepartmentRepository $departmentRepository
+	* @param DepartmentRepository $departmentRepository
+	* @param EmployeeRepository $employeeRepository
 	*/
 	function __construct(DepartmentRepository $departmentRepository, EmployeeRepository $employeeRepository) {
 		$this->departmentRepository = $departmentRepository;

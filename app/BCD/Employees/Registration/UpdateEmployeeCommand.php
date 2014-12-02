@@ -2,11 +2,15 @@
 
 class UpdateEmployeeCommand {
 
+	/**
+	* @var mixed
+	*/
 	public $username, $first_name, $middle_name, $last_name, $birthdate, $address, $email, $mobile, $department_id;
 
 	/**
 	* Constructor
-	*	
+	*
+	* @param mixed	
 	*/
 	function __construct($username, $first_name, $middle_name, $last_name, $birthdate, $address, $email, $mobile, $department_id) 
 	{

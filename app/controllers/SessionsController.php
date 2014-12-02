@@ -3,14 +3,14 @@
 
 class SessionsController extends \BaseController {
 	/**
-	* @var $loginForm
+	* @var LoginForm $loginForm
 	*/
 	private $loginForm;
 
 	/**
 	* Constructor
 	*
-	* @param $loginForm
+	* @param LoginForm $loginForm
 	*/
 	function __construct(LoginForm $loginForm) {
 		$this->loginForm = $loginForm;

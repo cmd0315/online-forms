@@ -7,26 +7,24 @@ use BCD\Clients\Client;
 class AddClientCommandHandler implements CommandHandler {
 
 	/**
-	* @var ClientRepository
+	* @var ClientRepository $clientRepository
 	*/
 	protected $clientRepository;
 
 	/**
 	* Constructor
 	*
-	* @param ClientRepository
+	* @param ClientRepository $clientRepository
 	*/
 	function __construct(ClientRepository $clientRepository) {
 		$this->clientRepository = $clientRepository;
 	}
 
 	/**
-	*
 	* Handle the command
 	*
 	* @param AddClientCommand $command
 	* @return Client
-	*
 	*/
 	public function handle($command) {
 		$client = Client::register(

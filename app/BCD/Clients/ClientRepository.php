@@ -8,6 +8,7 @@ class ClientRepository {
 	* Persists a Client
 	*
 	* @param Client $client
+	* @return Client
 	*/
 	public function save(Client $client) {
 		return $client->save();
@@ -54,7 +55,7 @@ class ClientRepository {
 	/**
 	* Get all clients by name to be listed on select tag
 	*
-	* @return Department
+	* @return Client
 	*/
 	public function listClientsByName() {
 		return Client::orderBy('client_name')->lists('client_name', 'client_id');
@@ -73,8 +74,8 @@ class ClientRepository {
 	* Return paginated results with search and filter values
 	*
 	* @param int $maxRowPerPage
-	* @param String
-	* @param array
+	* @param String $search
+	* @param array $filterOptions
 	* @return QueryBuilder
 	*/
 	public function paginateResults($maxRowPerPage, $search, array $filterOptions) {

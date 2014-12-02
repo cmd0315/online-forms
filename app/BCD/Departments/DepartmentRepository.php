@@ -60,7 +60,7 @@ class DepartmentRepository {
 	/**
 	* Get department with given table id
 	*
-	* @param 
+	* @param int $id 
 	* @return Department
 	*/
 	public function getDepartmentByID($id) {
@@ -70,36 +70,37 @@ class DepartmentRepository {
 	/**
 	* Get department with system generated id
 	*
-	* @param String
+	* @param String $departmentID
 	* @return Department
 	*/
-	public function getDepartmentByGeneratedID($id) {
-		return $this->getAll()->where('department_id', $id)->firstOrFail();
+	public function getDepartmentByGeneratedID($departmentID) {
+		return $this->getAll()->where('department_id', $departmentID)->firstOrFail();
 	}
 
 	/**
 	* Get departments that have specified id
 	*
-	* @param String
+	* @param String $departmentID
 	* @return Department
 	*/
-	public function getDepartmentsByGeneratedID($id) {
-		return $this->getAll()->where('department_id', $id)->get();
+	public function getDepartmentsByGeneratedID($departmentID) {
+		return $this->getAll()->where('department_id', $departmentID)->get();
 	}
 
 	/**
 	* Return name of the department
 	*
+	* @param String $departmentID
 	* @return String
 	*/
-	public function getDepartmentName($id) {
-		return $this->getAll()->where('department_id', $id)->pluck('department_name');
+	public function getDepartmentName($departmentID) {
+		return $this->getAll()->where('department_id', $departmentID)->pluck('department_name');
 	}
 
 	/**
 	* Return paginated results with search and filter values
 	*
-	* @int $maxRowPerPage
+	* @param int $maxRowPerPage
 	* @param String $search
 	* @param array $filterOptions
 	* @return QueryBuilder

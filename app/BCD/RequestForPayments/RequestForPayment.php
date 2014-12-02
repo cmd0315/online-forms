@@ -14,11 +14,16 @@ class RequestForPayment extends Eloquent implements UserInterface, RemindableInt
 	/**
 	 * The database table used by the model.
 	 *
-	 * @var string
+	 * @var String
 	 */
 	protected $table = 'prs';
 
-
+    /**
+    * Directory location of the class
+    *
+    * @var String
+    */
+    protected $formable_type = 'BCD\RequestForPayments\RequestForPayment';
 	
 	/**
 	 * The db table columns that can be filled
@@ -34,8 +39,9 @@ class RequestForPayment extends Eloquent implements UserInterface, RemindableInt
     */
     protected $dates = ['deleted_at'];
 
-      /**
+    /**
     * List of datatable column names that can be filtered
+    *
     * @var array
     */
     protected $filter_fields = ['status', 'created_by', 'created_at', 'updated_by', 'updated_at', 'date_requested', 'date_needed', 'payee_lastname', 'total_amount', 'client_name', 'department_name', 'approved_by', 'received_by'];
@@ -51,7 +57,7 @@ class RequestForPayment extends Eloquent implements UserInterface, RemindableInt
     * One-to-one relationship between RequestForPayment and Client
     */
     public function client() {
-    	return $this->belongsTo('BCD\Clients\Client', 'client_id', 'client_id');
+    	return $this->belongsTo('BCD\Clients\Client', 'client_id', 'client_id')->withTrashed();;
     }
 
     /**
@@ -70,7 +76,7 @@ class RequestForPayment extends Eloquent implements UserInterface, RemindableInt
     /**
     * Get the full name of the payee
     *
-    * return String
+    * @return String
     */
     public function getPayeeFullNameAttribute() {
     	return ucfirst($this->payee_firstname) . ' ' . ucfirst($this->payee_middlename) . ' ' . ucfirst($this->payee_lastname);
@@ -85,6 +91,11 @@ class RequestForPayment extends Eloquent implements UserInterface, RemindableInt
     	return sprintf('%01.2f', $this->total_amount);
     }
 
+    /**
+    * Get name of associated client with embedded link to its profile profile page
+    *
+    * @return String
+    */
     public function getClientFormattedAttribute() {
         print '<a href="' . URL::route('clients.show', $this->client->client_id) . '">' . $this->client->client_name . '</a>';
     }
@@ -92,7 +103,8 @@ class RequestForPayment extends Eloquent implements UserInterface, RemindableInt
     /**
     * Filter request for payments
     *
-    * @param String
+    * @param $query
+    * @param Account $currentUser
     * @return query
     */
     public function scopeUserForms($query, $currentUser) {
@@ -115,11 +127,38 @@ class RequestForPayment extends Eloquent implements UserInterface, RemindableInt
         return $query;
     }
 
-     /**
+    /**
+    * Check if the entry has already been softdeleted
+    *
+    * @return boolean
+    */
+    public function isDeleted() {
+        if($this->deleted_at !== NULL) {
+            return true;
+        }
+        return false;
+    }
+
+
+
+    /**
+    * Check if sort can be performed on the datatable
+    *
+    * @param array $params
+    * @return boolean
+    */
+    public function isSortable(array $params) {
+        if(in_array($params['sortBy'], $this->filter_fields)) {
+            return $params['sortBy'] and $params['direction'];
+        }
+    }
+
+
+    /**
     * Return table rows containing search value
     *
     * @param $query
-    * @param String
+    * @param String $search
     * @return $query
     */
     public function scopeSearch($query, $search) {
@@ -139,6 +178,42 @@ class RequestForPayment extends Eloquent implements UserInterface, RemindableInt
                     ->orWhereHas('client', function($q) use ($search) {
                         $q->where('client_name', 'LIKE', "%$search%");
                     })
+                    ->orWhereHas('onlineform', function($q) use ($search) {
+                        $q->leftJoin('departments as dept', 'onlineforms.department_id', '=', 'dept.department_id')
+                          ->where('dept.department_name', 'LIKE', "%$search%");
+                    })
+                    ->orWhereHas('onlineform', function($q) use ($search) {
+                        $q->leftJoin('employees as emp', 'onlineforms.created_by', '=', 'emp.username')
+                          ->where(function($q) use ($search){
+                              $q->where('emp.first_name', 'LIKE', "%$search%")
+                                ->OrWhere('emp.middle_name', 'LIKE', "%$search%")
+                                ->OrWhere('emp.last_name', 'LIKE', "%$search%");
+                          });
+                    })
+                    ->orWhereHas('onlineform', function($q) use ($search) {
+                        $q->leftJoin('employees as emp', 'onlineforms.updated_by', '=', 'emp.username')
+                          ->where(function($q) use ($search){
+                              $q->where('emp.first_name', 'LIKE', "%$search%")
+                                ->OrWhere('emp.middle_name', 'LIKE', "%$search%")
+                                ->OrWhere('emp.last_name', 'LIKE', "%$search%");
+                          });
+                    })
+                    ->orWhereHas('onlineform', function($q) use ($search) {
+                        $q->leftJoin('employees as emp', 'onlineforms.approved_by', '=', 'emp.username')
+                          ->where(function($q) use ($search){
+                              $q->where('emp.first_name', 'LIKE', "%$search%")
+                                ->OrWhere('emp.middle_name', 'LIKE', "%$search%")
+                                ->OrWhere('emp.last_name', 'LIKE', "%$search%");
+                          });
+                    })
+                    ->orWhereHas('onlineform', function($q) use ($search) {
+                        $q->leftJoin('employees as emp', 'onlineforms.received_by', '=', 'emp.username')
+                          ->where(function($q) use ($search){
+                              $q->where('emp.first_name', 'LIKE', "%$search%")
+                                ->OrWhere('emp.middle_name', 'LIKE', "%$search%")
+                                ->OrWhere('emp.last_name', 'LIKE', "%$search%");
+                          });
+                    })
                     ->get();
         });
     }
@@ -146,6 +221,7 @@ class RequestForPayment extends Eloquent implements UserInterface, RemindableInt
     /**
     * Sort datatable by the given database field and sort query direction
     *
+    * @param $query
     * @param array $params
     * @return RequestForPayment
     */
@@ -160,14 +236,53 @@ class RequestForPayment extends Eloquent implements UserInterface, RemindableInt
         $local_table_name = $this->table . '.*';
         $local_table_primary_key = $this->table . '.username';
 
-        if($sortBy == 'created_by' || $sortBy == 'updated_by' || $sortBy == 'approved_by' || $sortBy == 'received_by') {
+        if($sortBy == 'created_by') {
 
             return $query
                     ->select($local_table_name)
                     ->leftJoin('onlineforms as of', $this->table . '.id', '=', 'of.formable_id')
-                    ->where('of.formable_type', '=', 'BCD\RequestForPayments\RequestForPayment')
-                    ->orderBy('of.' . $sortBy, $direction);
+                    ->leftJoin('employees as emp', 'of.created_by', '=', 'emp.username')
+                    ->where('of.formable_type', '=', $this->formable_type)
+                    ->orderBy('emp.last_name', $direction);
 
+        }
+        else if($sortBy == 'updated_by') {
+
+            return $query
+                    ->select($local_table_name)
+                    ->leftJoin('onlineforms as of', $this->table . '.id', '=', 'of.formable_id')
+                    ->leftJoin('employees as emp', 'of.updated_by', '=', 'emp.username')
+                    ->where('of.formable_type', '=', $this->formable_type)
+                    ->orderBy('emp.last_name', $direction);
+
+        }    
+        else if($sortBy == 'approved_by') {
+
+            return $query
+                    ->select($local_table_name)
+                    ->leftJoin('onlineforms as of', $this->table . '.id', '=', 'of.formable_id')
+                    ->leftJoin('employees as emp', 'of.approved_by', '=', 'emp.username')
+                    ->where('of.formable_type', '=', $this->formable_type)
+                    ->orderBy('emp.last_name', $direction);
+
+        }
+        else if($sortBy == 'received_by') {
+
+            return $query
+                    ->select($local_table_name)
+                    ->leftJoin('onlineforms as of', $this->table . '.id', '=', 'of.formable_id')
+                    ->leftJoin('employees as emp', 'of.received_by', '=', 'emp.username')
+                    ->where('of.formable_type', '=', $this->formable_type)
+                    ->orderBy('emp.last_name', $direction);
+
+        }
+        else if($sortBy == 'department_name'){
+            return $query
+                    ->select($local_table_name)
+                    ->leftJoin('onlineforms as of', $this->table . '.id', '=', 'of.formable_id')
+                    ->leftJoin('departments as dept', 'of.department_id', '=', 'dept.department_id')
+                    ->where('of.formable_type', '=', $this->formable_type)
+                    ->orderBy('dept.' . $sortBy, $direction);
         }
         else if($sortBy == 'client_name'){
             return $query
@@ -177,19 +292,6 @@ class RequestForPayment extends Eloquent implements UserInterface, RemindableInt
         }
         else {
             return $query->orderBy($sortBy, $direction);
-        }
-    }
-
-
-    /**
-    * Check if sort can be performed on the datatable
-    *
-    * @param array $params
-    * @return boolean
-    */
-    public function isSortable(array $params) {
-        if(in_array($params['sortBy'], $this->filter_fields)) {
-            return $params['sortBy'] and $params['direction'];
         }
     }
 

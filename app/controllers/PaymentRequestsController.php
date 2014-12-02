@@ -49,9 +49,17 @@ class PaymentRequestsController extends \BaseController {
 	/**
 	* Directory of the formable_type
 	*
-	* @var String
+	* @var String $dir
 	*/
-	protected $dir; 
+	protected $dir;
+
+
+	/**
+	* Maximum number of rows to be display per page
+	*
+	* @var int $maxRowPerPage
+	*/
+	protected $maxRowPerPage;
 
 
 	/**
@@ -74,6 +82,8 @@ class PaymentRequestsController extends \BaseController {
 		$this->employees = $employees;
 		$this->dir = 'RequestForPayments\RequestForPayment';
 
+		$this->maxRowPerPage = 5;
+
 		$this->beforeFilter('auth');
 		$this->beforeFilter('csrf', ['on' => 'post']);
 	}
@@ -86,14 +96,22 @@ class PaymentRequestsController extends \BaseController {
 	 */
 	public function index()
 	{
-
 		$search = Request::get('q');
 		$sortBy = Request::get('sortBy');
 		$direction = Request::get('direction');
 
-		$forms = $this->requestForPayments->getUserForms(Auth::user(), $search, compact('sortBy', 'direction'));
+		$currentPage = 1;
+
+		if (Request::get('page')) {
+			$currentPage = Request::get('page');
+		}
+
+		$currentRow =  ($this->maxRowPerPage * ($currentPage - 1)) ;
+
+
+		$forms = $this->requestForPayments->getUserForms(Auth::user(), $this->maxRowPerPage, $search, compact('sortBy', 'direction'));
 		$formRejectReasons = $this->onlineForms->getAllFormRejectReasons($this->dir);
-		return View::make('account.forms.rfp.index', ['pageTitle' => 'Request For Payment'], compact('forms', 'formRejectReasons', 'search'));
+		return View::make('account.forms.rfp.index', ['pageTitle' => 'Request For Payment'], compact('forms', 'formRejectReasons', 'search', 'currentRow'));
 	}
 
 	/**

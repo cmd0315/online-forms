@@ -25,6 +25,11 @@ class Client extends Eloquent {
 	 */
 	protected $fillable = array('client_id', 'client_name', 'address', 'cp_first_name', 'cp_middle_name', 'cp_last_name', 'email', 'mobile', 'telephone', 'status');
 
+    /**
+    * Required for softdeletion
+    *
+    * @var array $dates
+    */
 	protected $dates = ['deleted_at'];
 
 	/**
@@ -125,7 +130,7 @@ class Client extends Eloquent {
     * Return table rows containing search value
     *
     * @param $query
-    * @param String
+    * @param String $search
     * @return $query
     */
     public function scopeSearch($query, $search) {
@@ -160,6 +165,7 @@ class Client extends Eloquent {
     /**
     * Sort datatable by the given database field and sort query direction
     *
+    * @param String $query
     * @param array $params
     * @return Client
     */

@@ -43,9 +43,8 @@ class OnlineFormRepository {
 
 			return $generatedFormNum;
 		}
-		else {
-			return date('y') . '-0001';
-		}
+		
+		return date('y') . '-0001';
 	}
 
 	/**
@@ -97,6 +96,12 @@ class OnlineFormRepository {
 		return $this->getAll()->where('formable_id', $id)->firstOrFail();
 	}
 
+	/**
+	* Return form type
+	*
+	* @param int $id
+	* @return String
+	*/
 	public function getFormType($id) {
 		$onlineForm = $this->getFormByFormableID($id);
 
@@ -106,6 +111,12 @@ class OnlineFormRepository {
 		return $formType;
 	}
 
+	/**
+	* Return form number
+	*
+	* @param int $id
+	* @return String
+	*/
 	public function getFormNum($id) {
 		$formType = $this->getFormType($id);
 
@@ -122,7 +133,7 @@ class OnlineFormRepository {
 	/**
 	* Get all the reasons why a form can be rejected
 	*
-	* @param String
+	* @param String $formableType
 	* @return FormRejectReason
 	*/
 	public function getAllFormRejectReasons($formableType) {
@@ -174,7 +185,6 @@ class OnlineFormRepository {
 		}
 
 		return $formRejectReasonArr;
-
 	}
 
 	/**

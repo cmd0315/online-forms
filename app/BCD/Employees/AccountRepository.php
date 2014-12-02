@@ -16,6 +16,7 @@ class AccountRepository {
 	* Get account based on username
 	*
 	* @param String $username
+	* @return Account
 	*/
 	public function find($username) {
 		return Account::withTrashed()->whereUsername($username)->firstOrFail();

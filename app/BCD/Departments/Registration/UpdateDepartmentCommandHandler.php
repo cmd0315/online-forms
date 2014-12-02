@@ -16,6 +16,8 @@ class UpdateDepartmentCommandHandler implements CommandHandler {
 	protected $employeeRepository;
 
 	/**
+	* Constructor
+	*
 	* @var DepartmentRepository $departmentRepository
 	* @var EmployeeRepository $employeeRepository
 	*/

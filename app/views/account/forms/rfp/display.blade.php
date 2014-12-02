@@ -91,7 +91,7 @@
                         </div>
                         <div class="col-lg-3 text-right">
                             @if($currentUser->employee->isForEditing(e($form->onlineForm->id)))
-                                <a class="btn btn-danger btn-sm" href="{{ URL::route('rfps.edit', e($form->form_num)) }}">Edit Request</a>
+                                <a class="btn btn-warning btn-sm" href="{{ URL::route('rfps.edit', e($form->form_num)) }}">Edit Request</a>
                             @endif
                             @if($currentUser->employee->isForApproving(e($form->onlineForm->id)))
                                 <a class="btn btn-danger btn-sm" href="{{ URL::route('approval.edit', e($form->onlineForm->id)) }}">Approve Request</a>

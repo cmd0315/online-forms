@@ -15,12 +15,10 @@ class UpdateEmployeeCommandHandler implements CommandHandler {
 	}
 
 	/**
-	*
 	* Handle the command
 	*
 	* @param UpdateEmployeeCommand $command
 	* @return mixed
-	*
 	*/
 	public function handle($command) {
 		$update = $this->employeeRepository->update(
