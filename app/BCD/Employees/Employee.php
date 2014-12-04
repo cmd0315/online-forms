@@ -5,13 +5,14 @@ use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\Reminders\RemindableTrait;
 use Illuminate\Auth\Reminders\RemindableInterface;
 use Illuminate\Database\Eloquent\SoftDeletingTrait;
+use Elasticquent\ElasticquentTrait;
 use Eloquent;
 
 use BCD\OnlineForms\OnlineForm;
 
 class Employee extends Eloquent implements UserInterface, RemindableInterface {
 
-	use UserTrait, RemindableTrait, SoftDeletingTrait;
+	use UserTrait, RemindableTrait, SoftDeletingTrait, ElasticquentTrait;
 
 	/**
 	 * The database table used by the model.

@@ -10,12 +10,13 @@
 		"laracasts/validation" : "1.1.*",
 		"laracasts/commander" : "~1.0",
 		"laracasts/flash" : "1.0",
-		"maatwebsite/excel": "1.*"
+		"maatwebsite/excel": "1.*",
+		"elasticsearch/elasticsearch": "~1.0",
+		"fairholm/elasticquent": "master-dev"
 	},
 	"require-dev" : {
 		"way/generators": "~2.0",
-		"codeception/codeception" : "~2.0",
-		"laracasts/testdummy" : "~1.0"
+		"codeception/codeception" : "~2.0"
 	},
 	"autoload": {
 		"classmap": [
