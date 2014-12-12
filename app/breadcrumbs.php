@@ -78,20 +78,36 @@ Breadcrumbs::register('edit-client', function($breadcrumbs, $id) {
 
 /*** FORMS ***/
 Breadcrumbs::register('online-forms', function($breadcrumbs) {
-    $breadcrumbs->push('List of Forms', route('forms.index'));
+    $breadcrumbs->push('List of Online Forms', route('forms.index'));
 });
 
 Breadcrumbs::register('payment-request', function($breadcrumbs) {
     $breadcrumbs->parent('online-forms');
-    $breadcrumbs->push('Request For Payment', route('rfps.index'));
+    $breadcrumbs->push('Payment Request', route('prs.index'));
 });
 
 Breadcrumbs::register('show-payment-request', function($breadcrumbs, $id) {
     $breadcrumbs->parent('payment-request');
-    $breadcrumbs->push('Request For Payment', route('rfps.show', $id));
+    $breadcrumbs->push('Payment', route('prs.show', $id));
 });
 
 Breadcrumbs::register('edit-payment-request', function($breadcrumbs, $id) {
     $breadcrumbs->parent('payment-request');
-    $breadcrumbs->push('Edit Request For Payment', route('rfps.edit', $id));
+    $breadcrumbs->push('Edit Payment Request', route('prs.edit', $id));
+});
+
+
+/*** FORM REJECT RESON ***/
+Breadcrumbs::register('list-reject-reasons', function($breadcrumbs) {
+    $breadcrumbs->push('List of Reject Reasons', route('rejectreasons.index'));
+});
+
+Breadcrumbs::register('add-reject-reason', function($breadcrumbs) {
+    $breadcrumbs->parent('list-reject-reasons');
+    $breadcrumbs->push('Add Form Reject Reason', route('rejectreasons.create'));
+});
+
+Breadcrumbs::register('edit-reject-reason', function($breadcrumbs, $id) {
+    $breadcrumbs->parent('list-reject-reasons');
+    $breadcrumbs->push('Edit Form Reject Reason', route('rejectreasons.edit', $id));
 });

@@ -18,7 +18,7 @@
                             <div class="btn-group btn-group-sm">
                                 @if( !($client->isDeleted()) )
                                     <a href="{{ URL::route('clients.edit', e($client->client_id)) }}" class="btn btn-primary">Edit</a>  
-                                    <a href="{{ URL::route('clients.destroy', e($client->client_id)) }}" class="btn btn-danger">Remove</a>
+                                    <button class="btn btn-danger btn-sm" name="remove-acct-btn" id="remove-acct-btn" data-toggle="modal" data-target="#myModal">Remove Client</button>
                                 @else
                                     <a href="{{ URL::route('clients.restore', e($client->client_id)) }}" class="btn btn-warning">Restore</a>
                                 @endif
@@ -109,4 +109,22 @@
 
 @section('sub-heading')
    {{$client->client_name}}
+@stop
+
+@section('modal-content')
+<div class="modal-content">
+  {{ Form::open(['id' => 'modal-form', 'route' => ['clients.destroy', e($client->client_id)], 'method' => 'DELETE']) }}
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+      <h4 class="modal-title" id="myModalLabel">Deactivate Client Account</h4>
+    </div>
+    <div class="modal-body">
+      Are you sure you want to deactivate client's account?
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      {{ Form::submit('OK', array('class' => 'btn btn-warning')) }}
+    </div>
+  {{ Form::close() }}
+</div><!-- .modal-content -->
 @stop

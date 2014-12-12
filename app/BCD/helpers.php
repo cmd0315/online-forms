@@ -25,8 +25,8 @@ function sort_rejectreasons_by($column, $body) {
 	return link_to_route('rejectreasons.index', $body, ['q' => $search, 'sortBy' => $column, 'direction' => $direction]);
 }
 
-function sort_rfps_by($column, $body) {
+function sort_prs_by($column, $body) {
 	$direction = (Request::get('direction') == 'asc') ? 'desc' : 'asc';
 	$search = Request::get('q');
-	return link_to_route('rfps.index', $body, ['q' => $search, 'sortBy' => $column, 'direction' => $direction]);
+	return link_to_route('prs.index', $body, ['q' => $search, 'sortBy' => $column, 'direction' => $direction]);
 }

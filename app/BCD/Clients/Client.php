@@ -5,7 +5,7 @@ use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\Reminders\RemindableTrait;
 use Illuminate\Auth\Reminders\RemindableInterface;
 use Illuminate\Database\Eloquent\SoftDeletingTrait;
-use Eloquent, Carbon;
+use Eloquent, Carbon, URL;
 
 class Client extends Eloquent {
 
@@ -82,6 +82,16 @@ class Client extends Eloquent {
     */
     public function getContactPersonAttribute() {
         return ucfirst($this->cp_first_name) . ' ' . ucfirst($this->cp_middle_name) . ' ' . ucfirst($this->cp_last_name);
+    }
+
+    /**
+    * Return client name with link to its profile.
+    *
+    *
+    * @return String
+    */
+    public function getProfileLinkAttribute() {
+        print '<a href="' . URL::route('clients.show', $this->client_id) . '">' . $this->client_name . '</a>';  
     }
 
     /**

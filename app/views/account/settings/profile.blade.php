@@ -182,7 +182,7 @@
       <h4 class="modal-title" id="myModalLabel">Deactivate Employee Account</h4>
     </div>
     <div class="modal-body">
-      Are you sure you want to deactivate <span id="employee-full-name">employee</span>'s account?
+      Are you sure you want to deactivate employee's account?
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

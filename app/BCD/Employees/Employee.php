@@ -6,7 +6,7 @@ use Illuminate\Auth\Reminders\RemindableTrait;
 use Illuminate\Auth\Reminders\RemindableInterface;
 use Illuminate\Database\Eloquent\SoftDeletingTrait;
 use Elasticquent\ElasticquentTrait;
-use Eloquent;
+use Eloquent, URL;
 
 use BCD\OnlineForms\OnlineForm;
 
@@ -202,6 +202,16 @@ class Employee extends Eloquent implements UserInterface, RemindableInterface {
     */
     public function getFirstLastNameAttribute() {
         return ucfirst($this->first_name) . ' ' . ucfirst($this->last_name);
+    }
+
+    /**
+    * Return full name with link to its profile.
+    *
+    *
+    * @return String
+    */
+    public function getProfileLinkAttribute() {
+        print '<a href="' . URL::route('employees.show', $this->username) . '">' . $this->getFullNameAttribute() . '</a>';  
     }
 
     /**

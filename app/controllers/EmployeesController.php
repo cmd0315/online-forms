@@ -53,21 +53,16 @@ class EmployeesController extends \BaseController {
 	*/
 	function __construct(RegisterEmployeeForm $registerEmployeeForm, UpdateEmployeeForm $updateEmployeeForm, EmployeeRepository $employees, DepartmentRepository $departments) {
 		$this->registerEmployeeForm = $registerEmployeeForm;
-
 		$this->updateEmployeeForm = $updateEmployeeForm;
 
 		$this->employees = $employees;
-
 		$this->departments = $departments;
 
 		$this->maxRowPerPage = 5;
 
 		$this->beforeFilter('auth');
-
 		$this->beforeFilter('role:System Administrator');
-
 		//$this->beforeFilter('profileEditable', ['only' => 'edit']);
-
 		$this->beforeFilter('csrf', ['on' => 'post']);
 	}
 

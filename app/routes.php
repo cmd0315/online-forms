@@ -16,12 +16,14 @@ Route::resource('departments', 'DepartmentsController');
 Route::get('clients/export', ['as' => 'clients.export', 'uses' => 'ClientsController@export']);
 Route::get('clients/restore/{clientID}', ['as' => 'clients.restore', 'uses' => 'ClientsController@restore']);
 Route::resource('clients', 'ClientsController');
-Route::resource('forms', 'FormsController');
+
 Route::get('rejectreasons/export', ['as' => 'rejectreasons.export', 'uses' => 'RejectReasonsController@export']);
+Route::get('rejectreasons/restore/{id}', ['as' => 'rejectreasons.restore', 'uses' => 'RejectReasonsController@restore']);
 Route::resource('rejectreasons', 'RejectReasonsController');
-Route::get('/rfps/{id}/pdf', ['as' => 'rfps.pdf', 'uses' => 'PaymentRequestsController@pdf']);
-Route::get('rfps/export', ['as' => 'rfps.export', 'uses' => 'PaymentRequestsController@export']);
-Route::resource('rfps', 'PaymentRequestsController');
+
+
+Route::resource('forms', 'FormsController');
+Route::resource('prs', 'PaymentRequestsController');
 Route::resource('approval', 'RequestApprovalController', ['only' => ['index', 'show', 'edit', 'update']]);
 Route::resource('receiving', 'RequestReceivingController', ['only' => ['index', 'show', 'edit', 'update']]);
 

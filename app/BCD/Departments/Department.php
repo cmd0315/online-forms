@@ -6,7 +6,7 @@ use Illuminate\Auth\Reminders\RemindableTrait;
 use Illuminate\Auth\Reminders\RemindableInterface;
 use Illuminate\Database\Eloquent\SoftDeletingTrait;
 use Elasticquent\ElasticquentTrait;
-use Eloquent, Carbon;
+use Eloquent, Carbon, URL;
 
 class Department extends Eloquent implements UserInterface, RemindableInterface {
 	
@@ -90,6 +90,16 @@ class Department extends Eloquent implements UserInterface, RemindableInterface 
             return 'None';
         }
 
+    }
+
+    /**
+    * Return department name with link to its profile.
+    *
+    *
+    * @return String
+    */
+    public function getProfileLinkAttribute() {
+        print '<a href="' . URL::route('departments.show', $this->department_id) . '">' . $this->department_name . '</a>';  
     }
 
     /**

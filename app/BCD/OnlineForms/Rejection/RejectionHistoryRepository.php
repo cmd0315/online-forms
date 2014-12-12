@@ -14,6 +14,15 @@ class RejectionHistoryRepository {
 	}
 
 	/**
+	* Returns all instance of the model including the soft deleted rows
+	*
+	* @return RejectionHistory
+	*/
+	public function all() {
+		return RejectionHistory::withTrashed();
+	}
+
+	/**
 	* Return rejection history rows based on given id
 	*
 	* @param int $id 

@@ -34,21 +34,18 @@ class RejectionHistory extends Eloquent implements UserInterface, RemindableInte
     protected $dates = ['deleted_at'];
 
     /**
-    * Many-to-many relationship between RejectionHistory and OnlineForm
-    */
-    public function onlineForms() {
-        $this->hasMany('BCD\OnlineForms\OnlineForm', 'id', 'form_id');
-    }
-
-    /**
     * Many-to-many relationship between RejectionHistory and RejectReason
+    *
+    * @return 
     */
-    public function formRejectReasons() {
-        return $this->belongsTo('BCD\OnlineForms\Rejection\FormRejectReason', 'form_reject_reason_id', 'id');
+    public function rejectReasons() {
+        return $this->belongsTo('BCD\OnlineForms\Rejection\RejectReason', 'reject_reason_id', 'id')->withTrashed();
     }
 
     /**
     * Create an instance of the model.
+    *
+    * @return RejectionHistory
     */
     public static function addRow($form_id, $form_reject_reason_id) {
     	$rejectionHistory = new static(compact('form_id', 'form_reject_reason_id'));

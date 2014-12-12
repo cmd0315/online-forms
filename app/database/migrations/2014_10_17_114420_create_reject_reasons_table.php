@@ -16,6 +16,8 @@ class CreateRejectReasonsTable extends Migration {
 		{
 			$table->increments('id');
 			$table->string('reason', 300);
+			$table->string('form_type', 250);
+			$table->string('process_type', 20);
 			$table->timestamps();
 			$table->softDeletes();
 		});

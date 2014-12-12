@@ -2,6 +2,18 @@
 
 class FormsController extends \BaseController {
 
+	/*
+	* Constructor
+	*
+	*
+	*/
+	public function __construct() {
+
+		$this->beforeFilter('auth');
+
+		$this->beforeFilter('csrf', ['on' => 'post']);
+	}
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -9,7 +21,7 @@ class FormsController extends \BaseController {
 	 */
 	public function index()
 	{
-		return View::make('account.forms.index', ['pageTitle' => 'List of Forms']);
+		return View::make('account.online-forms.index', ['pageTitle' => 'List of Online Forms']);
 	}
 
 

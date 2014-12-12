@@ -1,66 +1,86 @@
 <?php
 
 use BCD\Core\CommandBus;
-use BCD\OnlineForms\Rejection\Validation\RejectReasonForm;
-use BCD\OnlineForms\Rejection\AddRejectReasonCommand;
-use BCD\OnlineForms\Rejection\EditRejectReasonCommand;
+use BCD\ExportToExcel;
 use BCD\OnlineForms\Rejection\RejectReasonRepository;
-use BCD\OnlineForms\ExportToExcel;
+use BCD\OnlineForms\Rejection\Validation\AddRejectReasonForm;
+use BCD\OnlineForms\Rejection\Validation\EditRejectReasonForm;
+use BCD\OnlineForms\Rejection\Commands\AddRejectReasonCommand;
+use BCD\OnlineForms\Rejection\Commands\EditRejectReasonCommand;
+use BCD\OnlineForms\Rejection\Commands\RemoveRejectReasonCommand;
+use BCD\OnlineForms\Rejection\Commands\RestoreRejectReasonCommand;
 
 class RejectReasonsController extends \BaseController {
 
 	use CommandBus;
 
 	/**
-	* List of forms
-	*
-	* @var String $forms
+	* @var AddRejectReasonForm $addRejectReasonForm
 	*/
-	protected $forms;
-
-    /**
-    * The list of all form processes
-    *
-    * @var array
-    */
-    protected $processes;
+	protected $addRejectReasonForm;
 
 	/**
-	* @var RejectReasonForm $rejectReasonForm
+	* @var EditRejectReasonForm $editRejectReasonForm
 	*/
-	protected $rejectReasonForm;
+	protected $editRejectReasonForm;
 
 	/**
 	* @var RejectReasonRepository $rejectReasonRepo
 	*/
 	protected $rejectReasonRepo;
 
+	/**
+	* List of available online forms in the system
+	*
+	* @var array $onlineForms
+	*/
+	protected $onlineForms;
+
+	/**
+	* List of all availale processes for an online form i.e. department approval and receiving
+	*
+	* @var array
+	*/
+	protected $processes;
+
+	/**
+	* Maximum number of rows to be display per page
+	*
+	* @var int $maxRowPerPage
+	*/
+	protected $maxRowPerPage;
+
 
 	/**
 	* Constructor
 	*
-	* @param RejectReasonsForm
+	* @param AddRejectReasonForm $addRejectReasonForm
+	* @param EditRejectReasonForm $editRejectReasonForm
+	* @param RejectReasonRepository $rejectReasonRepository
 	*/
-	public function __construct(RejectReasonForm $rejectReasonForm, RejectReasonRepository $rejectReasonRepository) {
-		$this->rejectReasonForm = $rejectReasonForm;
+	public function __construct(AddRejectReasonForm $addRejectReasonForm, EditRejectReasonForm $editRejectReasonForm, RejectReasonRepository $rejectReasonRepository) {
+
+		$this->addRejectReasonForm = $addRejectReasonForm;
+		$this->editRejectReasonForm = $editRejectReasonForm;
 
 		$this->rejectReasonRepo = $rejectReasonRepository;
 
-		$this->forms = ['BCD\RequestForPayments\RequestForPayment' => 'Request For Payment', 'BCD\CheckVouchers\CheckVoucher' => 'Check Voucher', 'BCD\CashVouchers\CashVoucher' => 'Cash Voucher'];
+		$this->onlineForms = ['Payment Request', 'Check Voucher', 'Cash Voucher'];
 
-		$this->processes = ['0' => 'Department Approval', '1' => 'Receiving'];
+		$this->processes = ['Department Approval', 'Receiving'];
+
+		$this->maxRowPerPage = 5;
 
 		$this->beforeFilter('auth');
-
 		$this->beforeFilter('role:System Administrator', ['except' => 'show']);
-
 		$this->beforeFilter('csrf', ['on' => 'post']);
 	}
+
 	/**
 	 * Display a listing of the resource.
 	 * GET /rejectreason
 	 *
-	 * @return Response
+	 * @return View
 	 */
 	public function index()
 	{
@@ -68,39 +88,49 @@ class RejectReasonsController extends \BaseController {
 		$sortBy = Request::get('sortBy');
 		$direction = Request::get('direction');
 
+		$currentPage = 1;
+		if (Request::get('page')) {
+			$currentPage = Request::get('page');
+		}
+		$currentRow =  ($this->maxRowPerPage * ($currentPage - 1)) ;
+
+		$active_rejectreasons = $this->rejectReasonRepo->activeTotal();
 		$total_rejectreasons = $this->rejectReasonRepo->total();
 
-		$rejectReasons = $this->rejectReasonRepo->paginateResults($search, compact('sortBy', 'direction'));
-		return View::make('admin.display.list-formrejectreasons', ['pageTitle' => 'Reject Reasons'], compact('rejectReasons', 'total_rejectreasons', 'search'));
+		$rejectReasons = $this->rejectReasonRepo->paginateResults($this->maxRowPerPage, $search, compact('sortBy', 'direction'));
+
+		return View::make('admin.display.list-rejectreasons', ['pageTitle' => 'List of Reject Reasons'], compact('rejectReasons', 'active_rejectreasons', 'total_rejectreasons', 'search', 'currentRow'));
 	}
 
 	/**
 	 * Show the form for creating a new resource.
 	 * GET /rejectreason/create
 	 *
-	 * @return Response
+	 * @return View
 	 */
 	public function create()
 	{
-		$forms = $this->forms;
+		$onlineForms = $this->onlineForms;
 		$processes = $this->processes;
-		return View::make('admin.create.formrejectreason', ['pageTitle' => 'Add Reject Reasons to Form'], compact('forms', 'processes'));
+
+		return View::make('admin.create.rejectreason', ['pageTitle' => 'Add Reject Reason'], compact('onlineForms', 'processes'));
 	}
 
 	/**
 	 * Store a newly created resource in storage.
 	 * POST /rejectreason
 	 *
-	 * @return Response
+	 * @return Redirect
 	 */
 	public function store()
 	{
-		$input = Input::only('forms', 'process_type', 'reason');
-		$this->rejectReasonForm->validate($input);
+		$input = Input::only('reason', 'onlineForm', 'processType');
+		$this->addRejectReasonForm->validate($input);
+
 		extract($input);
 
 		$addRejectReason = $this->execute(
-			new AddRejectReasonCommand($forms, $process_type, $reason)
+			new AddRejectReasonCommand($reason, $onlineForm, $processType)
 		);
 
 		$referenceUrl = '<a href="' . URL::route('rejectreasons.index') . '">View list here.</a>';
@@ -135,17 +165,14 @@ class RejectReasonsController extends \BaseController {
 	 * GET /rejectreason/{id}/edit
 	 *
 	 * @param  int  $id
-	 * @return Response
+	 * @return View
 	 */
 	public function edit($id)
 	{
 		$rejectReason = $this->rejectReasonRepo->getReasonByID($id);
-		$forms = $this->forms;
+		$onlineForms = $this->onlineForms;
 		$processes = $this->processes;
-		$associatedForms = $this->rejectReasonRepo->getAssociatedForms($id);
-		$associatedProcesses = $this->rejectReasonRepo->getAssociatedProcesses($id);
-
-		return View::make('admin.edit.formrejectreason', ['pageTitle' => 'Reject Reason'], compact('rejectReason', 'forms', 'processes', 'associatedForms', 'associatedProcesses'));
+		return View::make('admin.edit.rejectreason', ['pageTitle' => 'Edit Reject Reason'], compact('rejectReason', 'onlineForms', 'processes'));
 	}
 
 	/**
@@ -157,19 +184,19 @@ class RejectReasonsController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		$input = Input::only('forms', 'process_types', 'reason');
-		$this->rejectReasonForm->validate($input);
+		$input = Input::only('reason', 'onlineForm', 'processType');
+		$this->editRejectReasonForm->validate($input);
+
 		extract($input);
 
-		$addRejectReason = $this->execute(
-			new EditRejectReasonCommand($id, $forms, $process_types, $reason)
+		$editRejectReason = $this->execute(
+			new EditRejectReasonCommand($id, $reason, $onlineForm, $processType)
 		);
-
 
 		$referenceUrl = '<a href="' . URL::route('rejectreasons.index') . '">View list here.</a>';
 		$msg = '';
 
-		if($addRejectReason) {
+		if($editRejectReason) {
 			$msg = 'Reason for rejection is successfully edited! ' . $referenceUrl;
 			Flash::success($msg);
 		}
@@ -190,7 +217,19 @@ class RejectReasonsController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		//
+		$removeRejectReason = $this->execute(
+			new RemoveRejectReasonCommand($id)
+		);
+
+		if($removeRejectReason) {
+			Flash::success('Reject reason has been successfully removed!');
+
+		}
+		else{
+			Flash::success('Failed to remove reject reason');
+		}
+		
+		return Redirect::route('rejectreasons.index');
 	}
 
 
@@ -201,11 +240,38 @@ class RejectReasonsController extends \BaseController {
 	*/
 	public function export() 
 	{
-		$rejectReasons = $this->rejectReasonRepo->getAll()->get();
+		$rejectReasons = $this->rejectReasonRepo->getCSVReport();
 
 		$excel = new ExportToExcel($rejectReasons, 'List of Reject Reasons');
 
 		return $excel->export();
+	}
+
+	/**
+	 * Restore reject reason
+	 *
+	 * @param  int  $id
+	 * @return Redirect
+	 */
+	public function restore($id) {
+
+		$restoreRejectReason = $this->execute(
+			new RestoreRejectReasonCommand($id)
+		);
+
+		$msg = '<a href="' . URL::route('rejectreasons.index') . '">View list of reject reasons.</a>';
+
+		if($restoreRejectReason) {
+			$msg = 'Reject reason has been successfully restored! ' . $msg;
+			Flash::success($msg);
+
+		}
+		else{
+			$msg = 'Failed to restore employee reject reason ' . $msg;
+			Flash::success($msg);
+		}
+		
+		return Redirect::route('rejectreasons.edit', $id);
 	}
 
 }

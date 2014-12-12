@@ -24,13 +24,14 @@ class RejectReason extends Eloquent implements UserInterface, RemindableInterfac
 	 *
 	 * @var array
      */
-	protected $fillable = ['reason'];
+	protected $fillable = ['reason', 'form_type', 'process_type'];
 
     /**
     * List of datatable column names that can be filtered
+    *
     * @var array
     */
-    protected $filter_fields = ['reason', 'created_at', 'updated_at'];
+    protected $filter_fields = ['reason', 'form_type', 'process_type', 'created_at', 'updated_at'];
 
     /**
     * Required attribute for soft deletion
@@ -38,14 +39,6 @@ class RejectReason extends Eloquent implements UserInterface, RemindableInterfac
     * @var array
     */
     protected $dates = ['deleted_at'];
-
-    /**
-    * Many-to-many relationship between RejectReason and FormRejectReason
-    */
-    public function formRejectReasons() {
-
-    	return $this->hasMany('BCD\OnlineForms\Rejection\FormRejectReason', 'reject_reason_id', 'id');
-    }
 
     /**
     * Many-to-many relationship between RejectReason and RejectionHistory
@@ -58,11 +51,26 @@ class RejectReason extends Eloquent implements UserInterface, RemindableInterfac
     * Create an instance of the model.
     *
     * @param String
+    * @return RejectReason
     */
-    public static function add($reason) {
-        $rejectReason = new static(compact('reason'));
+    public static function add($reason, $form_type, $process_type) {
+        $rejectReason = new static(compact('reason', 'form_type', 'process_type'));
 
         return $rejectReason;
+    }
+
+    /**
+    * Check if the entry has already been softdeleted
+    *
+    * @return boolean
+    */
+    public function isDeleted() {
+        if($this->deleted_at !== NULL) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     /**
@@ -92,9 +100,10 @@ class RejectReason extends Eloquent implements UserInterface, RemindableInterfac
                 $table_name = $this->table . '.*';
                 $query->select($table_name)
                         ->where($this->table . '.reason', 'LIKE', "%$search%")
-                         ->orWhereHas('formRejectReasons', function($q) use ($search) {
-                            $q->where('reject_reason_id', "%$search%");
-                        })->get();
+                        ->orWhere($this->table . '.form_type', 'LIKE', "%$search%")
+                        ->orWhere($this->table . '.process_type', 'LIKE', "%$search%");
+                
+                $query->get();
             });
         }
         else {
@@ -114,20 +123,24 @@ class RejectReason extends Eloquent implements UserInterface, RemindableInterfac
             $sortBy = $params['sortBy'];
             $direction = $params['direction'];
 
-            if($sortBy == 'form_type' || $sortBy == 'process_type'){
-                $table_name = $this->table . '.*';
-                $table_primary_key = $this->table . '.id';
-                return $query
-                        ->select($table_name) // Avoid 'ambiguous column name' for paginate() method
-                        ->leftJoin('form_reject_reasons', $table_primary_key, '=', 'form_reject_reasons.reject_reason_id') // Include related table
-                        ->orderBy('form_reject_reasons.' . $sortBy, $direction); // Finally sort by related column
-            }
-            else {
-                return $query->orderBy($sortBy, $direction);
-            }
+            return $query->orderBy($sortBy, $direction);
         }
         else {
             return $query;
+        }
+    }
+
+    /**
+    * Return formatted status of the reject reason based on deleted_at value
+    *
+    * @return String
+    */
+    public function getStatusAttribute() {
+        if($this->isDeleted()) {
+            print '<span class="label label-danger">Deleted</span>';
+        }
+        else {
+            print '<span class="label label-success">Active</span>';
         }
     }
 
